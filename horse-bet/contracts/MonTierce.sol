@@ -3,11 +3,19 @@
 
 contract MonTierce {
 
-	struct Bet {
+  enum EtatPari { NonDetermine, Perdant, GagnantTierce, GagnantDuo, GagnantUno }
+	struct Pari {
 		address adresseParieur;
 		uint mise;
 		bytes32[3] chevauxTierce;
+		EtatPari etat;
 	}
+
+	  struct CoefficientsPrime {
+			uint coefficientTierce;
+			uint coefficientDuo;
+			uint coefficientUno;
+		}
 
 	struct Course {
 		uint idCourse;
@@ -15,14 +23,13 @@ contract MonTierce {
 		bool terminee;
 		//les chevaux sont représentés par un hash de leur id et nom
 		bytes32[] chevauxEnCourse;
-		Bet[] paris;
+		//on ne peut pas itérer sur le mapping paris :( sans ça
+		address[] parisKeySet;
+		mapping (address => Pari) paris;
+		mapping (uint8 => uint8) coefficientsPrime;
+		uint sommeCoefficientsParMises;
 	}
 
-  struct CoefficientsPrime {
-		uint coefficientTierce;
-		uint coefficientDuo;
-		uint coefficientUno;
-	}
 	// sera automatiquement assigné
 	//lors de la construction du contract
 	// lorsque le msg.sender sera le propriètaire du contrat
@@ -80,8 +87,8 @@ contract MonTierce {
 				throw;
 			}
 		}
-
-		course.paris.push( Bet(msg.sender, mise, chevauxTierce));
+        course.parisKeySet.push(msg.sender);
+		course.paris[msg.sender] = Pari(msg.sender, mise, chevauxTierce, EtatPari.NonDetermine);
 		course.montantTotalMises += mise;
 		return true;
 	}
@@ -100,108 +107,116 @@ contract MonTierce {
 		course.terminee = true;
 
 		//Les primes sont intégralement redistribuées aux parieurs
-		Bet[] parisGagnantsTierce;
-		Bet[] parisGagnantsDuo;
-		Bet[] parisGagnantsUno;
+		bool existeGagnantTierce = false;
+		bool existeGagnantDuo = false;
+		bool existeGagnantUno = false;
 
-		for(uint i = 0 ; i < course.paris.length ; i++){
-			Bet pari = course.paris[i];
+		for(uint i = 0 ; i < course.parisKeySet.length ; i++){
+			Pari pari = course.paris[course.parisKeySet[i]];
 			if(pari.chevauxTierce[0] == chevauxTierceGagnant[0]){
 				if(pari.chevauxTierce[1] == chevauxTierceGagnant[1]){
 					if(pari.chevauxTierce[2] == chevauxTierceGagnant[2]){
 						//le code suivant est interdit car les arrays in memory doivent avoir une taille fixe
-						parisGagnantsTierce.push(pari);
+						pari.etat = EtatPari.GagnantTierce;
+						existeGagnantTierce = true;
 					} else {
-						parisGagnantsDuo.push(pari);
+						pari.etat = EtatPari.GagnantDuo;
+						existeGagnantDuo = true;
 					}
 				} else {
-					parisGagnantsUno.push(pari);
+					pari.etat = EtatPari.GagnantUno;
+					existeGagnantUno= true;
 				}
+			}else{
+				pari.etat = EtatPari.Perdant;
 			}
 		}
-		bool existeGagnantTierce = parisGagnantsTierce.lenght > 0;
-		bool existeGagnantDuo = parisGagnantsDuo.lenght > 0;
-		bool existeGagnantUno = parisGagnantsUno.lenght > 0;
+
 
 		if(!existeGagnantTierce && !existeGagnantDuo && !existeGagnantUno){
 			course.terminee=true;
-			annulerParis(course);
-
+			annulerParis(course.idCourse);
 		} else {
-			CoefficientsPrime coefficientsPrime = calculerCoefficientsPrime(existeGagnantTierce, existeGagnantDuo, existeGagnantUno);
-      uint sommeMiseParCoefficientParis = calculerSommeMiseParCoefficientPourChaquePari(parisGagnantsTierce, parisGagnantsDuo, parisGagnantsUno, coefficientsPrime);
+			calculerCoefficientsPrime(existeGagnantTierce, existeGagnantDuo, existeGagnantUno, course.idCourse);
+      calculerSommeMiseParCoefficientPourChaquePari(course.idCourse);
 
 				//TODO mettre la prime dans la struct pari pour simplifier les algos
 				//calcul de la somme due à chaque parieurs
 				//paiement du tierce
 				//facteurGainX = uno duo ou tierce ou rien
 				//gain pariX = (miseX * facteurGainX * totalMise) / somme pour tous les paris de misePari * facteurGainPari
-				for(uint j = 0 ; j < parisGagnantsTierce.length ; j++){
+				for(uint j = 0 ; j < course.parisKeySet.length ; j++){
+					address addresseParieur = course.parisKeySet[j];
 					//TODO gérer la division qui n'est pas entière
-					uint gainPari = (parisGagnantsTierce[j].mise * coefficientsPrime.coefficientTierce * course.montantTotalMises) / sommeMiseParCoefficientParis;
-					//TODO mettre en place withdraw pattern
-					parisGagnantsTierce[j].adresseParieur.send(gainPari);
+					EtatPari etatPari = course.paris[addresseParieur].etat;
+					if(etatPari != EtatPari.Perdant && etatPari != EtatPari.NonDetermine){
+						uint gainPari = (course.paris[addresseParieur].mise * course.coefficientsPrime[uint8(course.paris[addresseParieur].etat)] * course.montantTotalMises) / course.sommeCoefficientsParMises;
+						//TODO mettre en place withdraw pattern
+						bool envoiOK = course.paris[addresseParieur].adresseParieur.send(gainPari);
+						if(!envoiOK){
+						    //TODO regarder comment traiter ce retour
+						    throw;
+						}
+					}
 				}
-				for(uint k = 0 ; k < parisGagnantsDuo.length ; k++){
-					gainPari = (parisGagnantsDuo[k].mise * coefficientsPrime.coefficientDuo * course.montantTotalMises) / sommeMiseParCoefficientParis;
-					parisGagnantsDuo[k].adresseParieur.send(gainPari);
-				}
-				for(uint l = 0 ; l < parisGagnantsUno.length ; l++){
-					gainPari = (parisGagnantsUno[l].mise * coefficientsPrime.coefficientUno * course.montantTotalMises) / sommeMiseParCoefficientParis;
-					parisGagnantsUno[l].adresseParieur.send(gainPari);
-				}
-
 		}
-
-
-
-
-
 	}
 	// cette méthode va faire la somme pour chaque pari gagnant, de la mise multipliée par le coefficients de prime associé au pari
-	function calculerSommeMiseParCoefficientPourChaquePari(Bet[] parisGagnantsTierce, Bet[] parisGagnantsDuo, Bet[] parisGagnantsUno, CoefficientsPrime coefficientsPrime) private returns (uint) {
+	function calculerSommeMiseParCoefficientPourChaquePari(uint idCourse) private {
+		Course course = courses[idCourse];
 		uint result = 0;
-		for(uint m = 0 ; m < parisGagnantsTierce.length ; m++){
-			result += parisGagnantsTierce[m].mise * coefficientsPrime.coefficientTierce;
+		for(uint k = 0 ; k < course.parisKeySet.length ; k++){
+		    Pari pari = course.paris[course.parisKeySet[k]];
+			if(pari.etat != EtatPari.Perdant && pari.etat != EtatPari.NonDetermine){
+				result += pari.mise * course.coefficientsPrime[uint8(pari.etat)];
+			}
 		}
-		for(uint n = 0 ; n < parisGagnantsDuo.length ; n++){
-			result += parisGagnantsDuo[n].mise * coefficientsPrime.coefficientDuo;
-		}
-		for(uint o = 0 ; o < parisGagnantsUno.length ; o++){
-			result += parisGagnantsUno[o].mise * coefficientsPrime.coefficientUno;
-		}
-		return result;
+    course.sommeCoefficientsParMises = result;
 	}
 
-	function calculerCoefficientsPrime(bool existeGagnantTierce, bool existeGagnantDuo, bool existeGagnantUno) private  returns (CoefficientsPrime) {
-		CoefficientsPrime result;
+	function calculerCoefficientsPrime(bool existeGagnantTierce, bool existeGagnantDuo, bool existeGagnantUno, uint idCourse) private {
+	    Course course = courses[idCourse];
 		if(existeGagnantTierce && existeGagnantDuo && existeGagnantUno){
-      result = CoefficientsPrime(60, 30, 10);
+      course.coefficientsPrime[uint8(EtatPari.GagnantTierce)] = 60;
+			course.coefficientsPrime[uint8(EtatPari.GagnantDuo)] = 30;
+      course.coefficientsPrime[uint8(EtatPari.GagnantUno)] = 10;
 		}
 		else if(existeGagnantTierce && !existeGagnantDuo && existeGagnantUno){
-      result = CoefficientsPrime(80, 0, 20);
+			course.coefficientsPrime[uint8(EtatPari.GagnantTierce)] = 80;
+			course.coefficientsPrime[uint8(EtatPari.GagnantDuo)] = 0;
+      course.coefficientsPrime[uint8(EtatPari.GagnantUno)] = 20;
 		}
 		else if(existeGagnantTierce && existeGagnantDuo && !existeGagnantUno){
-			result = CoefficientsPrime(66, 34, 0);
+			course.coefficientsPrime[uint8(EtatPari.GagnantTierce)] = 66;
+			course.coefficientsPrime[uint8(EtatPari.GagnantDuo)] = 34;
+			course.coefficientsPrime[uint8(EtatPari.GagnantUno)] = 0;
 		}
 		else if(existeGagnantTierce && !existeGagnantDuo && !existeGagnantUno){
-			result = CoefficientsPrime(100, 0, 0);
+			course.coefficientsPrime[uint8(EtatPari.GagnantTierce)] = 100;
+			course.coefficientsPrime[uint8(EtatPari.GagnantDuo)] = 0;
+			course.coefficientsPrime[uint8(EtatPari.GagnantUno)] = 0;
 		}
 		else if(existeGagnantDuo && existeGagnantUno){
-				result = CoefficientsPrime(0, 75, 25);
+			course.coefficientsPrime[uint8(EtatPari.GagnantTierce)] = 0;
+			course.coefficientsPrime[uint8(EtatPari.GagnantDuo)] = 75;
+			course.coefficientsPrime[uint8(EtatPari.GagnantUno)] = 25;
 		}
 		else if(existeGagnantDuo && !existeGagnantUno){
-			result = CoefficientsPrime(0, 100, 0);
+			course.coefficientsPrime[uint8(EtatPari.GagnantTierce)] = 0;
+			course.coefficientsPrime[uint8(EtatPari.GagnantDuo)] = 100;
+			course.coefficientsPrime[uint8(EtatPari.GagnantUno)] = 0;
 		}
 		else{
-			result = CoefficientsPrime(0, 0, 100);
+			course.coefficientsPrime[uint8(EtatPari.GagnantTierce)] = 0;
+			course.coefficientsPrime[uint8(EtatPari.GagnantDuo)] = 0;
+			course.coefficientsPrime[uint8(EtatPari.GagnantUno)] = 100;
 		}
-		return result;
 	}
 
-	function annulerParis(Course course) private {
-		for(uint p = 0 ; p < course.paris.length ; p++){
-			Bet pari = course.paris[p];
+	function annulerParis(uint idCourse) private {
+	    Course course = courses[idCourse];
+		for(uint p = 0 ; p < course.parisKeySet.length ; p++){
+			Pari pari = course.paris[course.parisKeySet[p]];
 			if (!pari.adresseParieur.send(pari.mise)) {
 					//TODO faire que ça ne soit pas bloquant pour les autres
 					throw;
