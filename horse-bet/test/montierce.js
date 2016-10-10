@@ -1,55 +1,23 @@
 contract('MonTierce', function(accounts) {
-  it("should put 10000 MetaCoin in the first account", function() {
-    var meta = MetaCoin.deployed();
 
-    return meta.getBalance.call(accounts[0]).then(function(balance) {
-      assert.equal(balance.valueOf(), 10000, "10000 wasn't in the first account");
+  it("doit garder une struct Course dans le storage lorsque l'on appelle la méthode init", function() {
+    var contratTierce = MonTierce.deployed();
+    var chevauxEnCourse = ["0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef", "0x1123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef", "0x2123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"];
+    return contratTierce.initialiserCourse.call(chevauxEnCourse).then(function(idCourse) {
+      assert.equal(idCourse.valueOf(), 0, "L'id de la course doit être 0'");
+      contratTierce.getInfosCourse.call(idCourse).then(function(courseDatas){
+        assert.equal(courseDatas[0], 0, "L'id de la course dans le storage doit être 0");
+        assert.equal(courseDatas[1], 0, "Le montant total des paris de la course dans le storage doit être 0");
+        assert.equal(courseDatas[2], false, "La course ne doit pas être terminée");
+        assert.equal(courseDatas[3], chevauxEnCourse, "Les chevaux en course dans le storage doivent être ceux passés à l'initialisation");
+        assert.equal(courseDatas[4], false, "Les paris doivent être autorisés sur la course");
+      });
+
     });
   });
-  it("should call a function that depends on a linked library", function() {
-    var meta = MetaCoin.deployed();
-    var metaCoinBalance;
-    var metaCoinEthBalance;
 
-    return meta.getBalance.call(accounts[0]).then(function(outCoinBalance) {
-      metaCoinBalance = outCoinBalance.toNumber();
-      return meta.getBalanceInEth.call(accounts[0]);
-    }).then(function(outCoinBalanceEth) {
-      metaCoinEthBalance = outCoinBalanceEth.toNumber();
-    }).then(function() {
-      assert.equal(metaCoinEthBalance, 2 * metaCoinBalance, "Library function returned unexpeced function, linkage may be broken");
-    });
-  });
-  it("should send coin correctly", function() {
-    var meta = MetaCoin.deployed();
 
-    // Get initial balances of first and second account.
-    var account_one = accounts[0];
-    var account_two = accounts[1];
 
-    var account_one_starting_balance;
-    var account_two_starting_balance;
-    var account_one_ending_balance;
-    var account_two_ending_balance;
 
-    var amount = 10;
 
-    return meta.getBalance.call(account_one).then(function(balance) {
-      account_one_starting_balance = balance.toNumber();
-      return meta.getBalance.call(account_two);
-    }).then(function(balance) {
-      account_two_starting_balance = balance.toNumber();
-      return meta.sendCoin(account_two, amount, {from: account_one});
-    }).then(function() {
-      return meta.getBalance.call(account_one);
-    }).then(function(balance) {
-      account_one_ending_balance = balance.toNumber();
-      return meta.getBalance.call(account_two);
-    }).then(function(balance) {
-      account_two_ending_balance = balance.toNumber();
-
-      assert.equal(account_one_ending_balance, account_one_starting_balance - amount, "Amount wasn't correctly taken from the sender");
-      assert.equal(account_two_ending_balance, account_two_starting_balance + amount, "Amount wasn't correctly sent to the receiver");
-    });
-  });
 });

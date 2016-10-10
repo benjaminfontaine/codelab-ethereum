@@ -21,6 +21,7 @@ contract MonTierce {
 		uint idCourse;
 		uint montantTotalMises;
 		bool terminee;
+		bool parisBloques;
 		//les chevaux sont représentés par un hash de leur id et nom
 		bytes32[] chevauxEnCourse;
 		//on ne peut pas itérer sur le mapping paris :( sans ça
@@ -49,7 +50,7 @@ contract MonTierce {
 	}
 
 
-	function initialiserCourse(bytes32[] chevauxParticipants) ownerOnly returns(bool creationOK) {
+	function initialiserCourse(bytes32[] chevauxParticipants) ownerOnly returns(uint) {
 
 		//les struct Course du mapping courses sont déjà initialisés, il suffit juste de leur positionner des attributs
 		//L'initialisation suivante ne fonctionne pas
@@ -58,24 +59,34 @@ contract MonTierce {
 		courses[courseIDGenerator].montantTotalMises=0;
 		courses[courseIDGenerator].terminee=false;
 		courses[courseIDGenerator].chevauxEnCourse=chevauxParticipants;
+		courses[courseIDGenerator].parisBloques=false;
 		courseIDGenerator++ ;
-		return true;
+		return courses[courseIDGenerator].idCourse;
 	}
+
+
+	function getInfosCourse(uint idCourse) public returns(uint, uint, bool, bytes32[], bool){
+			 return (courses[idCourse].idCourse, courses[idCourse].montantTotalMises, courses[idCourse].terminee, courses[idCourse].chevauxEnCourse,courses[idCourse].parisBloques);
+	 }
 
 	function parier(uint idCourse, bytes32[3] chevauxTierce, uint mise) public returns(bool pariPrisEnCompte){
 		if(msg.sender.balance < mise){
 			throw;
 		}
 		Course course = courses[idCourse];
-		//si la course n'existe pas ou bien est terminée
+		//si la course n'existe pas
 		if(course.idCourse == 0){
 			throw;
 		}
-
+    //ou bien est terminée
 		if(course.terminee){
 			throw;
 		}
 
+		//ou que les paris sont bloques
+		if(course.parisBloques){
+			throw;
+		}
 		for(uint i = 0; i < 3; i++){
 			bool chevalExiste = false;
 			for(uint j = 0; j < course.chevauxEnCourse.length; j++){
@@ -222,6 +233,11 @@ contract MonTierce {
 					throw;
       }
 		}
+	}
+
+	//bloquer les paris au début de la course
+	function interdireParis(uint idCourse) ownerOnly{
+		courses[idCourse].parisBloques=true;
 	}
 
 	function detruire() ownerOnly returns(bool destructionOk) {
