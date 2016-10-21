@@ -7,7 +7,7 @@ contract MonTierce {
 	struct Pari {
 		address adresseParieur;
 		uint mise;
-		bytes32[3] chevauxTierce;
+		uint32[3] chevauxTierce;
 		EtatPari etat;
 	}
 
@@ -23,7 +23,7 @@ contract MonTierce {
 		bool terminee;
 		bool parisBloques;
 		//les chevaux sont représentés par un hash de leur id et nom
-		bytes32[] chevauxEnCourse;
+		uint32[] chevauxEnCourse;
 		//on ne peut pas itérer sur le mapping paris :( sans ça
 		address[] parisKeySet;
 		mapping (address => Pari) paris;
@@ -49,35 +49,49 @@ contract MonTierce {
 		_
 	}
 
+  event InitialisationCourse(uint32[] chevauxAuDepart, uint idCourse);
 
-	function initialiserCourse(bytes32[] chevauxParticipants) ownerOnly returns(uint) {
+	function initialiserCourse(uint32[] chevauxParticipants) ownerOnly returns(uint) {
 
 		//les struct Course du mapping courses sont déjà initialisés, il suffit juste de leur positionner des attributs
 		//L'initialisation suivante ne fonctionne pas
 		//Course course = Course({idCourse:courseIDGenerator, montantTotalMises:0,  terminee:false, chevauxEnCourse:chevauxParticipants });
-		courses[courseIDGenerator].idCourse= courseIDGenerator;
+    courses[courseIDGenerator].idCourse= courseIDGenerator;
 		courses[courseIDGenerator].montantTotalMises=0;
 		courses[courseIDGenerator].terminee=false;
-		courses[courseIDGenerator].chevauxEnCourse=chevauxParticipants;
 		courses[courseIDGenerator].parisBloques=false;
+    for(uint x= 0; x< chevauxParticipants.length; x++ ){
+        courses[courseIDGenerator].chevauxEnCourse.push(chevauxParticipants[x]);
+    }
+    InitialisationCourse(chevauxParticipants, courses[courseIDGenerator].idCourse);
+
 		courseIDGenerator++ ;
 		return courses[courseIDGenerator].idCourse;
 	}
 
+  event GetInfosCourse(uint idCourse);
 
-	function getInfosCourse(uint idCourse) public returns(uint, uint, bool, bytes32[], bool){
-			 return (courses[idCourse].idCourse, courses[idCourse].montantTotalMises, courses[idCourse].terminee, courses[idCourse].chevauxEnCourse,courses[idCourse].parisBloques);
+	function getInfosCourse(uint idCourse) public returns(uint, uint, bool, uint32[], bool){
+       GetInfosCourse(idCourse);
+       return (courses[idCourse].idCourse, courses[idCourse].montantTotalMises, courses[idCourse].terminee, courses[idCourse].chevauxEnCourse , courses[idCourse].parisBloques);
 	 }
 
-	function parier(uint idCourse, bytes32[3] chevauxTierce, uint mise) public returns(bool pariPrisEnCompte){
-		if(msg.sender.balance < mise){
+
+   event Parier(uint idCourse, uint32[3] chevauxTierce, address messageSender, uint mise, uint senderBalance);
+
+	function parier(uint idCourse, uint32[3] chevauxTierce) public returns(bool pariPrisEnCompte){
+    Parier(idCourse, chevauxTierce, msg.sender, msg.value, msg.sender.balance);
+
+    if(msg.sender.balance < msg.value){
 			throw;
 		}
-		Course course = courses[idCourse];
+
+    Course course = courses[idCourse];
 		//si la course n'existe pas
-		if(course.idCourse == 0){
+		if(course.chevauxEnCourse.length == 0){
 			throw;
 		}
+
     //ou bien est terminée
 		if(course.terminee){
 			throw;
@@ -98,14 +112,15 @@ contract MonTierce {
 				throw;
 			}
 		}
-        course.parisKeySet.push(msg.sender);
-		course.paris[msg.sender] = Pari(msg.sender, mise, chevauxTierce, EtatPari.NonDetermine);
-		course.montantTotalMises += mise;
+    course.parisKeySet.push(msg.sender);
+		course.paris[msg.sender] = Pari(msg.sender, msg.value, chevauxTierce, EtatPari.NonDetermine);
+		course.montantTotalMises += msg.value;
+
 		return true;
 	}
 
 
-	function terminerCourse(uint idCourse, bytes32[3] chevauxTierceGagnant) ownerOnly {
+	function terminerCourse(uint idCourse, uint32[3] chevauxTierceGagnant) ownerOnly {
 		Course course = courses[idCourse];
 		if( course.idCourse == 0){
 			throw;
@@ -235,9 +250,12 @@ contract MonTierce {
 		}
 	}
 
+  event InterdireParis(uint idCourse);
+
 	//bloquer les paris au début de la course
 	function interdireParis(uint idCourse) ownerOnly{
 		courses[idCourse].parisBloques=true;
+    InterdireParis(idCourse);
 	}
 
 	function detruire() ownerOnly returns(bool destructionOk) {

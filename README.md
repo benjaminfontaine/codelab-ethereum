@@ -45,8 +45,9 @@ Description de l'arborescence du projet
 - app : sources de la partie IHM de la D-app.
 - build : contient les contrats compilés
 
-## Etape 2 CRéation de la course
-["0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef", "0x1123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef", "0x2123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"]
+## Etape 2 Transactions de création de la course et opération de consultation d'une course
+On a un test unitaire, il faut maintenant créer le contrat et les méthodes de création et de consultation qui permettront de le faire passer.
+
 
 
 ##Etape 2
@@ -77,3 +78,31 @@ Très compliqué à moins d'avoir déjà téléchargé la blockchain de test (pr
 
 #Etape 7 (Optionnelle)
 Sécurisation du smart contract, application du pattern withdrawal.
+
+
+#Annexe : Le debuggage :
+Créer un event pour pouvoir debugger votre contrat :
+Dans le test unitaire ou votre IHM :
+```javascript
+var eventPari = contratTierce.Parier({});
+eventPari.watch(function(error, result) {
+  // This will catch all Transfer events, regardless of how they originated.
+  console.log("Event pari : ");
+  console.log(result.args);
+});
+```
+
+Dans votre smartcontract :
+```
+...
+event Parier(uint idCourse, uint32[3] chevauxTierce, address messageSender, uint mise, uint senderBalance);
+
+function parier(uint idCourse, uint32[3] chevauxTierce) public returns(bool pariPrisEnCompte){
+ Parier(idCourse, chevauxTierce, msg.sender, msg.value, msg.sender.balance);
+
+ if(msg.sender.balance < msg.value){
+   throw;
+ }
+ ...
+}
+```
