@@ -48,6 +48,7 @@ Description de l'arborescence du projet
 ## Etape 2 Transactions de création de la course et opération de consultation d'une course
 On a un test unitaire, il faut maintenant créer le contrat et les méthodes de création et de consultation qui permettront de le faire passer.
 
+truffle create:contract MonTierce
 
 
 ##Etape 2
@@ -79,6 +80,25 @@ Très compliqué à moins d'avoir déjà téléchargé la blockchain de test (pr
 #Etape 7 (Optionnelle)
 Sécurisation du smart contract, application du pattern withdrawal.
 
+#Annexe : Interagir en mode console
+//TODO : remplacer par des vrais appels à notre contrat
+// get the deployed version of our contract
+truffle(default)> var poe = ProofOfExistence1.deployed()
+// and print its address
+truffle(default)> console.log(poe.address)
+0x3d3bce79cccc331e9e095e8985def13651a86004
+// let's register our first "document"
+truffle(default)> poe.notarize('An amazing idea')
+Promise { <pending> }
+// let's now get the proof for that document
+truffle(default)> poe.calculateProof('An amazing idea').then(console.log)
+Promise { <pending> }
+0xa3287ff8d1abde95498962c4e1dd2f50a9f75bd8810bd591a64a387b93580ee7
+// To check if the contract's state was correctly changed:
+truffle(default)> poe.proof().then(console.log)
+0xa3287ff8d1abde95498962c4e1dd2f50a9f75bd8810bd591a64a387b93580ee7
+// The hash matches the one we previously calculated
+
 
 #Annexe : Le debuggage :
 Créer un event pour pouvoir debugger votre contrat :
@@ -92,7 +112,7 @@ eventPari.watch(function(error, result) {
 });
 ```
 
-Dans votre smartcontract :
+Dans votre smart-contract :
 ```
 ...
 event Parier(uint idCourse, uint32[3] chevauxTierce, address messageSender, uint mise, uint senderBalance);
