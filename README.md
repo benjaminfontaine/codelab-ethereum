@@ -1,54 +1,139 @@
 # Codelab-ethereum DevFest 2O16
 
-##Installation de l'environnement de travail
-Choix d'un framework de développement.
-Deux principaux :
-- embarkJS
-- truffle
-Et d'autres concurrent un peu moins connu mais qui montent petit à petit :
--dapple
-(TODO trouver les autres)...
+##Présentation et installation de l'environnement de travail
+Nous allons développer notre premier smart contract au sein d'un environnement de développement propre à Ethereum.
+Pour ce TP, vous aurez besoin :
+1. De votre IDE préféré qui gère le javascript, de préférence.
 
-Pour ce TP, nous utiliserons Truffle.
-Truffle va simplifier plusieurs étapes de réalistion de D-app :
-- compilation intégrée de smart contract, linkink, déploiement et gestion des livrables,
-- test automatisé des contracts avec Mocha (framework de test JS) et Chai (framework BDD),
-- pipeline de build configurable et personnalisable,
-- déploiements scriptables et framework de gestion de migration,
-- gestion des blockchains de déploiement (public et privée),
-- console interactive de communication avec les contrats,
-- ...
+2. D'un client/node blockchain
 
-Pour installer Truffle :
+    Plusieurs clients, à choisir selon vos goûts, car ils ont tous les mêmes fonctionnalités. Les principaux :
+
+    * Geth : client en GO (utilisé pour ce tp),
+    * Eth : en C++,
+    * Pyethapp : en python
+
+
+3. D'un framework de développement
+
+   Trois principaux :
+
+    * embarkJS
+    * truffle
+    * dapple
+
+    Pour ce TP, nous utiliserons Truffle parce qu'i était conseillé pour les débutants.
+
+    Truffle va simplifier plusieurs étapes de réalistion de D-app :
+   - compilation intégrée de smart contract, linkink, déploiement et gestion des livrables,
+   - test automatisé des contracts avec Mocha (framework de test JS) et Chai (framework BDD),
+   - pipeline de build configurable et personnalisable,
+   - déploiements scriptables et framework de gestion de migration,
+   - gestion des blockchains de déploiement (public et privée),
+   - console interactive de communication avec les contrats ...
+
+### Installation de Truffle :
 Pré-requis :
 -nodejs 5+
 
 Pour Linux, MacOS et Windows
 (sous Windows, il est conseillé d'utiliser PowerShell ou git bash sont peine de conflit)
-npm install -g truffle
+
+     npm install -g truffle
+
+Image docker Linux / Mac
+TODO
+
+Image docker Windows
+TODO
+
 (TODO : tester l'install Windows)
 
-Choix d'un client Ethereum :
-Plusieurs clients, à choisir selon vos goûts, car ils ont tous les mêmes fonctionnalités. Les principaux :
-- Geth : client en GO (utilisé pour ce tp),
-- Eth : en C++,
-- Pyethapp : en python
+### Installation de Geth
 
-J'ai choisi Geth pour ce tp.
+#### Mac
+Lien d'installation :
+https://github.com/ethereum/go-ethereum/wiki/Installation-Instructions-for-Mac
 
+Image docker : TODO
+
+#### Ubuntu
+Lien d'installation :
+https://github.com/ethereum/go-ethereum/wiki/Installation-Instructions-for-Ubuntu
+
+Image docker : TODO
+
+
+#### Windows
+Lien d'installation : https://github.com/ethereum/go-ethereum/wiki/Installation-instructions-for-Windows
+
+Image docker :
+TODO
+
+(TODO : tester l'install Windows)
+
+### Installation de testrpc :
+Pré-requis :
+-nodejs 5+
+
+Pour Linux, MacOS et Windows
+(sous Windows, il est conseillé d'utiliser PowerShell ou git bash sont peine de conflit)
+
+     npm install -g ethereumjs-testrpc
+
+Image docker Linux / Mac
+TODO
+
+Image docker Windows
+TODO
+
+(TODO : tester l'install Windows)
 
 ##Récupération des sources
-A cloner depuis ce repo : [https://github.com/benjaminfontaine/codelab-ethereum/tree/master/horse-bet]
+A cloner depuis le repo de ce codelab : [https://github.com/benjaminfontaine/codelab-ethereum/tree/master/horse-bet]
+
+     git clone https://github.com/benjaminfontaine/codelab-ethereum/tree/master/horse-bet
 
 ##Etape 1
+
+Se mettre sur la branche Step 1.
+
+     git checkout step1
+
+Cette branche est le résultat des commandes suivantes :
+
+      truffle init
+
+Qui va créer l'arborescence de notre projet :
+
+- app => le répertoire contenant la partie WEB de notre D-app, qui contiendra le site en Angular 2
+
+- build => fichier de l'IHM préts au déploiement du
+
+   - contract => dossier où sont créer les fichier .sol.js qui sont des artifacts crées par un framework appelé Ether Pudding. Ces fichiers sont crées à partir d'une ABI, d'un binaire ou d'une adresse de contrat et vont permettre de s'interfacer facilement avec le contrat en Javascript.
+- contracts => les sources .sol des contracts de votre D-app
+- migration => les scripts de déploiement
+- test => le fichier contenant les sources js de test Mocha et Chai de nos smart-contract
+- truffle.js : le fichier de configuration de truffle
+
+
+      truffle create:contract MonTierce
+
+Qui va permettre de créer le contract.
+
+Ce repo contient aussi un test unitaire qui va tester les premières méthodes de notre contrat.
+
 Description de l'arborescence du projet
 - app : sources de la partie IHM de la D-app.
 - build : contient les contrats compilés
 
-## Etape 2 Transactions de création de la course et opération de consultation d'une course
-On a un test unitaire, il faut maintenant créer le contrat et les méthodes de création et de consultation qui permettront de le faire passer.
+## Etape 2 : Création et consultation d'une course
+Sur la base du test unitaire présent On a un test unitaire, il faut maintenant créer le contrat et les méthodes de création et de consultation qui permettront de le faire passer.
 
-truffle create:contract MonTierce
+
+
+Pour avoir une compilation en temps réel de votre contract, vous pouvez utiliser votre navigateur à l'adresse suivante :
+https://ethereum.github.io/browser-solidity/#version=soljson-v0.3.6+commit.3fc68da.js
 
 
 ##Etape 2
@@ -100,7 +185,8 @@ truffle(default)> poe.proof().then(console.log)
 // The hash matches the one we previously calculated
 
 
-#Annexe : Le debuggage :
+#Annexes
+## Le debuggage :
 Créer un event pour pouvoir debugger votre contrat :
 Dans le test unitaire ou votre IHM :
 ```javascript
@@ -113,7 +199,7 @@ eventPari.watch(function(error, result) {
 ```
 
 Dans votre smart-contract :
-```
+```solidity
 ...
 event Parier(uint idCourse, uint32[3] chevauxTierce, address messageSender, uint mise, uint senderBalance);
 
