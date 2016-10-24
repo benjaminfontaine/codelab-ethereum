@@ -121,15 +121,18 @@ Qui va créer l'arborescence de notre projet :
 
 Qui va permettre de créer le contract.
 
-Ce repo contient aussi un test unitaire qui va tester les premières méthodes de notre contrat.
+Ce repo contient aussi un test unitaire `test/montierce.js` qui va tester les premières méthodes de notre contrat.
 
-Description de l'arborescence du projet
-- app : sources de la partie IHM de la D-app.
-- build : contient les contrats compilés
+
+
+
 
 ## Etape 2 : Création et consultation d'une course
 Sur la base du test unitaire présent On a un test unitaire, il faut maintenant créer le contrat et les méthodes de création et de consultation qui permettront de le faire passer.
 
+Vous pouvez lancer ce test avec la commande :
+
+    truffle test
 
 
 Pour avoir une compilation en temps réel de votre contract, vous pouvez utiliser votre navigateur à l'adresse suivante :
@@ -212,3 +215,7 @@ function parier(uint idCourse, uint32[3] chevauxTierce) public returns(bool pari
  ...
 }
 ```
+
+
+https://live.ether.camp/
+https://benjifontaine.by.ether.camp/ide.html
