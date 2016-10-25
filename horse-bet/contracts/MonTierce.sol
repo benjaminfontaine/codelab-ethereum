@@ -1,16 +1,17 @@
-
+import "MonTierceLib.sol";
+import "mortal.sol";
 // Contrat de tierce en ligne
 
-contract MonTierce {
+contract MonTierce is mortal{
 
   enum EtatPari { NonDetermine, Perdant, GagnantTierce, GagnantDuo, GagnantUno }
+
   struct Pari {
     address adresseParieur;
     uint mise;
     uint32[3] chevauxTierce;
     EtatPari etat;
   }
-
 
   struct Course {
     uint idCourse;
@@ -30,27 +31,15 @@ contract MonTierce {
     bool existeGagnantUno;
   }
 
-  // sera automatiquement assigné
-  //lors de la construction du contract
-  // lorsque le msg.sender sera le propriètaire du contrat
-  address public owner = msg.sender;
+
 
   uint public courseIDGenerator = 0;
   mapping (uint => Course) courses;
 
-  modifier ownerOnly()
-  {
-    if (msg.sender != owner)
-    throw;
-    // Le  "_;"! est important car il sera remplacé
-    // par le contenu de la fonction sur laquelle
-    // on placera le modifier
-    _
-  }
 
   event InitialisationCourse(uint32[] chevauxAuDepart, uint idCourse, address owner);
 
-  function initialiserCourse(uint32[] chevauxParticipants) ownerOnly returns(uint) {
+  function initialiserCourse(uint32[] chevauxParticipants) onlyowner returns(uint) {
 
     //les struct Course du mapping courses sont déjà initialisés, il suffit juste de leur positionner des attributs
     //L'initialisation suivante ne fonctionne pas
@@ -125,7 +114,7 @@ contract MonTierce {
   event TerminerCourseSommeEtCoeff(uint sommeParisParCoef, uint8 coefficientPrimesTierce, uint8 coefficientPrimesDuo, uint8 coefficientPrimesUno);
   event TerminerCourseEnvoiDesGains(address adresseGagnant, uint gain);
 
-  function terminerCourse(uint idCourse, uint32[3] chevauxTierceGagnant) ownerOnly {
+  function terminerCourse(uint idCourse, uint32[3] chevauxTierceGagnant) onlyowner {
     TerminerCourseParams(idCourse, chevauxTierceGagnant);
     Course course = courses[idCourse];
     if( course.chevauxEnCourse.length == 0){
@@ -172,6 +161,28 @@ contract MonTierce {
         }
       }
     }
+
+
+    function annulerParis(uint idCourse) private {
+      Course course = courses[idCourse];
+      for(uint p = 0 ; p < course.parisKeySet.length ; p++){
+        Pari pari = course.paris[course.parisKeySet[p]];
+        if (!pari.adresseParieur.send(pari.mise)) {
+          //TODO faire que ça ne soit pas bloquant pour les autres
+          throw;
+        }
+      }
+    }
+
+    event InterdireParis(uint idCourse);
+
+    //bloquer les paris au début de la course
+    function interdireParis(uint idCourse) onlyowner{
+      courses[idCourse].parisBloques=true;
+      InterdireParis(idCourse);
+    }
+
+
     // cette méthode va faire la somme pour chaque pari gagnant, de la mise multipliée par le coefficients de prime associé au pari
     function calculerSommeMiseParCoefficientPourChaquePari(uint idCourse) private {
       Course course = courses[idCourse];
@@ -255,27 +266,4 @@ contract MonTierce {
             }
           }
 
-          function annulerParis(uint idCourse) private {
-            Course course = courses[idCourse];
-            for(uint p = 0 ; p < course.parisKeySet.length ; p++){
-              Pari pari = course.paris[course.parisKeySet[p]];
-              if (!pari.adresseParieur.send(pari.mise)) {
-                //TODO faire que ça ne soit pas bloquant pour les autres
-                throw;
-              }
-            }
-          }
-
-          event InterdireParis(uint idCourse);
-
-          //bloquer les paris au début de la course
-          function interdireParis(uint idCourse) ownerOnly{
-            courses[idCourse].parisBloques=true;
-            InterdireParis(idCourse);
-          }
-
-          function detruire() ownerOnly returns(bool destructionOk) {
-            //envoi tous les fonds du contract au propriétaire
-            suicide(owner);
-          }
-        }
+}
