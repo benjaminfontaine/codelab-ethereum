@@ -142,15 +142,15 @@ Pour voir la correction de ce TP :
      git checkout step1-final
 
 <details>
-  <summary>Spoiler alert : solution de la copie de tableau dans la méthode initialiserCourse </summary>
-      <p>
+  <summary>SPOILER ALERT: solution de la copie de tableau dans la méthode initialiserCourse </summary>
+
 
 ```
         for(uint x= 0; x< chevauxParticipants.length; x++ ){
           courses[courseIDGenerator].chevauxEnCourse.push(chevauxParticipants[x]);
         }
 ```
-        </p>
+
 </details>
 
 ## Etape 2 : Mise en place de la fonctionnalité de pari

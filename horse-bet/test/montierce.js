@@ -19,7 +19,7 @@ contract('MonTierce', function(accounts) {
     // récupère l'interface MonTierce.sol.js
     // à rechercher dans : http://truffle.readthedocs.io/en/latest/getting_started/contracts/#making-a-transaction
     //syntaxe : interfaceContrat.d......d()
-    var contratTierce = FIX_ME;
+    var contratTierce = MonTierce.deployed();
     console.log(contratTierce);
     var initOwnerOnly = false;
     var idCourseCree = -1;
@@ -30,7 +30,7 @@ contract('MonTierce', function(accounts) {
     // Syntaxe de l'appel d'une fonction sur un contrat : http://truffle.readthedocs.io/en/latest/getting_started/contracts/#making-a-transaction
     // cette appel déclenche une action d'écriture, on utilisera donc la syntaxe :
     // interfaceContrat.nomMethode(parametres1,[ parametres2 ...],[ {options} ])
-    contratTierce.FIX_ME.catch(function(error){
+    contratTierce.initialiserCourse(chevauxEnCourse, {from : account_two}).catch(function(error){
       //cette création doit échouer
       initOwnerOnly = true;
     }).then(function(){
@@ -39,7 +39,7 @@ contract('MonTierce', function(accounts) {
 
     //création du compte avec le bon compte (account_one est le compte par défaut)
     // INFO : même syntaxe qu'au dessus, sans les options
-    contratTierce.FIX_ME
+    contratTierce.initialiserCourse(chevauxEnCourse)
     .then(function(transactionId) {
       //une fonction générant une transaction renvoie toujours
       // l'id de la transaction même si la fonction renvoie autre chose dans le code du contract
@@ -47,7 +47,7 @@ contract('MonTierce', function(accounts) {
 
       //on veut récupérer l'id de la dernière course créée
       //INFO : syntaxe interfaceContrat.attributPublic.call();
-      return FIX_ME;
+      return contratTierce.courseIDGenerator.call();
     })
     .then(function (idCourseCompteur){
       //idCourseCompteur est un BigInteger, on doit le convertir
@@ -56,7 +56,7 @@ contract('MonTierce', function(accounts) {
       //INFO :
       // encore une fois, c'est un appel qui ne modifiera pas les données du contrat
       // on utilisera donc la syntaxe interfaceContrat.methodePublique.call(args);
-      return FIX_ME;
+      return contratTierce.getInfosCourse.call(idCourseCree);
     })
     .then(function(courseDatas){
       assert.equal(courseDatas[0], idCourseCree, "L'id de la course dans le storage doit être 0");
