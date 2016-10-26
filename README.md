@@ -100,7 +100,7 @@ Se mettre sur la branche Step 1.
 
      git checkout step1
 
-Le projet ainsi récupéré est déjà initialisé ([voir les étapes d'initialisation](#Initialisation-projet))
+Le projet ainsi récupéré est déjà initialisé ([voir les étapes d'initialisation](#initialisation-projet))
 
 
 
@@ -122,8 +122,8 @@ Le contrat est déjà crée, ainsi que son test unitaire.
 Seulement, j'ai sadiquement supprimé certaines lignes de code qui empèche les tests unitaires de fonctionner.
 
 Les fichiers impactés sont :
-- 'contacts/MonTierce.sol' : le contract
-- 'test/montierce.js' : son test unitaire
+- `contacts/MonTierce.sol` : le contract
+- `test/montierce.js` : son test unitaire
 
 Vous repérerez les zones corromptues par le pattern FIX_ME disséminé un peu partout dans le code.
 Au dessus de ces FIX_ME, des TAGs INFO vous donneront les indications pour compléter les trous.
@@ -141,14 +141,17 @@ Pour voir la correction de ce TP :
 
      git checkout step1-final
 
-     <details>
-       <summary>Spoile alert : solution de la copie de tableau dans la méthode initialiserCourse </summary>
-        ,,,
+<details>
+  <summary>Spoiler alert : solution de la copie de tableau dans la méthode initialiserCourse </summary>
+      <p>
+
+```
         for(uint x= 0; x< chevauxParticipants.length; x++ ){
           courses[courseIDGenerator].chevauxEnCourse.push(chevauxParticipants[x]);
         }
-        ,,,
-     </details>
+```
+        </p>
+</details>
 
 ## Etape 2 : Mise en place de la fonctionnalité de pari
 
