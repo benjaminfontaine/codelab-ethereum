@@ -8,7 +8,8 @@ contract('MonTierce', function(accounts) {
   var account_five = "0xd03ea8624c8c5987235048901fb614fdca89b117";
   var account_six = "0x95ced938f7991cd0dfcb48f0a06a40fa1af46ebc";
   var chevauxEnCourse = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-
+  var throwMessage = "VM Exception while processing transaction: invalid JUMP";
+  
   it("doit garder une struct Course dans le storage lorsque l'on appelle la méthode init", function(done) {
     var contratTierce = MonTierce.deployed();
     var chevauxEnCourse = [10, 20, 30];
@@ -36,59 +37,39 @@ contract('MonTierce', function(accounts) {
 
     it("possède une fonction parier qui va permettre de miser si les paris ne sont bloqués, la course encore en cours,  les chevaux du pari existent et le parieur n'a pas déjà parié", function(done) {
       var contratTierce = MonTierce.deployed();
-      //récupère tous les events InitialisationCourse du dernier block
-      // var eventInitCourse = contratTierce.InitialisationCourse({ fromBlock:'latest' });
-      // eventInitCourse.watch(function(error, result) {
-      //   //loggue chaque event
-      //   console.log("Event init course : ");
-      //   console.log(result.args);
-      // });
 
-      //pas de filtre, va tout loguer
-      // var eventPari = contratTierce.Parier({});
-      // eventPari.watch(function(error, result) {
-      //   // This will catch all Transfer events, regardless of how they originated.
-      //   console.log("Event pari : ");
-      //   console.log(result.args);
-      // });
       var events = contratTierce.allEvents({});
       events.watch(function(error, result) {
         console.log(result.event);
         console.log(result.args);
       });
 
-      // var eventCompPari = contratTierce.ComparaisonPari({ fromBlock:'latest' });
-      // eventCompPari.watch(function(error, result) {
-      //   //loggue chaque event
-      //   console.log("Event comparaison pari  : ");
-      //   console.log(Number(result.args.chevauxTierceGagnant[0]));
-      //   console.log(Number(result.args.chevauxTierceGagnant[1]));
-      //   console.log(Number(result.args.chevauxTierceGagnant[2]));
-      //
-      //   console.log(Number(result.args.chevauxPari[0]));
-      //   console.log(Number(result.args.chevauxPari[1]));
-      //   console.log(Number(result.args.chevauxPari[2]));
-      // });
 
 
 
+      var courseId = -1;
       var pari3EnErreur = false;
       var pari5EnErreur = false;
       var pari6EnErreur = false;
 
       contratTierce.initialiserCourse(chevauxEnCourse)
-      .then(function(transactionId) {
-        console.log("transactionId="+transactionId);
-        console.log("pari 1");
-        return contratTierce.parier(1, [4,3,10], {value: 300, gas: 2000000, from: account_one});
+          .then(function(transactionId) {
+            return contratTierce.courseIDGenerator.call();
+          })
+          .then(function(lastCourseId){
+            courseId = Number(lastCourseId-1);
+            console.log("courseId " + courseId);
+            console.log("pari 1");
+            return contratTierce.parier(courseId, [4,3,10], {value: 300, gas: 2000000, from: account_one});
       })
       .then(function() {
         console.log("get info 1");
-        return contratTierce.getInfosCourse.call(1);
+        return contratTierce.getInfosCourse.call(courseId);
       })
+      
       .then(function(courseDatas){
         console.log("analyse info 1");
-        assert.equal(courseDatas[0], 1, "L'id de la course dans le storage doit être 1");
+        assert.equal(courseDatas[0], courseId, "L'id de la course dans le storage doit être 1");
         assert.equal(courseDatas[1].valueOf(), 300, "Le montant total des paris de la course dans le storage doit être 300");
         assert.equal(courseDatas[2], false, "La course ne doit pas être terminée");
 
@@ -100,23 +81,23 @@ contract('MonTierce', function(accounts) {
         assert.deepEqual(chevauxEnCourseRetournes, chevauxEnCourse, "Les chevaux en course dans le storage doivent être ceux passés à l'initialisation");
         assert.equal(courseDatas[4], false, "Les paris doivent être autorisés sur la course");
         console.log("pari 2");
-        return contratTierce.parier(1, [6,10,8], {value: 200, gas: 2000000, from: account_two});
+        return contratTierce.parier(courseId, [6,10,8], {value: 200, gas: 2000000, from: account_two});
       })
       .then(function(){
         console.log("get info 2");
-        return contratTierce.getInfosCourse.call(1);
+        return contratTierce.getInfosCourse.call(courseId);
       })
       .then(function(courseDatas){
         console.log("analyse info 2");
         assert.equal(courseDatas[1].valueOf(), 500, "Le montant total des paris de la course dans le storage doit être 300");
         console.log("pari 3");
-        return contratTierce.parier(1, [12,3,2], {value: 1000, gas: 2000000, from: account_three});
+        return contratTierce.parier(courseId, [12,3,2], {value: 1000, gas: 2000000, from: account_three});
       })
       .catch(function (err){
         console.log("catch 1");
 
         //l'erreur renvoyait quand on lance un throw depuis le contrat
-        if(err.message.indexOf("VM Exception while executing transaction: invalid JUMP") !== -1){
+        if(err.message.indexOf(throwMessage) !== -1){
           pari3EnErreur =true;
         }else{
           console.log(err);
@@ -124,21 +105,21 @@ contract('MonTierce', function(accounts) {
       })
       .then(function (){
         console.log("pari 4");
-        return contratTierce.parier(1, [6,10,4], {value: 2000, gas: 2000000, from: account_four});
+        return contratTierce.parier(courseId, [6,10,4], {value: 2000, gas: 2000000, from: account_four});
       })
       .then(function (){
         console.log("interdire pari");
-        return contratTierce.interdireParis(1);
+        return contratTierce.interdireParis(courseId);
       })
       .then(function (){
         console.log("pari 5");
-        return contratTierce.parier(1, [9,7,4], {value: 3000, gas: 2000000, from: account_five});
+        return contratTierce.parier(courseId, [9,7,4], {value: 3000, gas: 2000000, from: account_five});
       })
       .catch(function (err){
         console.log("catch 2");
-
+        console.log(err.message);
         //l'erreur renvoyée quand on lance un throw depuis le contrat
-        if(err.message.indexOf("VM Exception while executing transaction: invalid JUMP") !== -1){
+        if(err.message.indexOf(throwMessage) !== -1){
           pari5EnErreur =true;
         }else {
           console.log(err);
@@ -147,7 +128,7 @@ contract('MonTierce', function(accounts) {
       })
       .then(function(){
         console.log("get info 3");
-        return contratTierce.getInfosCourse.call(1);
+        return contratTierce.getInfosCourse.call(courseId);
       })
       .then(function(courseDatas){
         console.log("analyse info 3");
@@ -157,20 +138,20 @@ contract('MonTierce', function(accounts) {
         assert.equal(courseDatas[4], true, "Les paris doivent être interdits sur la course");
         // eventPari.stopWatching();
         console.log("terminer course");
-        return contratTierce.terminerCourse(1,[6,10,8]);
+        return contratTierce.terminerCourse(courseId,[6,10,8]);
       })
       .then(function(){
         console.log("get info 4");
-        return contratTierce.getInfosCourse.call(1);
+        return contratTierce.getInfosCourse.call(courseId);
       })
       .then(function(courseDatas){
         console.log("analyse info 4");
         assert.equal(courseDatas[2], true, "La course davrait être terminée");
         console.log("pari 6");
-        return contratTierce.parier(1, [9,7,4], {value: 3000, gas: 2000000, from: account_one});
+        return contratTierce.parier(courseId, [9,7,4], {value: 3000, gas: 2000000, from: account_one});
       })
       .catch(function(err){
-        if(err.message.indexOf("VM Exception while executing transaction: invalid JUMP") !== -1){
+        if(err.message.indexOf(throwMessage) !== -1){
           pari6EnErreur =true;
         }else {
           console.log(err);
@@ -188,26 +169,26 @@ contract('MonTierce', function(accounts) {
     });
 
   // NE FONCTIONNE PAS, AUCUNE TRANSACTION N'EST APPELEE SUR LE CONTRAT
-   function initialiserParis(contratTierce){
-
-     console.log("salut");
-     contratTierce.initialiserCourse(chevauxEnCourse).catch(function(error){
-       console.log("yop");
-     })
-     .then(function(transactionId) {
-       console.log("when");
-       return contratTierce.courseIDGenerator.call();
-     })
-     .then(function(lastCourseId){
-       console.log("does this happen");
-       courseId = Number(lastCourseId-1);
-       return contratTierce.parier(courseId, [9,7,4], {value: 3000, gas: 2000000, from: account_one});
-     })
-     .then(function(){
-       console.log("returning");
-       return Promise.resolve(courseId);
-     });
-   }
+  //  function initialiserParis(contratTierce){
+  //
+  //    console.log("salut");
+  //    contratTierce.initialiserCourse(chevauxEnCourse).catch(function(error){
+  //      console.log("yop");
+  //    })
+  //    .then(function(transactionId) {
+  //      console.log("when");
+  //      return contratTierce.courseIDGenerator.call();
+  //    })
+  //    .then(function(lastCourseId){
+  //      console.log("does this happen");
+  //      courseId = Number(lastCourseId-1);
+  //      return contratTierce.parier(courseId, [9,7,4], {value: 3000, gas: 2000000, from: account_one});
+  //    })
+  //    .then(function(){
+  //      console.log("returning");
+  //      return Promise.resolve(courseId);
+  //    });
+  //  }
 
   it("possède une fonction terminerCourse qui va calculer les gains et payer tous les parieurs", function(done) {
     var balanceAccount2, balanceAccount3, balanceAccount4, balanceAccount5, balanceAccount6;

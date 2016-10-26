@@ -1,9 +1,11 @@
-
+pragma solidity ^0.4.2;
 // Contrat de tierce en ligne
 
 contract MonTierce {
 
+
   enum EtatPari { NonDetermine, Perdant, GagnantTierce, GagnantDuo, GagnantUno }
+
   struct Pari {
     address adresseParieur;
     uint mise;
@@ -45,7 +47,7 @@ contract MonTierce {
     // Le  "_;"! est important car il sera remplacé
     // par le contenu de la fonction sur laquelle
     // on placera le modifier
-    _
+    _;
   }
 
   event InitialisationCourse(uint32[] chevauxAuDepart, uint idCourse, address owner);
@@ -77,9 +79,12 @@ contract MonTierce {
   }
 
 
+  //fonction de fallback indispensable sinon la fonction parier revoit un throw à chaque appel
+  function() payable { }
+
   event Parier(uint idCourse, uint32[3] chevauxTierce, address messageSender, uint mise, uint senderBalance);
 
-  function parier(uint idCourse, uint32[3] chevauxTierce) public returns(bool pariPrisEnCompte){
+  function parier(uint idCourse, uint32[3] chevauxTierce) payable  {
     Parier(idCourse, chevauxTierce, msg.sender, msg.value, msg.sender.balance);
 
     if(msg.sender.balance < msg.value){
@@ -115,9 +120,7 @@ contract MonTierce {
     course.parisKeySet.push(msg.sender);
     course.paris[msg.sender] = Pari(msg.sender, msg.value, chevauxTierce, EtatPari.NonDetermine);
     course.montantTotalMises += msg.value;
-
-    return true;
-  }
+}
 
   event TerminerCourseParams(uint idCourse, uint32[3] chevauxTierceGagnant);
   event TerminerCourseCalculGagnants(uint idCourse, uint32[3] chevauxTierceGagnant, bool existeGagnantTierce, bool existeGagnantDuo, bool existeGagnantUno, uint potAPartagerEntreGagnants);

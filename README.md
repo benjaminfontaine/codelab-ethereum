@@ -34,6 +34,7 @@ Pour ce TP, vous aurez besoin :
 
 ### Installation de Truffle :
 Pré-requis :
+-npm
 -nodejs 5+
 
 Pour Linux, MacOS et Windows
@@ -47,7 +48,50 @@ TODO
 Image docker Windows
 TODO
 
-(TODO : tester l'install Windows)
+#### Installation Windows
+
+Pour cbp, si vous avez l'erreur suivante :
+gyp ERR! configure error
+gyp ERR! stack Error: unable to get local issuer certificate
+gyp ERR! stack     at Error (native)
+gyp ERR! stack     at TLSSocket.<anonymous> (_tls_wrap.js:1022:38)
+gyp ERR! stack     at emitNone (events.js:67:13)
+gyp ERR! stack     at TLSSocket.emit (events.js:166:7)
+gyp ERR! stack     at TLSSocket._init.ssl.onclienthello.ssl.oncertcb.TLSSocket._finishInit (_tls_wrap.js:586:8)
+gyp ERR! stack     at TLSWrap.ssl.onclienthello.ssl.oncertcb.ssl.onnewsession.ssl.onhandshakedone (_tls_wrap.js:428:38)
+gyp ERR! System Windows_NT 6.1.7601
+gyp ERR! command "C:\\Program Files\\nodejs\\node.exe" "C:\\Users\\fontaine\\AppData\\Roaming\\npm\\node_modules\\npm\\node_modules\\node-gyp\\bin\\node-gyp.js" "rebuild"
+
+Ajouter les certificats de Palo alto et du bluecoat
+> npm config set cafile "C:\Users\fontaine\Desktop\cacert.pem"
+
+npm install --global --production windows-build-tools
+
+
+Option 1: Installer tous les outils requis via npm (run as Administrator) :
+
+    npm install --global --production
+
+Option 2: Installer tous les outils requis manuellement
+
+- Installer package [Framework DotNet 4.6.1] (\\srv0009\Sources\Microsoft\DotNet_FrameWork\v4.6.1\NDP461-KB3102436-x86-x64-AllOS-ENU.exe)
+
+- Installer [Visual C++ Build Tools] (http://landinghub.visualstudio.com/visual-cpp-build-tools) - install par défaut.
+- Installer Python 2.7
+- Configurer Python
+     run npm config set python python2.7
+- Configurer la version du framework .NET à utiliser
+
+     npm config set msvs_version 2015
+
+-L'erreur OpenSSL n'empeche pas l'installation mais vous pouvez l'installer quand même au [lien suivant](https://wiki.openssl.org/index.php/Binaries)
+
+
+Lancer truffle dans un autre typ de terminal que celui par défaut car il peut y avoir des conflits Power shell, git bash ou babun
+
+
+Pour installer Testrpc
+
 
 ### Installation de Geth
 
@@ -161,7 +205,7 @@ npm install -g ethereumjs-testrpc
 Test :
 
 ##Etape 6 (Optionnelle)
-Déploiement et test en live en live sur la blockchain de test Ethereum :
+Déploiement et test en live en live sur la blockchain privée (voir comment on signe les transactions) :
 Très compliqué à moins d'avoir déjà téléchargé la blockchain de test (prendre au moins 6h).
 
 
