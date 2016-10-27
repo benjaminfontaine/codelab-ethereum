@@ -12,24 +12,15 @@ contract('MonTierce', function(accounts) {
 
   //tableau indiquant la liste des chevaux participants à la course
   var chevauxEnCourse = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  var throwMessage = "VM Exception while processing transaction: invalid JUMP";
 
   it("contient une méthode initialiserCourse qui doit garder une struct Course dans le storage lorsque l'on l'appelle", function(done) {
-
-    //INFO
     // récupère l'interface MonTierce.sol.js
-    // à rechercher dans : http://truffle.readthedocs.io/en/latest/getting_started/contracts/#making-a-transaction
-    //syntaxe : interfaceContrat.d......d()
     var contratTierce = MonTierce.deployed();
-    console.log(contratTierce);
     var initOwnerOnly = false;
     var idCourseCree = -1;
 
     //tente de faire une transaction de création de course sur un account autre que le owner
-    // INFO : il faut appeler la fonction d'initialisation de la course
-    // en lui passant les chevaux participants et en utilisant account_two
-    // Syntaxe de l'appel d'une fonction sur un contrat : http://truffle.readthedocs.io/en/latest/getting_started/contracts/#making-a-transaction
-    // cette appel déclenche une action d'écriture, on utilisera donc la syntaxe :
-    // interfaceContrat.nomMethode(parametres1,[ parametres2 ...],[ {options} ])
     contratTierce.initialiserCourse(chevauxEnCourse, {from : account_two}).catch(function(error){
       //cette création doit échouer
       initOwnerOnly = true;
@@ -38,35 +29,32 @@ contract('MonTierce', function(accounts) {
     });
 
     //création du compte avec le bon compte (account_one est le compte par défaut)
-    // INFO : même syntaxe qu'au dessus, sans les options
     contratTierce.initialiserCourse(chevauxEnCourse)
     .then(function(transactionId) {
       //une fonction générant une transaction renvoie toujours
       // l'id de la transaction même si la fonction renvoie autre chose dans le code du contract
       console.log("transactionId="+transactionId);
 
-      //on veut récupérer l'id de la dernière course créée
-      //INFO : syntaxe interfaceContrat.attributPublic.call();
+      //on récupére l'id de la dernière course créée
       return contratTierce.courseIDGenerator.call();
     })
     .then(function (idCourseCompteur){
       //idCourseCompteur est un BigInteger, on doit le convertir
       idCourseCree = Number(idCourseCompteur - 1);
       //et on recherche ensuite des informations sur cette course
-      //INFO :
-      // encore une fois, c'est un appel qui ne modifiera pas les données du contrat
-      // on utilisera donc la syntaxe interfaceContrat.methodePublique.call(args);
       return contratTierce.getInfosCourse.call(idCourseCree);
     })
     .then(function(courseDatas){
       assert.equal(courseDatas[0], idCourseCree, "L'id de la course dans le storage doit être 0");
-      assert.equal(courseDatas[1], false, "La course ne doit pas être terminée");
+      assert.equal(courseDatas[1].valueOf(), 0, "Le montant total des paris de la course dans le storage doit être 0");
+      assert.equal(courseDatas[2], false, "La course ne doit pas être terminée");
       //web3 renvoie des BigInteger pour les uint, il faut donc les convertir en nombre standards
       var chevauxEnCourseRetournes = [];
-      for(var i = 0 ; i < courseDatas[2].length; i++){
-        chevauxEnCourseRetournes.push(Number(courseDatas[2][i]));
+      for(var i = 0 ; i < courseDatas[3].length; i++){
+        chevauxEnCourseRetournes.push(Number(courseDatas[3][i]));
       }
       assert.deepEqual(chevauxEnCourseRetournes, chevauxEnCourse, "Les chevaux en course dans le storage doivent être ceux passés à l'initialisation");
+      assert.equal(courseDatas[4], false, "Les paris doivent être autorisés sur la course");
       //indispensable pour que le test unitaire se termine
       done();
     })
@@ -76,5 +64,113 @@ contract('MonTierce', function(accounts) {
       assert.fail("Une erreur inattendue s'est produite" + err.message);
       done();
     });
+  });
+  
+  it("possède une fonction parier qui va permettre de miser si les paris ne sont bloqués, la course encore en cours,  les chevaux du pari existent et le parieur n'a pas déjà parié", function(done) {
+    var contratTierce = MonTierce.deployed();
+    
+    //permet de logguer tous les events lancés par le contrat
+    var events = contratTierce.allEvents({});
+    events.watch(function(error, result) {
+      console.log(result.event);
+      console.log(result.args);
+    });
+    
+    var courseId = -1;
+    var pari3EnErreur = false;
+    var pari5EnErreur = false;
+    var pari6EnErreur = false;
+    
+    contratTierce.initialiserCourse(chevauxEnCourse)
+        .then(function(transactionId) {
+          return contratTierce.courseIDGenerator.call();
+        })
+        .then(function(lastCourseId){
+          courseId = Number(lastCourseId-1);
+          console.log("courseId " + courseId);
+          console.log("pari 1");
+          return contratTierce.parier(courseId, [4,3,10], {value: 300, gas: 2000000, from: account_one});
+        })
+        .then(function() {
+          console.log("get info 1");
+          return contratTierce.getInfosCourse.call(courseId);
+        })
+        
+        .then(function(courseDatas){
+          console.log("analyse info 1");
+          assert.equal(courseDatas[0], courseId, "L'id de la course dans le storage doit être 1");
+          assert.equal(courseDatas[1].valueOf(), 300, "Le montant total des paris de la course dans le storage doit être 300");
+          assert.equal(courseDatas[2], false, "La course ne doit pas être terminée");
+          
+          //web3 renvoie des BigInteger pour les uint, il faut donc les convertir en nombre standards
+          var chevauxEnCourseRetournes = [];
+          for(var i = 0 ; i < courseDatas[3].length; i++){
+            chevauxEnCourseRetournes.push(Number(courseDatas[3][i]));
+          }
+          assert.deepEqual(chevauxEnCourseRetournes, chevauxEnCourse, "Les chevaux en course dans le storage doivent être ceux passés à l'initialisation");
+          assert.equal(courseDatas[4], false, "Les paris doivent être autorisés sur la course");
+          console.log("pari 2");
+          return contratTierce.parier(courseId, [6,10,8], {value: 200, gas: 2000000, from: account_two});
+        })
+        .then(function(){
+          console.log("get info 2");
+          return contratTierce.getInfosCourse.call(courseId);
+        })
+        .then(function(courseDatas){
+          console.log("analyse info 2");
+          assert.equal(courseDatas[1].valueOf(), 500, "Le montant total des paris de la course dans le storage doit être 300");
+          console.log("pari 3");
+          //on essaye de parier sur des chevaux qui ne sont pas en course
+          return contratTierce.parier(courseId, [12,3,2], {value: 1000, gas: 2000000, from: account_three});
+        })
+        .catch(function (err){
+          console.log("catch 1");
+          
+          //l'erreur renvoyée lorsque l'on lance un throw depuis le contrat
+          if(err.message.indexOf(throwMessage) !== -1){
+            pari3EnErreur =true;
+          }else{
+            console.log(err);
+          }
+        })
+        .then(function (){
+          console.log("pari 4");
+          return contratTierce.parier(courseId, [6,10,4], {value: 2000, gas: 2000000, from: account_four});
+        })
+        .then(function (){
+          console.log("interdire pari");
+          return contratTierce.interdireParis(courseId);
+        })
+        .then(function (){
+          console.log("pari 5");
+          return contratTierce.parier(courseId, [9,7,4], {value: 3000, gas: 2000000, from: account_five});
+        })
+        .catch(function (err){
+          console.log("catch 2");
+          console.log(err.message);
+          //l'erreur renvoyée quand on lance un throw depuis le contrat
+          if(err.message.indexOf(throwMessage) !== -1){
+            pari5EnErreur =true;
+          }else {
+            console.log(err);
+            assert.fail("Une erreur inattendue s'est produite "+ err.message);
+          }
+        })
+        .then(function(){
+          console.log("get info 3");
+          return contratTierce.getInfosCourse.call(courseId);
+        })
+        .then(function(courseDatas){
+          console.log("analyse info 3");
+          assert.equal(courseDatas[1].valueOf(), 2500, "Le montant total des paris de la course dans le storage n'a pas bougé car le pari n'est pas passé");
+          assert.equal(pari3EnErreur, true, "Le pari 3 ne devrait passé car les paris étaientS bloqués");
+          assert.equal(pari5EnErreur, true, "Le pari 5 ne devrait pas être passé car il a misé sur le cheval 12 inexistant");
+          assert.equal(courseDatas[4], true, "Les paris doivent être interdits sur la course");
+          events.stopWatching();
+          done();
+        })
+        .catch(
+            done
+        );
   });
 });
