@@ -3,6 +3,7 @@
 ##Présentation et installation de l'environnement de travail
 Nous allons développer notre premier smart contract au sein d'un environnement de développement propre à Ethereum.
 Pour ce TP, vous aurez besoin :
+
 1. De votre IDE préféré qui gère le javascript, de préférence.
 
 2. D'un client/node blockchain
@@ -94,17 +95,17 @@ A cloner depuis le repo de ce codelab : [https://github.com/benjaminfontaine/cod
 
      git clone https://github.com/benjaminfontaine/codelab-ethereum/tree/master/horse-bet
 
-##Etape 1
+##Etape 1 : Le contrat - Création et consultation d'une course
 
 Se mettre sur la branche Step 1.
 
      git checkout step1
 
-Cette branche est le résultat des commandes suivantes :
+Le projet ainsi récupéré est déjà initialisé ([voir les étapes d'initialisation](#initialisation-projet))
 
-      truffle init
 
-Qui va créer l'arborescence de notre projet :
+
+L'arborescence de notre projet est constituée de :
 
 - app => le répertoire contenant la partie WEB de notre D-app, qui contiendra le site en Angular 2
 
@@ -117,56 +118,110 @@ Qui va créer l'arborescence de notre projet :
 - truffle.js : le fichier de configuration de truffle
 
 
-      truffle create:contract MonTierce
+Le contrat est déjà crée, ainsi que son test unitaire.
 
-Qui va permettre de créer le contract.
+Seulement, j'ai sadiquement supprimé certaines lignes de code qui empèche les tests unitaires de fonctionner.
 
-Ce repo contient aussi un test unitaire `test/montierce.js` qui va tester les premières méthodes de notre contrat.
+Les fichiers impactés sont :
+- `contacts/MonTierce.sol` : le contract
+- `test/montierce.js` : son test unitaire
 
+Vous repérerez les zones corromptues par le pattern FIX_ME disséminé un peu partout dans le code.
+Au dessus de ces FIX_ME, des TAGs INFO vous donneront les indications pour compléter les trous.
 
+Vous pouvez tester la compilation du contrat en temps réel via :
+https://ethereum.github.io/browser-solidity/
 
-
-
-## Etape 2 : Création et consultation d'une course
-Sur la base du test unitaire présent On a un test unitaire, il faut maintenant créer le contrat et les méthodes de création et de consultation qui permettront de le faire passer.
-
-Vous pouvez lancer ce test avec la commande :
-
-    truffle test
-
-
-Pour avoir une compilation en temps réel de votre contract, vous pouvez utiliser votre navigateur à l'adresse suivante :
-https://ethereum.github.io/browser-solidity/#version=soljson-v0.3.6+commit.3fc68da.js
+Les tests unitaires se lancent, à la racine du répertoire horse-bet par le biais de la commande :
+     truffle test
 
 
-##Etape 2
-Implémentation de la fonctionnalité de récupération des infos de la Course
+Au terme de cette première partie de TP, les tests unitaires doivent être au vert.
 
-##Etape 3
-Implémentation de la fonctionnalité de la méthode parieurs.
-Le but du jeu est que le TU passes
+Pour voir la correction de ce TP :
 
-##Etape4
-Implémentation de la méthode de fin de course.
-Cette méthode doit parcourir tous les paris de la course, déterminer ceux qui sont gagnants.
-Et mettre à disposition le gain de chaque vainqueur dans une structure de données afin que chque parieurs puisse venir le récupérer (pattern withdrawal).
+     git checkout step1-final
 
-##Etape5
-Déploiement du contrat sur blockchain public + test via testrpc, une blockchain de test in memory.
-Installation :
-
-npm install -g ethereumjs-testrpc
+<details>
+  <summary>SPOILER ALERT: solution de la copie de tableau dans la méthode initialiserCourse </summary>
 
 
-Test :
+```
+        for(uint x= 0; x< chevauxParticipants.length; x++ ){
+          courses[courseIDGenerator].chevauxEnCourse.push(chevauxParticipants[x]);
+        }
+```
 
-##Etape 6 (Optionnelle)
-Déploiement et test en live en live sur la blockchain de test Ethereum :
-Très compliqué à moins d'avoir déjà téléchargé la blockchain de test (prendre au moins 6h).
+</details>
+
+## Etape 2 : Mise en place de la fonctionnalité de pari
+
+Maintenant que nous pouvons créer et consulter les informations d'une course, nous pouvons passer à l'étape suivante : la fonctionnalité de parier.
+
+Tout d'abord charger la deuxième partie du TP :
+
+     git checkout step2
+
+Deux méthodes ont fait leur apparition dans le contrat `contacts/MonTierce.sol`
+- parier : méthode publique qui va permettre au parieur de miser un tierce une certaine somme d'argent. Stocke ce pari dans la course.
+- interdireParis : méthode du propriètaire qui va bloquer la fonctionnalité de pari une fois la course démarrée
 
 
-#Etape 7 (Optionnelle)
-Sécurisation du smart contract, application du pattern withdrawal.
+De la même manière que l'exercice 1, traquez les FIX_ME dans ce contrat afin qu'il compile et que le nouveau test unitaire du fichier `test/montierce.js`, lui aussi un peu troué passe.
+
+
+Pour voir la correction de ce TP :
+
+     git checkout step2-final
+
+
+
+##Etape 3 : Implémentation de la méthode de fin de course.
+
+Cette méthode doit parcourir tous les paris de la course, déterminer ceux qui sont gagnants, et d'envoyer le gain à tous les vainqueurs.
+
+Vous devez commencer à avoir l'habitude, pour la troisième partie du TP, on lance :
+
+     git checkout step3
+
+
+
+
+Deux méthodes ont fait leur apparition dans le contrat `contacts/MonTierce.sol`
+- terminerCourse : méthode du propriètaire qui va effectuer toutes les opérations de fin de course.
+
+Concernant l'algorithme de distribution des gains.
+C'est un algorithme maison dont je n'ai pas encore complétement testé la fiabilité.
+Cependant, il permet de rétribuer chaque parieur en fonction de son type de gain (tierce, doublet ou unique) et du montant de sa mise.
+
+La formule de calcul est la suivante :
+
+     gain parieur = (mise * facteurGain * miseDesPerdants) / (somme pour tous les paris de (misePari * facteurGainPari))
+où facteurGain est un nombre entre 0 et 100 qui varie en fonction du fait qu'il y ait ou pas des gagnants de chaque type.
+
+
+De la même manière que les exercices 1 et 2, traquez les FIX_ME dans ce contrat afin qu'il compile et que le nouveau test unitaire du fichier `test/montierce.js`, lui aussi un peu troué passe.
+
+
+Pour voir la correction de ce TP :
+
+     git checkout step3-final
+
+## Etape 4 : L'IHM
+Nous voila de retour dans un domaine un peu plus connu, l'IHM de la D-app.
+L'avantage de truffle c'est qu'il va utiliser le framework Javascript WEB3, avec la surcouche Ether Pudding pour appeler le contrat, depuis nos fichier js ou ts.
+La bonne nouvelle, c'est que c'est exactement les mêmes surcouches qui sont utilisée dans les tests que nous avons fait jusqu'à présent.
+Par conséquent, vous connaissez déjà la syntaxe.
+
+
+##Etape 5 : Déploiement du contrat sur une blockchain privée (Optionnelle)
+Utilisation du client geth pour monter une blockchain privée et configuration de Truffle pour l'utiliser.
+Voir comment on autorise les transactions pour les paris
+
+
+#Etape 6 : Sécurisation du smart contract
+Application du pattern withdrawal.
+
 
 #Annexe : Interagir en mode console
 //TODO : remplacer par des vrais appels à notre contrat
@@ -215,6 +270,15 @@ function parier(uint idCourse, uint32[3] chevauxTierce) public returns(bool pari
  ...
 }
 ```
+##Initialisation projet
+Initialiser le projet :
+
+      truffle init
+
+Créer un contrat :
+
+      truffle create:contract MonTierce
+
 
 
 https://live.ether.camp/
