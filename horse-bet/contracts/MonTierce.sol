@@ -1,11 +1,14 @@
-pragma solidity ^0.4.2;
+pragma solidity ^0.4.0;
+import "MonTierceLib.sol";
+import "mortal.sol";
 // Contrat de tierce en ligne
 
-contract MonTierce {
+contract MonTierce is mortal{
 
-
+  //les différents état que peut prendre un pari
   enum EtatPari { NonDetermine, Perdant, GagnantTierce, GagnantDuo, GagnantUno }
 
+  //représente un pari
   struct Pari {
     address adresseParieur;
     uint mise;
@@ -26,42 +29,30 @@ contract MonTierce {
     mapping (address => Pari) paris;
     mapping (uint8 => uint8) coefficientsPrime;
     uint sommeCoefficientsParMises;
-    uint potAPartagerEntreGagnants;
+    uint misesDesPerdants;
     bool existeGagnantTierce;
     bool existeGagnantDuo;
     bool existeGagnantUno;
   }
 
-  // sera automatiquement assigné
-  //lors de la construction du contract
-  // lorsque le msg.sender sera le propriètaire du contrat
-  address public owner = msg.sender;
-
   uint public courseIDGenerator = 0;
+  //structure de données qui référence les courses
   mapping (uint => Course) courses;
 
-  modifier ownerOnly()
-  {
-    if (msg.sender != owner)
-    throw;
-    // Le  "_;"! est important car il sera remplacé
-    // par le contenu de la fonction sur laquelle
-    // on placera le modifier
-    _;
-  }
-
+  //event qui va permettre de debugger le contrat au cours de test et au cours de la vie du contrat.
   event InitialisationCourse(uint32[] chevauxAuDepart, uint idCourse, address owner);
 
-  function initialiserCourse(uint32[] chevauxParticipants) ownerOnly returns(uint) {
+  function initialiserCourse(uint32[] chevauxParticipants) onlyowner returns(uint) {
 
     //les struct Course du mapping courses sont déjà initialisés, il suffit juste de leur positionner des attributs
     //L'initialisation suivante ne fonctionne pas
     //Course course = Course({idCourse:courseIDGenerator, montantTotalMises:0,  terminee:false, chevauxEnCourse:chevauxParticipants });
+    //car solidity ne gère pas l'initialisation partielle d'une struct
     courses[courseIDGenerator].idCourse= courseIDGenerator;
     courses[courseIDGenerator].montantTotalMises=0;
     courses[courseIDGenerator].terminee=false;
     courses[courseIDGenerator].parisBloques=false;
-    courses[courseIDGenerator].potAPartagerEntreGagnants=0;
+    courses[courseIDGenerator].misesDesPerdants=0;
     for(uint x= 0; x< chevauxParticipants.length; x++ ){
       courses[courseIDGenerator].chevauxEnCourse.push(chevauxParticipants[x]);
     }
@@ -78,7 +69,6 @@ contract MonTierce {
     return (courses[idCourse].idCourse, courses[idCourse].montantTotalMises, courses[idCourse].terminee, courses[idCourse].chevauxEnCourse , courses[idCourse].parisBloques);
   }
 
-
   //fonction de fallback indispensable sinon la fonction parier revoit un throw à chaque appel
   function() payable { }
 
@@ -86,10 +76,6 @@ contract MonTierce {
 
   function parier(uint idCourse, uint32[3] chevauxTierce) payable  {
     Parier(idCourse, chevauxTierce, msg.sender, msg.value, msg.sender.balance);
-
-    if(msg.sender.balance < msg.value){
-      throw;
-    }
 
     Course course = courses[idCourse];
     //si la course n'existe pas
@@ -106,6 +92,8 @@ contract MonTierce {
     if(course.parisBloques){
       throw;
     }
+
+    //on contrôle que le pari s'effectue sur des chevaux existants
     for(uint i = 0; i < 3; i++){
       bool chevalExiste = false;
       for(uint j = 0; j < course.chevauxEnCourse.length; j++){
@@ -120,15 +108,16 @@ contract MonTierce {
     course.parisKeySet.push(msg.sender);
     course.paris[msg.sender] = Pari(msg.sender, msg.value, chevauxTierce, EtatPari.NonDetermine);
     course.montantTotalMises += msg.value;
-}
+  }
 
+  //event de debug de la fonctionnalité terminerCourse
   event TerminerCourseParams(uint idCourse, uint32[3] chevauxTierceGagnant);
-  event TerminerCourseCalculGagnants(uint idCourse, uint32[3] chevauxTierceGagnant, bool existeGagnantTierce, bool existeGagnantDuo, bool existeGagnantUno, uint potAPartagerEntreGagnants);
+  event TerminerCourseCalculGagnants(uint idCourse, uint32[3] chevauxTierceGagnant, bool existeGagnantTierce, bool existeGagnantDuo, bool existeGagnantUno, uint misesDesPerdants);
   event TerminerCourseComparaisonPari(uint32[3] chevauxTierceGagnant, uint32[3] chevauxPari);
   event TerminerCourseSommeEtCoeff(uint sommeParisParCoef, uint8 coefficientPrimesTierce, uint8 coefficientPrimesDuo, uint8 coefficientPrimesUno);
   event TerminerCourseEnvoiDesGains(address adresseGagnant, uint gain);
 
-  function terminerCourse(uint idCourse, uint32[3] chevauxTierceGagnant) ownerOnly {
+  function terminerCourse(uint idCourse, uint32[3] chevauxTierceGagnant) onlyowner {
     TerminerCourseParams(idCourse, chevauxTierceGagnant);
     Course course = courses[idCourse];
     if( course.chevauxEnCourse.length == 0){
@@ -145,7 +134,7 @@ contract MonTierce {
     calculerGagnantsCourse(idCourse, chevauxTierceGagnant);
 
 
-    TerminerCourseCalculGagnants(idCourse, chevauxTierceGagnant, course.existeGagnantTierce, course.existeGagnantDuo, course.existeGagnantUno, course.potAPartagerEntreGagnants);
+    TerminerCourseCalculGagnants(idCourse, chevauxTierceGagnant, course.existeGagnantTierce, course.existeGagnantDuo, course.existeGagnantUno, course.misesDesPerdants);
 
     if(!course.existeGagnantTierce && !course.existeGagnantDuo && !course.existeGagnantUno){
       annulerParis(course.idCourse);
@@ -154,21 +143,20 @@ contract MonTierce {
         calculerSommeMiseParCoefficientPourChaquePari(course.idCourse);
         TerminerCourseSommeEtCoeff(course.sommeCoefficientsParMises, course.coefficientsPrime[uint8(EtatPari.GagnantTierce)], course.coefficientsPrime[uint8(EtatPari.GagnantDuo)], course.coefficientsPrime[uint8(EtatPari.GagnantUno)]);
 
-        //calcul de la somme due à chaque parieurs
-        //paiement du tierce
-        //facteurGainX = uno duo ou tierce ou rien
-        //gain pariX = (miseX * facteurGainX * totalMise) / somme pour tous les paris de (misePari * facteurGainPari)
+        //calcul de la somme due à chaque parieurs et paiement des gains
+
         for(uint j = 0 ; j < course.parisKeySet.length ; j++){
           address addresseParieur = course.parisKeySet[j];
-          //TODO gérer la division qui n'est pas entière
           EtatPari etatPari = course.paris[addresseParieur].etat;
           if(etatPari != EtatPari.Perdant && etatPari != EtatPari.NonDetermine){
-            uint gainPari = (course.paris[addresseParieur].mise * course.coefficientsPrime[uint8(course.paris[addresseParieur].etat)] * course.potAPartagerEntreGagnants) / course.sommeCoefficientsParMises;
+            //facteurGainX = renvoyé par la méthode coefficient prime
+            //gain pariX = (miseX * facteurGainX * misesDesPerdants) / somme pour tous les paris de (misePari * facteurGainPari)
+            uint gainPari = (course.paris[addresseParieur].mise * course.coefficientsPrime[uint8(course.paris[addresseParieur].etat)] * course.misesDesPerdants) / course.sommeCoefficientsParMises;
             TerminerCourseEnvoiDesGains(addresseParieur, gainPari);
-            //TODO mettre en place withdraw pattern
+            //TODO mettre en place withdrawal pattern pour éviter des tas de failles de sécurité
             bool envoiOK = course.paris[addresseParieur].adresseParieur.send(gainPari + course.paris[addresseParieur].mise);
             if(!envoiOK){
-              //TODO regarder comment traiter ce retour
+              //TODO regarder comment traiter ce retour sans que toutes la transaction soit annulée
               throw;
             }
           }
@@ -190,9 +178,6 @@ contract MonTierce {
 
     function calculerGagnantsCourse(uint idCourse, uint32[3] chevauxTierceGagnant) private {
       Course course = courses[idCourse];
-      bool existeGagnantTierce = false;
-      bool existeGagnantDuo = false;
-      bool existeGagnantUno = false;
       for(uint i = 0 ; i < course.parisKeySet.length ; i++){
         Pari pari = course.paris[course.parisKeySet[i]];
         TerminerCourseComparaisonPari(chevauxTierceGagnant, pari.chevauxTierce);
@@ -211,20 +196,22 @@ contract MonTierce {
               }
               }else{
                 pari.etat = EtatPari.Perdant;
-                course.potAPartagerEntreGagnants += pari.mise;
+                course.misesDesPerdants += pari.mise;
               }
             }
           }
 
+          //calcul du coefficient pour chaque type de gain (tierce, duo, uno)
+          //en fonction de la présence ou non de chacun de ces types
           function calculerCoefficientsPrime(uint idCourse) private {
             Course course = courses[idCourse];
             bool existeGagnantTierce = course.existeGagnantTierce;
             bool existeGagnantDuo = course.existeGagnantDuo;
             bool existeGagnantUno = course.existeGagnantUno;
             if(existeGagnantTierce && existeGagnantDuo && existeGagnantUno){
-              course.coefficientsPrime[uint8(EtatPari.GagnantTierce)] = 60;
-              course.coefficientsPrime[uint8(EtatPari.GagnantDuo)] = 30;
-              course.coefficientsPrime[uint8(EtatPari.GagnantUno)] = 10;
+              course.coefficientsPrime[uint8(EtatPari.GagnantTierce)] = 60; //le gagnant d'un tierce bénéficie d'un coefficient de 60
+              course.coefficientsPrime[uint8(EtatPari.GagnantDuo)] = 30; //le gagnant d'un doublet bénéficie d'un coefficient de 30
+              course.coefficientsPrime[uint8(EtatPari.GagnantUno)] = 10; //le gagnant sur un cheval bénéficie d'un coefficient de 10
             }
             else if(existeGagnantTierce && !existeGagnantDuo && existeGagnantUno){
               course.coefficientsPrime[uint8(EtatPari.GagnantTierce)] = 80;
@@ -258,27 +245,26 @@ contract MonTierce {
             }
           }
 
+          //si personne n'a gagné, on rend leur argent à tout les parieurs
           function annulerParis(uint idCourse) private {
             Course course = courses[idCourse];
             for(uint p = 0 ; p < course.parisKeySet.length ; p++){
               Pari pari = course.paris[course.parisKeySet[p]];
               if (!pari.adresseParieur.send(pari.mise)) {
-                //TODO faire que ça ne soit pas bloquant pour les autres
+                // si un envoi est impossible, on rend leur argent à tous les parieurs
+                // mais tel que c'est fait là, si un des envois échoue,
+                // alors tout la méthode terminerCourse est rollbackée et personne ne reçoit rien
+                // TODO faire que ça ne soit pas bloquant pour les autres
                 throw;
               }
             }
           }
 
-          event InterdireParis(uint idCourse);
+  event InterdireParis(uint idCourse);
 
-          //bloquer les paris au début de la course
-          function interdireParis(uint idCourse) ownerOnly{
-            courses[idCourse].parisBloques=true;
-            InterdireParis(idCourse);
-          }
-
-          function detruire() ownerOnly returns(bool destructionOk) {
-            //envoi tous les fonds du contract au propriétaire
-            suicide(owner);
-          }
-        }
+  //bloquer les paris au début de la course
+  function interdireParis(uint idCourse) onlyowner{
+    courses[idCourse].parisBloques=true;
+    InterdireParis(idCourse);
+  }
+}

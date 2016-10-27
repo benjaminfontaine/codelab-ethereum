@@ -138,17 +138,17 @@ A cloner depuis le repo de ce codelab : [https://github.com/benjaminfontaine/cod
 
      git clone https://github.com/benjaminfontaine/codelab-ethereum/tree/master/horse-bet
 
-##Etape 1
+##Etape 1 : Le contrat - Création et consultation d'une course
 
 Se mettre sur la branche Step 1.
 
      git checkout step1
 
-Cette branche est le résultat des commandes suivantes :
+Le projet ainsi récupéré est déjà initialisé ([voir les étapes d'initialisation](#initialisation-projet))
 
-      truffle init
 
-Qui va créer l'arborescence de notre projet :
+
+L'arborescence de notre projet est constituée de :
 
 - app => le répertoire contenant la partie WEB de notre D-app, qui contiendra le site en Angular 2
 
@@ -161,26 +161,45 @@ Qui va créer l'arborescence de notre projet :
 - truffle.js : le fichier de configuration de truffle
 
 
-      truffle create:contract MonTierce
+Le contrat est déjà crée, ainsi que son test unitaire.
 
-Qui va permettre de créer le contract.
+Seulement, j'ai sadiquement supprimé certaines lignes de code qui empèche les tests unitaires de fonctionner.
 
-Ce repo contient aussi un test unitaire `test/montierce.js` qui va tester les premières méthodes de notre contrat.
+Les fichiers impactés sont :
+- `contacts/MonTierce.sol` : le contract
+- `test/montierce.js` : son test unitaire
+
+Vous repérerez les zones corromptues par le pattern FIX_ME disséminé un peu partout dans le code.
+Au dessus de ces FIX_ME, des TAGs INFO vous donneront les indications pour compléter les trous.
+
+Vous pouvez tester la compilation du contrat en temps réel via :
+https://ethereum.github.io/browser-solidity/
+
+Les tests unitaires se lancent, à la racine du répertoire horse-bet par le biais de la commande :
+     truffle test
 
 
+Au terme de cette première partie de TP, les tests unitaires doivent être au vert.
+
+Pour voir la correction de ce TP :
+
+     git checkout step1-final
+
+<details>
+  <summary>SPOILER ALERT: solution de la copie de tableau dans la méthode initialiserCourse </summary>
 
 
+```
+        for(uint x= 0; x< chevauxParticipants.length; x++ ){
+          courses[courseIDGenerator].chevauxEnCourse.push(chevauxParticipants[x]);
+        }
+```
 
-## Etape 2 : Création et consultation d'une course
-Sur la base du test unitaire présent On a un test unitaire, il faut maintenant créer le contrat et les méthodes de création et de consultation qui permettront de le faire passer.
+</details>
 
-Vous pouvez lancer ce test avec la commande :
-
-    truffle test
+## Etape 2 : Mise en place de la fonctionnalité de pari
 
 
-Pour avoir une compilation en temps réel de votre contract, vous pouvez utiliser votre navigateur à l'adresse suivante :
-https://ethereum.github.io/browser-solidity/#version=soljson-v0.3.6+commit.3fc68da.js
 
 
 ##Etape 2
@@ -259,6 +278,15 @@ function parier(uint idCourse, uint32[3] chevauxTierce) public returns(bool pari
  ...
 }
 ```
+##Initialisation projet
+Initialiser le projet :
+
+      truffle init
+
+Créer un contrat :
+
+      truffle create:contract MonTierce
+
 
 
 https://live.ether.camp/
