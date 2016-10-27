@@ -163,9 +163,33 @@ contract('MonTierce', function(accounts) {
         .then(function(courseDatas){
           console.log("analyse info 3");
           assert.equal(courseDatas[1].valueOf(), 2500, "Le montant total des paris de la course dans le storage n'a pas bougé car le pari n'est pas passé");
-          assert.equal(pari3EnErreur, true, "Le pari 3 ne devrait passé car les paris étaientS bloqués");
+          assert.equal(pari3EnErreur, true, "Le pari 3 ne devrait passé car les paris étaient bloqués");
           assert.equal(pari5EnErreur, true, "Le pari 5 ne devrait pas être passé car il a misé sur le cheval 12 inexistant");
           assert.equal(courseDatas[4], true, "Les paris doivent être interdits sur la course");
+        // eventPari.stopWatching();
+        console.log("terminer course");
+        return contratTierce.terminerCourse(courseId,[6,10,8]);
+      })
+      .then(function(){
+        console.log("get info 4");
+        return contratTierce.getInfosCourse.call(courseId);
+      })
+      .then(function(courseDatas){
+        console.log("analyse info 4");
+        assert.equal(courseDatas[2], true, "La course davrait être terminée");
+        console.log("pari 6");
+        return contratTierce.parier(courseId, [9,7,4], {value: 3000, gas: 2000000, from: account_one});
+      })
+      .catch(function(err){
+        if(err.message.indexOf(throwMessage) !== -1){
+          pari6EnErreur =true;
+        }else {
+          console.log(err);
+          assert.fail("Une erreur inattendue s'est produite "+ err.message);
+        }
+      })
+      .then(function(courseDatas){
+        assert.equal(pari6EnErreur, true, "Le dernier pari devrait avoir été refusé car la course est terminée");
           events.stopWatching();
           done();
         })
@@ -173,4 +197,73 @@ contract('MonTierce', function(accounts) {
             done
         );
   });
+
+  it("possède une fonction terminerCourse qui va calculer les gains et payer tous les parieurs", function(done) {
+    var balanceAccount2, balanceAccount3, balanceAccount4, balanceAccount5, balanceAccount6;
+
+    var contratTierce = MonTierce.deployed();
+    var events = contratTierce.allEvents({});
+    var courseId;
+    events.watch(function(error, result) {
+      console.log(result.event);
+      console.log(result.args);
+    });
+    contratTierce.initialiserCourse(chevauxEnCourse).catch(function(error){
+      console.log(console.error());
+    })
+    .then(function(transactionId) {
+      return contratTierce.courseIDGenerator.call();
+    })
+    .then(function(lastCourseId){
+      courseId = Number(lastCourseId-1);
+      console.log("courseId" + courseId);
+      return contratTierce.parier(courseId, [9,7,4], {value: 3000, gas: 2000000, from: account_six});
+    })
+    .then(function(){
+      return contratTierce.parier(courseId, [10,5,6], {value: 4000, gas: 2000000, from: account_two});
+    })
+    .then(function(){
+      return contratTierce.parier(courseId, [1,2,3], {value: 1000, gas: 2000000, from: account_three});
+    })
+    .then(function(){
+      return contratTierce.parier(courseId, [1,2,5], {value: 2000, gas: 2000000, from: account_four});
+    })
+    .then(function(){
+      return contratTierce.parier(courseId, [1,8,9], {value: 10000, gas: 2000000, from: account_five});
+    })
+    .then(function (){
+      return contratTierce.interdireParis(courseId);
+    })
+    .then(function(){
+      balanceAccount2=web3.eth.getBalance(account_two);
+      balanceAccount3=web3.eth.getBalance(account_three);
+      balanceAccount4=web3.eth.getBalance(account_four);
+      balanceAccount5=web3.eth.getBalance(account_five);
+      balanceAccount6=web3.eth.getBalance(account_six);
+
+      return contratTierce.terminerCourse(courseId,[1,2,3]);
+    })
+    .then(function(){
+      console.log("asserts");
+      var balanceAccount2Apres=web3.eth.getBalance(account_two);
+      var balanceAccount3Apres=web3.eth.getBalance(account_three);
+      var balanceAccount4Apres=web3.eth.getBalance(account_four);
+      var balanceAccount5Apres=web3.eth.getBalance(account_five);
+      var balanceAccount6Apres=web3.eth.getBalance(account_six);
+
+      assert.equal(balanceAccount2Apres.minus(balanceAccount2).toString(10), "0", "Le compte 2 devrait avoir gagné weis");
+      assert.equal(balanceAccount3Apres.minus(balanceAccount3).toString(10), "2909", "Le compte 3 devrait avoir gagné 1909 weis");
+      assert.equal(balanceAccount4Apres.minus(balanceAccount4).toString(10), "3909", "Le compte 4 devrait avoir gagné 1909 weis");
+      assert.equal(balanceAccount5Apres.minus(balanceAccount5).toString(10), "13181", "Le compte 5 devrait avoir gagné 3181 weis");
+      assert.equal(balanceAccount6Apres.minus(balanceAccount6).toString(10),  "0", "Le compte 6 devrait avoir gagné weis");
+      events.stopWatching();
+      done();
+    })
+    .catch(function(err){
+      console.log(err);
+      events.stopWatching();
+      done();
+    })
+  });
+
 });
