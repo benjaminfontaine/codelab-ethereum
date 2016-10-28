@@ -43,10 +43,10 @@ Pour Linux, MacOS et Windows
      npm install -g truffle
 
 Image docker Linux / Mac
-TODO
+`docker run hermanjunge/truffle`
 
 Image docker Windows
-TODO
+idem
 
 (TODO : tester l'install Windows)
 
@@ -60,10 +60,10 @@ Pour Linux, MacOS et Windows
      npm install -g ethereumjs-testrpc
 
 Image docker Linux / Mac
-TODO
+`docker pull abobwhite/ethereumjs-testrpc`
 
 Image docker Windows
-TODO
+idem
 
 (TODO : tester l'install Windows)
 
@@ -73,7 +73,7 @@ TODO
 Lien d'installation :
 https://github.com/ethereum/go-ethereum/wiki/Installation-Instructions-for-Mac
 
-Image docker : TODO
+Image docker : //regarder `docker pull ethereum/client-go`
 
 #### Ubuntu
 Lien d'installation :
