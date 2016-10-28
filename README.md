@@ -93,9 +93,9 @@ TODO
 
 
 ##Récupération des sources
-A cloner depuis le repo de ce codelab : [https://github.com/benjaminfontaine/codelab-ethereum/tree/master/horse-bet]
+A cloner depuis le repo de ce codelab : [https://github.com/benjaminfontaine/codelab-ethereum]
 
-     git clone https://github.com/benjaminfontaine/codelab-ethereum/tree/master/horse-bet
+     git clone https://github.com/benjaminfontaine/codelab-ethereum.git
 
 ##Etape 1 : Le contrat - Création et consultation d'une course
 
