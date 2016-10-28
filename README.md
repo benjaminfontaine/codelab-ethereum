@@ -122,7 +122,7 @@ Se mettre sur la branche Step 1.
 
      git checkout step1
 
-Le projet ainsi récupéré est déjà initialisé ([voir les étapes d'initialisation](#initialisation-projet))
+Le projet ainsi récupéré est déjà initialisé (NE PAS LES RELANCER, JUSTE POUR INFO [voir les étapes d'initialisation](#initialisation-projet))
 
 
 
