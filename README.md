@@ -37,6 +37,8 @@ Pour ce TP, vous aurez besoin :
 Pré-requis :
 -nodejs 5+
 
+La version attendue est la 2.1.0
+
 Pour Linux, MacOS et Windows
 (sous Windows, il est conseillé d'utiliser PowerShell ou git bash sont peine de conflit)
 
@@ -53,6 +55,8 @@ TODO
 ### Installation de testrpc :
 Pré-requis :
 -nodejs 5+
+
+La version attendue est la 3.0.0
 
 Pour Linux, MacOS et Windows
 (sous Windows, il est conseillé d'utiliser PowerShell ou git bash sont peine de conflit)
@@ -97,6 +101,21 @@ A cloner depuis le repo de ce codelab : [https://github.com/benjaminfontaine/cod
 
      git clone https://github.com/benjaminfontaine/codelab-ethereum.git
 
+###Etape 0 : Test du bon fonctionnement de vos Installation
+
+Récupèrer la correction du TP1 :
+
+     git checkout step1-final
+
+Lancer testrpc avec l'option -d (déterministe) qui va faire que les comptes générés par testrpc auront toujours les mêmes clés (indispensable) pour le fonctionnement du test unitaire :
+
+     testrpc -d
+
+Puis lancer les tests truffle qui doivent passer :
+
+    truffle test
+
+
 ##Etape 1 : Le contrat - Création et consultation d'une course
 
 Se mettre sur la branche Step 1.
@@ -136,6 +155,8 @@ https://ethereum.github.io/browser-solidity/
 
 Les tests unitaires se lancent, à la racine du répertoire horse-bet par le biais de la commande :
      truffle test
+
+Truffle 2.1.0
 
 
 Au terme de cette première partie de TP, les tests unitaires doivent être au vert.
