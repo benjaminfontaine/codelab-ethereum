@@ -50,6 +50,23 @@ TODO
 
 (TODO : tester l'install Windows)
 
+### Installation de testrpc :
+Pré-requis :
+-nodejs 5+
+
+Pour Linux, MacOS et Windows
+(sous Windows, il est conseillé d'utiliser PowerShell ou git bash sont peine de conflit)
+
+     npm install -g ethereumjs-testrpc
+
+Image docker Linux / Mac
+TODO
+
+Image docker Windows
+TODO
+
+(TODO : tester l'install Windows)
+
 ### Installation de Geth
 
 #### Mac
@@ -73,22 +90,7 @@ TODO
 
 (TODO : tester l'install Windows)
 
-### Installation de testrpc :
-Pré-requis :
--nodejs 5+
 
-Pour Linux, MacOS et Windows
-(sous Windows, il est conseillé d'utiliser PowerShell ou git bash sont peine de conflit)
-
-     npm install -g ethereumjs-testrpc
-
-Image docker Linux / Mac
-TODO
-
-Image docker Windows
-TODO
-
-(TODO : tester l'install Windows)
 
 ##Récupération des sources
 A cloner depuis le repo de ce codelab : [https://github.com/benjaminfontaine/codelab-ethereum/tree/master/horse-bet]
