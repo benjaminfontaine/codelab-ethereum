@@ -43,7 +43,7 @@ Pour Linux, MacOS et Windows
      npm install -g truffle
 
 Image docker Linux / Mac
-`docker run hermanjunge/truffle`
+`docker run zenika/truffle-with-testrpc`
 
 Image docker Windows
 idem
@@ -60,7 +60,7 @@ Pour Linux, MacOS et Windows
      npm install -g ethereumjs-testrpc
 
 Image docker Linux / Mac
-`docker pull abobwhite/ethereumjs-testrpc`
+`docker pull zenika/truffle-with-testrpc`
 
 Image docker Windows
 idem
@@ -134,9 +134,23 @@ Au dessus de ces FIX_ME, des TAGs INFO vous donneront les indications pour compl
 Vous pouvez tester la compilation du contrat en temps réel via :
 https://ethereum.github.io/browser-solidity/
 
-Les tests unitaires se lancent, à la racine du répertoire horse-bet par le biais de la commande :
-     truffle test
+Les tests unitaires se lancent, à la racine du répertoire horse-bet par le biais des commandes :
 
+     `testrpc -d &`
+     
+     `truffle test`
+     
+Lancer votre serveur 'testrpc' avec Docker: `docker run -d -p 8545:8545 zenika/truffle-with-testrpc testrpc -d &`
+
+Modifier ensuite l'emplacement de son serveur de tests en modifiant le fichier `truffle.js`
+```
+rpc: {
+   host: "192.168.99.100", //host de votre docker :)
+   port: 8545
+ }
+```
+
+Depuis le répertoire `horse-bet`, lancer les tests en faisant : `docker run -it --rm -v $(pwd):/app -w /app zenika/truffle-with-testrpc truffle test`
 
 Au terme de cette première partie de TP, les tests unitaires doivent être au vert.
 
