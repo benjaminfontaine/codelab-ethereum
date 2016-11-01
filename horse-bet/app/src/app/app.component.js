@@ -6,7 +6,7 @@ class AppComponent {
 		return [
 			new Component({
 	    		selector: "my-app",
-	    		templateUrl: './public/src/app/app.component.html'
+	    		templateUrl: './app/src/app/app.component.html'
 	  		}),
 		];
 	}

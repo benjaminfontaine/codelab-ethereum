@@ -2,3 +2,4 @@ meta-coins/
 horse-bet/build/
 horse-bet/app/.truffle-solidity-loader/
 horse-bet/app/node_modules
+**/.DS_Store

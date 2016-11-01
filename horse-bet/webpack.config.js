@@ -4,9 +4,9 @@ var CopyWebpackPlugin = require('copy-webpack-plugin');
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 module.exports = {
-  entry: path.join(__dirname, 'public', 'src','index.js'),
+  entry: path.join(__dirname, 'app', 'src','index.js'),
   output: {
-    path: path.join(__dirname, 'public', 'dist'),
+    path: path.join(__dirname, 'app', 'dist'),
     filename: 'vendor.js'
   },
   devtool: 'source-map',
@@ -39,7 +39,8 @@ module.exports = {
   },
   plugins: [
    new CopyWebpackPlugin([
-     { from: './index.html', to: "index.html" }
+     { from: './app/index.html', to: "index.html" },
+     { from: './app/src/**/*', ignore:['**/*.js', '**/*.sol']}
    ]),
    new ExtractTextPlugin("app.css")
  ],

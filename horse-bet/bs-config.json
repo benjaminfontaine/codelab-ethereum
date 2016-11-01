@@ -1,0 +1,6 @@
+{
+    "files" : ["./app/dist/*.{js}", "./app/src/**/*.{html, css}"],
+    "server" : { "baseDir" : "./app/dist" },
+    "watchOptions": { "ignored": "node_modules" },
+    "browser" : ["google-chrome", "firefox"]
+}
