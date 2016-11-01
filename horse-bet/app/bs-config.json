@@ -1,0 +1,6 @@
+{
+    "files" : ["./public/**/*.{js, html, css}", "./index.html"],
+    "server" : { "baseDir" : "./" },
+    "watchOptions": { "ignored": "node_modules" },
+    "browser" : ["google-chrome", "firefox"]
+}

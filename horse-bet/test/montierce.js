@@ -20,6 +20,11 @@ contract('MonTierce', function(accounts) {
     var initOwnerOnly = false;
     var idCourseCree = -1;
 
+
+    var events = contratTierce.allEvents({});
+    events.watch(function(event){
+      console.log(event.args);
+    });
     //tente de faire une transaction de création de course sur un account autre que le owner
     contratTierce.initialiserCourse(chevauxEnCourse, {from : account_two}).catch(function(error){
       //cette création doit échouer
@@ -65,22 +70,22 @@ contract('MonTierce', function(accounts) {
       done();
     });
   });
-  
+
   it("possède une fonction parier qui va permettre de miser si les paris ne sont bloqués, la course encore en cours,  les chevaux du pari existent et le parieur n'a pas déjà parié", function(done) {
     var contratTierce = MonTierce.deployed();
-    
+
     //permet de logguer tous les events lancés par le contrat
     var events = contratTierce.allEvents({});
     events.watch(function(error, result) {
       console.log(result.event);
       console.log(result.args);
     });
-    
+
     var courseId = -1;
     var pari3EnErreur = false;
     var pari5EnErreur = false;
     var pari6EnErreur = false;
-    
+
     contratTierce.initialiserCourse(chevauxEnCourse)
         .then(function(transactionId) {
           return contratTierce.courseIDGenerator.call();
@@ -95,13 +100,13 @@ contract('MonTierce', function(accounts) {
           console.log("get info 1");
           return contratTierce.getInfosCourse.call(courseId);
         })
-        
+
         .then(function(courseDatas){
           console.log("analyse info 1");
           assert.equal(courseDatas[0], courseId, "L'id de la course dans le storage doit être 1");
           assert.equal(courseDatas[1].valueOf(), 300, "Le montant total des paris de la course dans le storage doit être 300");
           assert.equal(courseDatas[2], false, "La course ne doit pas être terminée");
-          
+
           //web3 renvoie des BigInteger pour les uint, il faut donc les convertir en nombre standards
           var chevauxEnCourseRetournes = [];
           for(var i = 0 ; i < courseDatas[3].length; i++){
@@ -125,7 +130,7 @@ contract('MonTierce', function(accounts) {
         })
         .catch(function (err){
           console.log("catch 1");
-          
+
           //l'erreur renvoyée lorsque l'on lance un throw depuis le contrat
           if(err.message.indexOf(throwMessage) !== -1){
             pari3EnErreur =true;

@@ -1,0 +1,42 @@
+{
+  "name": "angular2-quickstart-es6-webpack",
+  "version": "1.0.0",
+  "description": "The Angular 2 Quickstart tutorial done in ES6 with webpack and Babel, without using TypeScript.",
+  "scripts": {
+    "start": "npm run lite",
+    "lite": "lite-server",
+    "webpack": "webpack --progress",
+    "postinstall": "npm run webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/varunmulloli/angular2-quickstart-es6-webpack.git"
+  },
+  "author": "Varun Mulloli",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/varunmulloli/angular2-quickstart-es6-webpack/issues"
+  },
+  "homepage": "https://github.com/varunmulloli/angular2-quickstart-es6-webpack#readme",
+  "dependencies": {
+    "angular2": "2.0.0-beta.9",
+    "es6-promise": "^3.0.2",
+    "es6-shim": "^0.35.0",
+    "json-loader": "^0.5.4",
+    "reflect-metadata": "0.1.2",
+    "rxjs": "5.0.0-beta.2",
+    "truffle-solidity-loader": "0.0.8",
+    "zone.js": "0.5.15"
+  },
+  "devDependencies": {
+    "babel-core": "^6.7.0",
+    "babel-loader": "^6.2.4",
+    "babel-preset-es2015": "^6.6.0",
+    "concurrently": "^2.0.0",
+    "copy-webpack-plugin": "^4.0.0",
+    "extract-text-webpack-plugin": "^1.0.1",
+    "lite-server": "^2.1.0",
+    "script-loader": "^0.6.1",
+    "webpack": "^1.12.14"
+  }
+}
