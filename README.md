@@ -39,10 +39,39 @@ Pré-requis :
 
 La version attendue est la 2.1.0
 
-Pour Linux, MacOS et Windows
+#### Pré-requis Windows : installer les outils pour rebuilder une obscure librairie npm
+
+Option 1: Installer tous les outils requis via npm (run as Administrator) :
+
+    npm install --global --production
+
+Option 2: Installer tous les outils requis manuellement
+
+- Installer package [Framework DotNet 4.6.1]
+
+- Installer [Visual C++ Build Tools] (http://landinghub.visualstudio.com/visual-cpp-build-tools) - install par défaut.
+- Installer Python 2.7
+- Configurer Python
+     run npm config set python python2.7
+- Configurer la version du framework .NET à utiliser
+
+     npm config set msvs_version 2015
+
+-L'erreur OpenSSL n'empeche pas l'installation mais vous pouvez l'installer quand même au [lien suivant](https://wiki.openssl.org/index.php/Binaries)
+
+
+Lancer truffle dans un autre typ de terminal que celui par défaut car il peut y avoir des conflits Power shell, git bash ou babun
+
+
+#### Install pour Linux, MacOS et Windows
 (sous Windows, il est conseillé d'utiliser PowerShell ou git bash sont peine de conflit)
 
      npm install -g truffle
+
+
+
+
+
 
 Image docker Linux / Mac
 TODO
