@@ -6,7 +6,7 @@ import "mortal.sol";
 contract MonTierce is mortal{
 
   //INFO : il manque le mot clé pour définir une structure de donnée
-  FIX_ME Course {
+  struct Course {
     uint idCourse;
     bool terminee;
     //les chevaux sont représentés par leur id
@@ -17,7 +17,7 @@ contract MonTierce is mortal{
   //INFO définir une structure de données type Map qui va associer un id à une course.
   // http://solidity.readthedocs.io/en/develop/types.html
   // INDICE : MAP...G
-  FIX_ME courses;
+  mapping (uint => Course) courses;
 
   //event qui va permettre de debugger le contrat au cours de test et au cours de la vie du contrat.
   event InitialisationCourse(uint32[] chevauxAuDepart, uint idCourse, address owner);
@@ -25,7 +25,7 @@ contract MonTierce is mortal{
   //INFO : on souhaite restreindre l'accès à cette fonction au propriètaire du contrat
   // on peut le faire via le modifier défini dans le fichier owned.sol
   // https://github.com/ethereum/wiki/wiki/Solidity-Features#user-content-function-modifiers
-  function initialiserCourse(uint32[] chevauxParticipants) FIX_ME returns(uint) {
+  function initialiserCourse(uint32[] chevauxParticipants) onlyowner returns(uint) {
 
     //les struct Course du mapping courses sont déjà initialisés, il suffit juste de leur positionner des attributs
     //L'initialisation suivante ne fonctionne pas
@@ -37,7 +37,9 @@ contract MonTierce is mortal{
     // => courses[courseIDGenerator].chevauxEnCourse
     // INDICE : on ne peut pas copier le tableau chevauxParticipants
     //directement de la callstack dans l'espace storage, le code est en spoiler dans le TP
-    FIX_ME
+    for(uint x= 0; x< chevauxParticipants.length; x++ ){
+      courses[courseIDGenerator].chevauxEnCourse.push(chevauxParticipants[x]);
+    }
     InitialisationCourse(chevauxParticipants, courses[courseIDGenerator].idCourse, owner);
 
     courseIDGenerator++ ;
