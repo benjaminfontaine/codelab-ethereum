@@ -19,27 +19,16 @@ contract('MonTierce', function(accounts) {
     // récupère l'interface MonTierce.sol.js
     // à rechercher dans : http://truffle.readthedocs.io/en/latest/getting_started/contracts/#making-a-transaction
     //syntaxe : interfaceContrat.d......d()
-    var contratTierce = FIX_ME;
+    var contratTierce = MonTierce.deployed();
     console.log(contratTierce);
     var initOwnerOnly = false;
     var idCourseCree = -1;
 
-    //tente de faire une transaction de création de course sur un account autre que le owner
-    // INFO : il faut appeler la fonction d'initialisation de la course
-    // en lui passant les chevaux participants et en utilisant account_two
-    // Syntaxe de l'appel d'une fonction sur un contrat : http://truffle.readthedocs.io/en/latest/getting_started/contracts/#making-a-transaction
-    // cette appel déclenche une action d'écriture, on utilisera donc la syntaxe :
-    // interfaceContrat.nomMethode(parametres1,[ parametres2 ...],[ {options} ])
-    contratTierce.FIX_ME.catch(function(error){
-      //cette création doit échouer
-      initOwnerOnly = true;
-    }).then(function(){
-      assert.equal(initOwnerOnly, true, "La création de course doit être réservé au propriètaire du contrat.")
-    });
+
 
     //création du compte avec le bon compte (account_one est le compte par défaut)
     // INFO : même syntaxe qu'au dessus, sans les options
-    contratTierce.FIX_ME
+    contratTierce.initialiserCourse(chevauxEnCourse)
     .then(function(transactionId) {
       //une fonction générant une transaction renvoie toujours
       // l'id de la transaction même si la fonction renvoie autre chose dans le code du contract
@@ -47,26 +36,12 @@ contract('MonTierce', function(accounts) {
 
       //on veut récupérer l'id de la dernière course créée
       //INFO : syntaxe interfaceContrat.attributPublic.call();
-      return FIX_ME;
+      return contratTierce.courseIDGenerator.call();
     })
     .then(function (idCourseCompteur){
       //idCourseCompteur est un BigInteger, on doit le convertir
       idCourseCree = Number(idCourseCompteur - 1);
-      //et on recherche ensuite des informations sur cette course
-      //INFO :
-      // encore une fois, c'est un appel qui ne modifiera pas les données du contrat
-      // on utilisera donc la syntaxe interfaceContrat.methodePublique.call(args);
-      return FIX_ME;
-    })
-    .then(function(courseDatas){
-      assert.equal(courseDatas[0], idCourseCree, "L'id de la course dans le storage doit être 0");
-      assert.equal(courseDatas[1], false, "La course ne doit pas être terminée");
-      //web3 renvoie des BigInteger pour les uint, il faut donc les convertir en nombre standards
-      var chevauxEnCourseRetournes = [];
-      for(var i = 0 ; i < courseDatas[2].length; i++){
-        chevauxEnCourseRetournes.push(Number(courseDatas[2][i]));
-      }
-      assert.deepEqual(chevauxEnCourseRetournes, chevauxEnCourse, "Les chevaux en course dans le storage doivent être ceux passés à l'initialisation");
+      assert.equal(idCourseCree, 0, "L'id de la course dans le storage doit être 0");
       //indispensable pour que le test unitaire se termine
       done();
     })
@@ -75,6 +50,19 @@ contract('MonTierce', function(accounts) {
       console.log(err);
       assert.fail("Une erreur inattendue s'est produite" + err.message);
       done();
+    });
+
+    //tente de faire une transaction de création de course sur un account autre que le owner
+    // INFO : il faut appeler la fonction d'initialisation de la course
+    // en lui passant les chevaux participants et en utilisant account_two
+    // Syntaxe de l'appel d'une fonction sur un contrat : http://truffle.readthedocs.io/en/latest/getting_started/contracts/#making-a-transaction
+    // cette appel déclenche une action d'écriture, on utilisera donc la syntaxe :
+    // interfaceContrat.nomMethode(parametres1,[ parametres2 ...],[ {options} ])
+    contratTierce.initialiserCourse(chevauxEnCourse,{'from': account_two}).catch(function(error){
+      //cette création doit échouer
+      initOwnerOnly = true;
+    }).then(function(){
+      assert.equal(initOwnerOnly, true, "La création de course doit être réservé au propriètaire du contrat.")
     });
   });
 });

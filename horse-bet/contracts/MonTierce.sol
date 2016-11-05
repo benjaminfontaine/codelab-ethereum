@@ -24,6 +24,7 @@ contract MonTierce is mortal{
 
   //INFO : on souhaite restreindre l'accès à cette fonction au propriètaire du contrat
   // on peut le faire via le modifier défini dans le fichier owned.sol
+  // https://github.com/ethereum/wiki/wiki/Solidity-Features#user-content-function-modifiers
   function initialiserCourse(uint32[] chevauxParticipants) FIX_ME returns(uint) {
 
     //les struct Course du mapping courses sont déjà initialisés, il suffit juste de leur positionner des attributs
@@ -42,15 +43,4 @@ contract MonTierce is mortal{
     courseIDGenerator++ ;
     return courses[courseIDGenerator].idCourse;
   }
-
-  event GetInfosCourse(uint idCourse);
-
-  function getInfosCourse(uint idCourse) public returns(uint, bool, uint32[]){
-    //INFO : on souhaite déclencher ici l'événement GetInfosCourse à des fins de debug
-    FIX_ME
-
-    //INFO : renvoyer les informations idCourse, terminee et chevauxEnCourse
-    return FIX_ME;
-  }
-
 }
