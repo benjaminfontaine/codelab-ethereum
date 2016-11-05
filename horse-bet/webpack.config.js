@@ -16,7 +16,11 @@ module.exports = {
         test: /\.js$/,
         loader: "babel-loader",
         query: {
-          presets: ['es2015']
+          presets: ['es2015'],
+          plugins: ["angular2-annotations",
+          "transform-decorators-legacy",
+          "transform-class-properties",
+          "transform-flow-strip-types"]
         }
       },
       {
