@@ -39,10 +39,39 @@ Pré-requis :
 
 La version attendue est la 2.1.0
 
-Pour Linux, MacOS et Windows
+#### Pré-requis Windows : installer les outils pour rebuilder une obscure librairie npm
+
+Option 1: Installer tous les outils requis via npm (run as Administrator) :
+
+    npm install --global --production
+
+Option 2: Installer tous les outils requis manuellement
+
+- Installer package [Framework DotNet 4.6.1]
+
+- Installer [Visual C++ Build Tools] (http://landinghub.visualstudio.com/visual-cpp-build-tools) - install par défaut.
+- Installer Python 2.7
+- Configurer Python
+     run npm config set python python2.7
+- Configurer la version du framework .NET à utiliser
+
+     npm config set msvs_version 2015
+
+-L'erreur OpenSSL n'empeche pas l'installation mais vous pouvez l'installer quand même au [lien suivant](https://wiki.openssl.org/index.php/Binaries)
+
+
+Lancer truffle dans un autre typ de terminal que celui par défaut car il peut y avoir des conflits Power shell, git bash ou babun
+
+
+#### Install pour Linux, MacOS et Windows
 (sous Windows, il est conseillé d'utiliser PowerShell ou git bash sont peine de conflit)
 
      npm install -g truffle
+
+
+
+
+
 
 Image docker Linux / Mac
 TODO
@@ -118,13 +147,13 @@ Puis lancer les tests truffle qui doivent passer :
 
 ##Etape 1 : Le contrat - Création et consultation d'une course
 
+###Création d'une course
+
 Se mettre sur la branche Step 1.
 
-     git checkout step1
+     git checkout step1-1
 
-Le projet ainsi récupéré est déjà initialisé (NE PAS LES RELANCER, JUSTE POUR INFO [voir les étapes d'initialisation](#initialisation-projet))
-
-
+Le projet ainsi récupéré est déjà initialisé ([voir les étapes d'initialisation](#initialisation-projet) NE PAS LES EXECUTER, C'EST JUSTE POUR INFO )
 
 L'arborescence de notre projet est constituée de :
 
@@ -156,26 +185,27 @@ https://ethereum.github.io/browser-solidity/
 Les tests unitaires se lancent, à la racine du répertoire horse-bet par le biais de la commande :
      truffle test
 
-Truffle 2.1.0
+
+
+     <details>
+       <summary>SPOILER ALERT: solution de la copie de tableau dans la méthode initialiserCourse </summary>
+
+
+     ```
+             for(uint x= 0; x< chevauxParticipants.length; x++ ){
+               courses[courseIDGenerator].chevauxEnCourse.push(chevauxParticipants[x]);
+             }
+     ```
+
+     </details>
 
 
 Au terme de cette première partie de TP, les tests unitaires doivent être au vert.
 
 Pour voir la correction de ce TP :
 
-     git checkout step1-final
+     git checkout step1-1c
 
-<details>
-  <summary>SPOILER ALERT: solution de la copie de tableau dans la méthode initialiserCourse </summary>
-
-
-```
-        for(uint x= 0; x< chevauxParticipants.length; x++ ){
-          courses[courseIDGenerator].chevauxEnCourse.push(chevauxParticipants[x]);
-        }
-```
-
-</details>
 
 ## Etape 2 : Mise en place de la fonctionnalité de pari
 
