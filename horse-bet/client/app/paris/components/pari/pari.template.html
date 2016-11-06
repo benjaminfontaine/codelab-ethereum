@@ -14,126 +14,74 @@
       <div>
         <label for="premierCourse">Le cheval gagnant de la course : </label>
         <select formControlName="premierCourse">
-                <option *ngFor="let cheval of chevauxEnCourse" [value]="cheval">{{cheval}}</option>
+          <option *ngFor="let cheval of chevauxEnCourse" [value]="cheval">{{cheval}}</option>
         </select>
       </div>
       <div>
         <label for="secondCourse">Le second cheval de la course : </label>
         <select name="secondCourse" id="secondCourse">
-          <option>Cheval1</option>
-          <option>Cheval2</option>
-          <option>Cheval3</option>
-          <option>Cheval4</option>
-          <option>Cheval5</option>
-          <option>Cheval6</option>
-          <option>Cheval7</option>
-          <option>Cheval8</option>
-          <option>Cheval9</option>
-          <option>Cheval10</option>
+          <option *ngFor="let cheval of chevauxEnCourse" [value]="cheval">{{cheval}}</option>
         </select>
       </div>
       <div>
         <label for="troisiemeCourse">Le troisième cheval de la course : </label>
         <select name="troisiemeCourse" id="troisiemeCourse">
-          <option>Cheval1</option>
-          <option>Cheval2</option>
-          <option>Cheval3</option>
-          <option>Cheval4</option>
-          <option>Cheval5</option>
-          <option>Cheval6</option>
-          <option>Cheval7</option>
-          <option>Cheval8</option>
-          <option>Cheval9</option>
-          <option>Cheval10</option>
+          <option *ngFor="let cheval of chevauxEnCourse" [value]="cheval">{{cheval}}</option>
         </select>
       </div>
       <div>
         <label for="misePari">Votre mise :</label>
         <input name="misePari" id="misePari" type="text"/>
       </div>
-
+      <br/>
       <button type="button">Parier</button>
+      <br/><br/>
 
       <h3>Récupérer mes gains</h3>
+      <br/>
       <div>
         <label for="idCourseGain">L'identifiant de la course : </label>
         <input name="idCourseGain" id="idCourseGain" type="text"/>
       </div>
+      <br/>
 
       <button type="button">Donne moi mes gains ! </button>
     </form>
   </div>
 </div>
 
+<br/><br/>
+
 <div id="actionOwner">
   <h2>Espace administrateur (pseudo Oracle)</h2>
   <form id="formulaireAdmin">
-    Adresse du owner : adresseOwner
-
     <h3>Créer une course :</h3>
+    <br/>
+    <div>
+      <label for="chevauxParticipants">Chevaux participants : </label>
+      <select name="chevauxParticipants" id="chevauxParticipants">
+        <option *ngFor="let cheval of chevauxExistants" [value]="cheval">{{cheval}}</option>
+      </select>
+    </div>
+    <br/>
+    <button type="button">Créer la course </button>
+    <br/><br/>
+    <h3>Interdire les paris : </h3>
+    <div>
+      <label for="idCourse">Identifiant de la course : </label>
+      <input name="idCourse" id="idCourse" type="text"/>
+    </div>
+    <br/>
+    <button type="button">Bloquer les paris </button>
 
-
-    <p>Solde du parieur : XXXXX.XXXXXXXXX Ethers</p>
-
-    <h3>Parier</h3>
-
-    <label for="idCourse">L'identifiant de la course : </label>
-    <input name="idCourse" id="idCourse" type="text"/>
-
-
-    <label for="premierCourse">Le cheval gagnant de la course : </label>
-    <select name="premierCourse" id="premierCourse">
-      <option>Cheval1</option>
-      <option>Cheval2</option>
-      <option>Cheval3</option>
-      <option>Cheval4</option>
-      <option>Cheval5</option>
-      <option>Cheval6</option>
-      <option>Cheval7</option>
-      <option>Cheval8</option>
-      <option>Cheval9</option>
-      <option>Cheval10</option>
-    </select>
-
-    <label for="secondCourse">Le second cheval de la course : </label>
-    <select name="secondCourse" id="secondCourse">
-      <option>Cheval1</option>
-      <option>Cheval2</option>
-      <option>Cheval3</option>
-      <option>Cheval4</option>
-      <option>Cheval5</option>
-      <option>Cheval6</option>
-      <option>Cheval7</option>
-      <option>Cheval8</option>
-      <option>Cheval9</option>
-      <option>Cheval10</option>
-    </select>
-
-
-    <label for="troisiemeCourse">Le troisième cheval de la course : </label>
-    <select name="troisiemeCourse" id="troisiemeCourse">
-      <option>Cheval1</option>
-      <option>Cheval2</option>
-      <option>Cheval3</option>
-      <option>Cheval4</option>
-      <option>Cheval5</option>
-      <option>Cheval6</option>
-      <option>Cheval7</option>
-      <option>Cheval8</option>
-      <option>Cheval9</option>
-      <option>Cheval10</option>
-    </select>
-
-    <label for="misePari">Votre mise :</label>
-    <input name="misePari" id="misePari" type="text"/>
-
-    <button type="button">Parier</button>
-
-    <h3>Récupèrer mes gains</h3>
-
-    <label for="idCourseGain">L'identifiant de la course : </label>
-    <input name="idCourseGain" id="idCourseGain" type="text"/>
-
-    <button type="button">Donne moi mes gains ! </button>
+    <h3>Terminer la course :</h3>
+    <br/>
+    <div>
+      <label for="idFinCourse">Identifiant de la course : </label>
+      <input name="idFinCourse" id="idFinCourse" type="text"/>
+    </div>
+    <br/><br/>
+    <button type="button">Fin de la course </button>
+    <br/>
   </form>
 </div>

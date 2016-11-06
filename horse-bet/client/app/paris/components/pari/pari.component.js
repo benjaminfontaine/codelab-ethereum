@@ -2,7 +2,7 @@ import { Component, ChangeDetectionStrategy, EventEmitter} from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 
 import template from './pari.template.html';
-import MonTierce from "../../../contracts/MonTierce.sol";
+import MonTierce from "../../../../../contracts/MonTierce.sol";
 
 @Component({
   selector: 'post-list',
@@ -31,6 +31,8 @@ export class PariComponent {
     var contratTierce = MonTierce.deployed();
 
     this.chevauxEnCourse = ["cheval1", "cheval2", "cheval3","cheval4", "cheval5", "cheval6","cheval7", "cheval8", "cheval9"]; // List of cities
+    this.chevauxExistants = ["cheval1", "cheval2", "cheval3","cheval4", "cheval5", "cheval6","cheval7", "cheval8", "cheval9", "cheval10", "cheval11", "cheval12", "cheval13","cheval14", "cheval15", "cheval16", "cheval17", "cheval18", "cheval19", "cheval20"]; // List of cities
+
     this.currentAddress =web3.eth.defaultAccount;
     web3.eth.getBalance(this.currentAddress, (error, result) => {
       if(!error){
