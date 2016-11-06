@@ -57,9 +57,14 @@ L'arborescence de notre projet est constituée de :
 
 - test => le fichier contenant les sources js de test Mocha et Chai de nos smart-contract
 
+- server : sources et configuration du serveur koa qui sert l'ihm
+
 - tasks : tasks gulp servant à automatiser le déploiement de notre application
 
+- test : test unitaire sur nos smart-contract
+
 - truffle.js : le fichier de configuration de truffle
+
 
 ## Installation de l'environnement de développement :
 Pré-requis :
@@ -195,7 +200,7 @@ Le contrat est déjà crée, ainsi que son test unitaire.
 
 Seulement, j'ai sadiquement supprimé certaines lignes de code qui empèche les tests unitaires de fonctionner.
 
-Les fichiers impactés sont :
+Les deux fichiers impactés sont :
 - `contacts/MonTierce.sol` : le contract, qui va être le code déploié sur la blockchain et qui contiendra toutes les méthodes permettant de gérer des paris sur les courses. Ce contrat est écrit en SOLIDITY.
 - `test/montierce.js` : son test unitaire, qui va utilisé Mocha et Chai pour fournir des tests unitaires et d'intégration sur notre contrat
 
