@@ -214,11 +214,15 @@ Les tests unitaires se lancent, à la racine du répertoire horse-bet par le bia
      truffle test
 
 
+Pour le debug, c'est compliqué et rien n'est fourni de base.
+Vous pouvez cependant utiliser [les events et les logs js](#le-debuggage)
+
 Au terme de cette première partie de TP, les tests unitaires doivent être au vert.
 
 Pour voir la correction de ce TP :
 
      git checkout step1-final
+
 
 <details>
   <summary>SPOILER ALERT: solution de la copie de tableau dans la méthode initialiserCourse </summary>
@@ -291,34 +295,26 @@ L'avantage de truffle c'est qu'il va utiliser le framework Javascript WEB3, avec
 La bonne nouvelle, c'est que c'est exactement les mêmes surcouches qui sont utilisée dans les tests que nous avons fait jusqu'à présent.
 Par conséquent, vous connaissez déjà la syntaxe.
 
+L'IHM est en Angular 2 mais libre à vous d'utiliser n'importe quelle autre techno web.
+J'ai utilisé la base du projet https://github.com/blacksonic/angular2-babel-esnext-starter pour notre IHM.
+
+Cela fournit une IHM Angular de base en ES6, servie par un serveur koa, avec liveReload et contruite avec gulp et webpack.
+
+
 
 ##Etape 5 : Déploiement du contrat sur une blockchain privée (Optionnelle)
 Utilisation du client geth pour monter une blockchain privée et configuration de Truffle pour l'utiliser.
 Voir comment on autorise les transactions pour les paris
 
+Création d'une blockchain de test privée :
+
+    geth --dev
 
 #Etape 6 : Sécurisation du smart contract
 Application du pattern withdrawal.
 
 
-#Annexe : Interagir en mode console
-//TODO : remplacer par des vrais appels à notre contrat
-// get the deployed version of our contract
-truffle(default)> var poe = ProofOfExistence1.deployed()
-// and print its address
-truffle(default)> console.log(poe.address)
-0x3d3bce79cccc331e9e095e8985def13651a86004
-// let's register our first "document"
-truffle(default)> poe.notarize('An amazing idea')
-Promise { <pending> }
-// let's now get the proof for that document
-truffle(default)> poe.calculateProof('An amazing idea').then(console.log)
-Promise { <pending> }
-0xa3287ff8d1abde95498962c4e1dd2f50a9f75bd8810bd591a64a387b93580ee7
-// To check if the contract's state was correctly changed:
-truffle(default)> poe.proof().then(console.log)
-0xa3287ff8d1abde95498962c4e1dd2f50a9f75bd8810bd591a64a387b93580ee7
-// The hash matches the one we previously calculated
+
 
 
 #Annexes
