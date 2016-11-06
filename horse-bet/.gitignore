@@ -1,5 +1,4 @@
-node_modules/
-build/
 .truffle-solidity-loader/
-npm-debug.log
-app/dist/
+node_modules
+**/.DS_Store
+dist

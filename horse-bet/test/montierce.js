@@ -22,7 +22,7 @@ contract('MonTierce', function(accounts) {
 
 
     var events = contratTierce.allEvents({});
-    events.watch(function(event){
+    events.watch(function(error, event){
       console.log(event.args);
     });
     //tente de faire une transaction de création de course sur un account autre que le owner
@@ -61,6 +61,7 @@ contract('MonTierce', function(accounts) {
       assert.deepEqual(chevauxEnCourseRetournes, chevauxEnCourse, "Les chevaux en course dans le storage doivent être ceux passés à l'initialisation");
       assert.equal(courseDatas[4], false, "Les paris doivent être autorisés sur la course");
       //indispensable pour que le test unitaire se termine
+      events.stopWatching();
       done();
     })
     //on catche les erreurs pour effectuer le done() dans tous les cas
