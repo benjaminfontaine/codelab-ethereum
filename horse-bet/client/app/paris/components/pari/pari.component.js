@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, EventEmitter} from '@angular/core';
+import { Component, ChangeDetectionStrategy, EventEmitter, Input, Output} from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 
 import template from './pari.template.html';
@@ -10,6 +10,8 @@ import MonTierce from "../../../../../contracts/MonTierce.sol";
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PariComponent {
+
+  @Input() currentBalance;
   constructor(formBuilder: FormBuilder) {
     this._builder = formBuilder;
     this.pariForm = this._builder.group({

@@ -1,6 +1,6 @@
 # Codelab-ethereum DevFest 2O16
 
-##Présentation et installation de l'environnement de travail
+## Présentation  de l'environnement de travail
 Nous allons développer notre premier smart contract au sein d'un environnement de développement propre à Ethereum.
 Pour ce TP, vous aurez besoin :
 
@@ -33,43 +33,72 @@ Pour ce TP, vous aurez besoin :
    - gestion des blockchains de déploiement (public et privée),
    - console interactive de communication avec les contrats ...
 
-### Installation de Truffle :
+## Arborescence du projet
+
+A cloner depuis le repo de ce codelab : [https://github.com/benjaminfontaine/codelab-ethereum]
+
+     git clone https://github.com/benjaminfontaine/codelab-ethereum.git
+
+Ensuite aller dans le répertoire horse-bet pour découvrir le code final de notre application :
+     cd horse-bet
+
+
+L'arborescence de notre projet est constituée de :
+
+- .truffle-solidity-loader : fichier .sol.js qui sont des artifacts crées par un framework appelé Ether Pudding. Ces fichiers sont crées à partir d'une ABI, d'un binaire ou d'une adresse de contrat et vont permettre de s'interfacer facilement avec le contrat en Javascript,
+
+- build => répertoire de travail de truffle
+
+- client => le répertoire contenant la partie WEB de notre D-app, qui contient donc le site en Angular 2
+
+- contracts => dossier où sont stockés les smart-contracts de notre D-app en Solidity (.sol)
+
+- migrations => les scripts de déploiement des smart-contract sur la blockchain
+
+- test => le fichier contenant les sources js de test Mocha et Chai de nos smart-contract
+
+- tasks : tasks gulp servant à automatiser le déploiement de notre application
+
+- truffle.js : le fichier de configuration de truffle
+
+## Installation de l'environnement de développement :
 Pré-requis :
--nodejs 5+
+- sur tous les environnements : nodejs 5+
 
-La version attendue est la 2.1.0
 
+### Pré-requis Windows : installer les outils pour rebuilder une obscure librairie npm
+
+*Option 1: Installer tous les outils requis via npm (run as Administrator) :*
+
+    npm install --global --production
+
+Option 2 manuelle : (si la 1 ne fonctionne pas)
+
+- Installer package [Framework DotNet 4.6.1]
+
+- Installer [Visual C++ Build Tools] (http://landinghub.visualstudio.com/visual-cpp-build-tools) - install par défaut.
+- Installer Python 2.7
+- Configurer Python
+     run npm config set python python2.7
+- Configurer la version du framework .NET à utiliser
+
+     npm config set msvs_version 2015
+
+-L'erreur OpenSSL n'empeche pas l'installation mais vous pouvez l'installer quand même au [lien suivant](https://wiki.openssl.org/index.php/Binaries)
+
+
+Lancer truffle dans un autre typ de terminal que celui par défaut car il peut y avoir des conflits Power shell, git bash ou babun
+
+
+#### Installation des dépendances npm
 Pour Linux, MacOS et Windows
 (sous Windows, il est conseillé d'utiliser PowerShell ou git bash sont peine de conflit)
 
-     npm install -g truffle
+     cd horse-bet
+     npm install
 
-Image docker Linux / Mac
-TODO
+Cette commande va installer toutes les dépendances npm du projet (truffle, ethereumjs-testrpc, angular2, webpack, gulp ...)
 
-Image docker Windows
-TODO
-
-(TODO : tester l'install Windows)
-
-### Installation de testrpc :
-Pré-requis :
--nodejs 5+
-
-La version attendue est la 3.0.0
-
-Pour Linux, MacOS et Windows
-(sous Windows, il est conseillé d'utiliser PowerShell ou git bash sont peine de conflit)
-
-     npm install -g ethereumjs-testrpc
-
-Image docker Linux / Mac
-TODO
-
-Image docker Windows
-TODO
-
-(TODO : tester l'install Windows)
 
 ### Installation de Geth
 
@@ -98,10 +127,7 @@ TODO
 
 Installez le navigateur Chrome et le plugin [Metamask](https://metamask.io/)
 
-##Récupération des sources
-A cloner depuis le repo de ce codelab : [https://github.com/benjaminfontaine/codelab-ethereum]
 
-     git clone https://github.com/benjaminfontaine/codelab-ethereum.git
 
 ### Test de l'application
 
@@ -117,14 +143,13 @@ Puis lancer les tests truffle qui doivent passer :
 
     truffle test
 
-Ensuite aller dans le répertoire app
+Pour lancer
 
-    npm install
-    webpack
-    npm start
+    npm install (si pas déjà fait)
+    gulp serve
 
-Cela lance une url localhost:3000 dans votre navigateur web favori.
-Ouvrez cette url sur Chrome.
+Cela lance une url [localhost:9000](http://localhost:9000/) dans votre navigateur web favori.
+Mais ouvrez la plutôt avec Chrome.
 
 Cliquer sur l'icone du plugin Metamask en haut à droite de votre fenêtre (un renard orangé).
 
@@ -157,21 +182,6 @@ Vous pouvez à tout moment changer d'utilisateur en faisant un switch account da
 TODO : (voir comment gérer le rechargement automatique)
 
 
-###Etape 0 : Test du bon fonctionnement de vos Installation
-
-Récupèrer la correction du TP1 :
-
-     git checkout step1-final
-
-Lancer testrpc avec l'option -d (déterministe) qui va faire que les comptes générés par testrpc auront toujours les mêmes clés (indispensable) pour le fonctionnement du test unitaire :
-
-     testrpc -d
-
-Puis lancer les tests truffle qui doivent passer :
-
-    truffle test
-
-
 ##Etape 1 : Le contrat - Création et consultation d'une course
 
 Se mettre sur la branche Step 1.
@@ -179,20 +189,6 @@ Se mettre sur la branche Step 1.
      git checkout step1
 
 Le projet ainsi récupéré est déjà initialisé (NE PAS LES RELANCER, c'est juste pour info [voir les étapes d'initialisation](#initialisation-projet))
-
-
-
-L'arborescence de notre projet est constituée de :
-
-- app => le répertoire contenant la partie WEB de notre D-app, qui contiendra le site en Angular 2
-
-- build => fichier de l'IHM préts au déploiement du
-
-   - contract => dossier où sont créer les fichier .sol.js qui sont des artifacts crées par un framework appelé Ether Pudding. Ces fichiers sont crées à partir d'une ABI, d'un binaire ou d'une adresse de contrat et vont permettre de s'interfacer facilement avec le contrat en Javascript.
-- contracts => les sources .sol des contracts de votre D-app
-- migration => les scripts de déploiement
-- test => le fichier contenant les sources js de test Mocha et Chai de nos smart-contract
-- truffle.js : le fichier de configuration de truffle
 
 
 Le contrat est déjà crée, ainsi que son test unitaire.
