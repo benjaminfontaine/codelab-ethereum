@@ -1,6 +1,6 @@
 # Codelab-ethereum DevFest 2O16
 
-##Présentation et installation de l'environnement de travail
+## Présentation  de l'environnement de travail
 Nous allons développer notre premier smart contract au sein d'un environnement de développement propre à Ethereum.
 Pour ce TP, vous aurez besoin :
 
@@ -33,19 +33,51 @@ Pour ce TP, vous aurez besoin :
    - gestion des blockchains de déploiement (public et privée),
    - console interactive de communication avec les contrats ...
 
-### Installation de Truffle :
+## Arborescence du projet
+
+A cloner depuis le repo de ce codelab : [https://github.com/benjaminfontaine/codelab-ethereum]
+
+     git clone https://github.com/benjaminfontaine/codelab-ethereum.git
+
+Ensuite aller dans le répertoire horse-bet pour découvrir le code final de notre application :
+     cd horse-bet
+
+
+L'arborescence de notre projet est constituée de :
+
+- .truffle-solidity-loader : fichier .sol.js qui sont des artifacts crées par un framework appelé Ether Pudding. Ces fichiers sont crées à partir d'une ABI, d'un binaire ou d'une adresse de contrat et vont permettre de s'interfacer facilement avec le contrat en Javascript,
+
+- build => répertoire de travail de truffle
+
+- client => le répertoire contenant la partie WEB de notre D-app, qui contient donc le site en Angular 2
+
+- contracts => dossier où sont stockés les smart-contracts de notre D-app en Solidity (.sol)
+
+- migrations => les scripts de déploiement des smart-contract sur la blockchain
+
+- test => le fichier contenant les sources js de test Mocha et Chai de nos smart-contract
+
+- server : sources et configuration du serveur koa qui sert l'ihm
+
+- tasks : tasks gulp servant à automatiser le déploiement de notre application
+
+- test : test unitaire sur nos smart-contract
+
+- truffle.js : le fichier de configuration de truffle
+
+
+## Installation de l'environnement de développement :
 Pré-requis :
--nodejs 5+
+- sur tous les environnements : nodejs 5+
 
-La version attendue est la 2.1.0
 
-#### Pré-requis Windows : installer les outils pour rebuilder une obscure librairie npm
+### Pré-requis Windows : installer les outils pour rebuilder une obscure librairie npm
 
-Option 1: Installer tous les outils requis via npm (run as Administrator) :
+*Option 1: Installer tous les outils requis via npm (run as Administrator) :*
 
     npm install --global --production
 
-Option 2: Installer tous les outils requis manuellement
+Option 2 manuelle : (si la 1 ne fonctionne pas)
 
 - Installer package [Framework DotNet 4.6.1]
 
@@ -63,42 +95,15 @@ Option 2: Installer tous les outils requis manuellement
 Lancer truffle dans un autre typ de terminal que celui par défaut car il peut y avoir des conflits Power shell, git bash ou babun
 
 
-#### Install pour Linux, MacOS et Windows
-(sous Windows, il est conseillé d'utiliser PowerShell ou git bash sont peine de conflit)
-
-     npm install -g truffle
-
-
-
-
-
-
-Image docker Linux / Mac
-TODO
-
-Image docker Windows
-TODO
-
-(TODO : tester l'install Windows)
-
-### Installation de testrpc :
-Pré-requis :
--nodejs 5+
-
-La version attendue est la 3.0.0
-
+#### Installation des dépendances npm
 Pour Linux, MacOS et Windows
 (sous Windows, il est conseillé d'utiliser PowerShell ou git bash sont peine de conflit)
 
-     npm install -g ethereumjs-testrpc
+     cd horse-bet
+     npm install
 
-Image docker Linux / Mac
-TODO
+Cette commande va installer toutes les dépendances npm du projet (truffle, ethereumjs-testrpc, angular2, webpack, gulp ...)
 
-Image docker Windows
-TODO
-
-(TODO : tester l'install Windows)
 
 ### Installation de Geth
 
@@ -123,18 +128,17 @@ TODO
 
 (TODO : tester l'install Windows)
 
+### Installation de Chrome et du plugin Metamask
+
+Installez le navigateur Chrome et le plugin [Metamask](https://metamask.io/)
 
 
-##Récupération des sources
-A cloner depuis le repo de ce codelab : [https://github.com/benjaminfontaine/codelab-ethereum]
 
-     git clone https://github.com/benjaminfontaine/codelab-ethereum.git
-
-###Etape 0 : Test du bon fonctionnement de vos Installation
+### Test de l'application
 
 Récupèrer la correction du TP1 :
 
-     git checkout step1-final
+     git checkout master
 
 Lancer testrpc avec l'option -d (déterministe) qui va faire que les comptes générés par testrpc auront toujours les mêmes clés (indispensable) pour le fonctionnement du test unitaire :
 
@@ -144,37 +148,61 @@ Puis lancer les tests truffle qui doivent passer :
 
     truffle test
 
+Pour lancer
+
+    npm install (si pas déjà fait)
+    gulp serve
+
+Cela lance une url [localhost:9000](http://localhost:9000/) dans votre navigateur web favori.
+Mais ouvrez la plutôt avec Chrome.
+
+Cliquer sur l'icone du plugin Metamask en haut à droite de votre fenêtre (un renard orangé).
+
+Pour qu'une IHM de D-app fonctionne, elle doit être interfacée avec un portefeuille contenant les comptes et les clés privée des utilisateurs. Sans cet interfaçage avec le portefeuille, l'utilisateur ne peut pas signer ses transactions et donc, par extension, pas interagir avec une blockchain.
+
+A l'heure actuelle, il y a deux solutions : *Metamask* qui permet d'ajouter un portefeuille ultra léger à Chrome (il ne télécharge pas de blockchain) et le navigateur dédie *Mist* qui se veut être l'appstore des D-apps.
+
+Le plugin Metamask va permettre à une application web qui utilise la librairie js web3, de communiquer avec n'importe quelle blockchain (rpc, privée, morden ou la principale).
+
+Pour pouvoir interfacer le plugin Metamask avec votre blockchain RPC, il faut le configurer.
+
+Sur l'écran de connexion (écran disponible de base ou accessible via Menu Lock puis Back), choisir l'option 'Restore existing Vault'.
+Il vous sera demandé douze mots clés permettant de récupérer votre portefeuille ainsi qu'un nouveau mot de passe.
+
+Pour se connecter au testrpc local, rentrer les deux mots clés fournis au lancement de testrpc dans la partie Mnemonic :
+
+     HD Wallet
+     ==================
+     Mnemonic:      myth like bonus scare over problem client lizard pioneer submit female collect
+
+Une fois cette configuration effectuée, vous serez connecté sur la blockchain avec le compte par défaut (qui sera l'owner du contrat).
+
+Vous aurez donc accès à l'interface spécifique du owner (création de course, blocage des paris, déclenchement de la fin de course).
+
+Vous pouvez à tout moment changer d'utilisateur en faisant un switch account dans Metamask afin d'accèder, par la même url, à l'interface de pari et de récupération des gains.
+
+
+
+
+TODO : (voir comment gérer le rechargement automatique)
+
 
 ##Etape 1 : Le contrat - Création et consultation d'une course
 
-###Création d'une course
-
 Se mettre sur la branche Step 1.
 
-     git checkout step1-1
+     git checkout step1
 
-Le projet ainsi récupéré est déjà initialisé ([voir les étapes d'initialisation](#initialisation-projet) NE PAS LES EXECUTER, C'EST JUSTE POUR INFO )
-
-L'arborescence de notre projet est constituée de :
-
-- app => le répertoire contenant la partie WEB de notre D-app, qui contiendra le site en Angular 2
-
-- build => fichier de l'IHM préts au déploiement du
-
-   - contract => dossier où sont créer les fichier .sol.js qui sont des artifacts crées par un framework appelé Ether Pudding. Ces fichiers sont crées à partir d'une ABI, d'un binaire ou d'une adresse de contrat et vont permettre de s'interfacer facilement avec le contrat en Javascript.
-- contracts => les sources .sol des contracts de votre D-app
-- migration => les scripts de déploiement
-- test => le fichier contenant les sources js de test Mocha et Chai de nos smart-contract
-- truffle.js : le fichier de configuration de truffle
+Le projet ainsi récupéré est déjà initialisé (NE PAS LES RELANCER, c'est juste pour info [voir les étapes d'initialisation](#initialisation-projet))
 
 
 Le contrat est déjà crée, ainsi que son test unitaire.
 
 Seulement, j'ai sadiquement supprimé certaines lignes de code qui empèche les tests unitaires de fonctionner.
 
-Les fichiers impactés sont :
-- `contacts/MonTierce.sol` : le contract
-- `test/montierce.js` : son test unitaire
+Les deux fichiers impactés sont :
+- `contacts/MonTierce.sol` : le contract, qui va être le code déploié sur la blockchain et qui contiendra toutes les méthodes permettant de gérer des paris sur les courses. Ce contrat est écrit en SOLIDITY.
+- `test/montierce.js` : son test unitaire, qui va utilisé Mocha et Chai pour fournir des tests unitaires et d'intégration sur notre contrat
 
 Vous repérerez les zones corromptues par le pattern FIX_ME disséminé un peu partout dans le code.
 Au dessus de ces FIX_ME, des TAGs INFO vous donneront les indications pour compléter les trous.
@@ -186,26 +214,27 @@ Les tests unitaires se lancent, à la racine du répertoire horse-bet par le bia
      truffle test
 
 
-
-     <details>
-       <summary>SPOILER ALERT: solution de la copie de tableau dans la méthode initialiserCourse </summary>
-
-
-     ```
-             for(uint x= 0; x< chevauxParticipants.length; x++ ){
-               courses[courseIDGenerator].chevauxEnCourse.push(chevauxParticipants[x]);
-             }
-     ```
-
-     </details>
-
+Pour le debug, c'est compliqué et rien n'est fourni de base.
+Vous pouvez cependant utiliser [les events et les logs js](#le-debuggage)
 
 Au terme de cette première partie de TP, les tests unitaires doivent être au vert.
 
 Pour voir la correction de ce TP :
 
-     git checkout step1-1c
+     git checkout step1-final
 
+
+<details>
+  <summary>SPOILER ALERT: solution de la copie de tableau dans la méthode initialiserCourse </summary>
+
+
+```
+        for(uint x= 0; x< chevauxParticipants.length; x++ ){
+          courses[courseIDGenerator].chevauxEnCourse.push(chevauxParticipants[x]);
+        }
+```
+
+</details>
 
 ## Etape 2 : Mise en place de la fonctionnalité de pari
 
@@ -266,34 +295,26 @@ L'avantage de truffle c'est qu'il va utiliser le framework Javascript WEB3, avec
 La bonne nouvelle, c'est que c'est exactement les mêmes surcouches qui sont utilisée dans les tests que nous avons fait jusqu'à présent.
 Par conséquent, vous connaissez déjà la syntaxe.
 
+L'IHM est en Angular 2 mais libre à vous d'utiliser n'importe quelle autre techno web.
+J'ai utilisé la base du projet https://github.com/blacksonic/angular2-babel-esnext-starter pour notre IHM.
+
+Cela fournit une IHM Angular de base en ES6, servie par un serveur koa, avec liveReload et contruite avec gulp et webpack.
+
+
 
 ##Etape 5 : Déploiement du contrat sur une blockchain privée (Optionnelle)
 Utilisation du client geth pour monter une blockchain privée et configuration de Truffle pour l'utiliser.
 Voir comment on autorise les transactions pour les paris
 
+Création d'une blockchain de test privée :
+
+    geth --dev
 
 #Etape 6 : Sécurisation du smart contract
 Application du pattern withdrawal.
 
 
-#Annexe : Interagir en mode console
-//TODO : remplacer par des vrais appels à notre contrat
-// get the deployed version of our contract
-truffle(default)> var poe = ProofOfExistence1.deployed()
-// and print its address
-truffle(default)> console.log(poe.address)
-0x3d3bce79cccc331e9e095e8985def13651a86004
-// let's register our first "document"
-truffle(default)> poe.notarize('An amazing idea')
-Promise { <pending> }
-// let's now get the proof for that document
-truffle(default)> poe.calculateProof('An amazing idea').then(console.log)
-Promise { <pending> }
-0xa3287ff8d1abde95498962c4e1dd2f50a9f75bd8810bd591a64a387b93580ee7
-// To check if the contract's state was correctly changed:
-truffle(default)> poe.proof().then(console.log)
-0xa3287ff8d1abde95498962c4e1dd2f50a9f75bd8810bd591a64a387b93580ee7
-// The hash matches the one we previously calculated
+
 
 
 #Annexes
