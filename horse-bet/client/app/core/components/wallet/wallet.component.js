@@ -39,6 +39,10 @@ export class WalletComponent {
         //   });
     });
     } else {
+      console.log("on devrait changer d'adresse");
+      setTimeout(()=>{
+        this.currentAddress = 'changement adresse';
+      },500);
       this.errorMessage="Le plugin Metamask doit étre installé et configuré sur votre navigateur.";
     }
   }
