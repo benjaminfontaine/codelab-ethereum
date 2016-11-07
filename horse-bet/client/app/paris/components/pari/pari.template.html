@@ -1,6 +1,4 @@
-<p id="activeAccount">Adresse actuelle du wallet (Metamask) : {{currentAddress}}</p>
-<p>Votre solde : {{currentBalance}} Ethers</p>
-
+<wallet></wallet>
 <div id="actionPublic">
   <h2>Espace parieurs</h2>
   <div>
@@ -51,37 +49,3 @@
 </div>
 
 <br/><br/>
-
-<div id="actionOwner">
-  <h2>Espace administrateur (pseudo Oracle)</h2>
-  <form id="formulaireAdmin">
-    <h3>Créer une course :</h3>
-    <br/>
-    <div>
-      <label for="chevauxParticipants">Chevaux participants : </label>
-      <select name="chevauxParticipants" id="chevauxParticipants">
-        <option *ngFor="let cheval of chevauxExistants" [value]="cheval">{{cheval}}</option>
-      </select>
-    </div>
-    <br/>
-    <button type="button">Créer la course </button>
-    <br/><br/>
-    <h3>Interdire les paris : </h3>
-    <div>
-      <label for="idCourse">Identifiant de la course : </label>
-      <input name="idCourse" id="idCourse" type="text"/>
-    </div>
-    <br/>
-    <button type="button">Bloquer les paris </button>
-
-    <h3>Terminer la course :</h3>
-    <br/>
-    <div>
-      <label for="idFinCourse">Identifiant de la course : </label>
-      <input name="idFinCourse" id="idFinCourse" type="text"/>
-    </div>
-    <br/><br/>
-    <button type="button">Fin de la course </button>
-    <br/>
-  </form>
-</div>
