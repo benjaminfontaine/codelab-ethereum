@@ -6,8 +6,7 @@ import MonTierce from "../../../../../contracts/MonTierce.sol";
 
 @Component({
   selector: 'wallet',
-  template: template,
-  changeDetection: ChangeDetectionStrategy.OnPush
+  template: template
 })
 export class WalletComponent {
 
@@ -17,7 +16,7 @@ export class WalletComponent {
     this.currentBalance = 0;
     this.currentAddress = "pas d'adresse trouvée";
     if (typeof web3 !== 'undefined') {
-      window.addEventListener('load', function() {
+      window.addEventListener('load', () => {
         this.currentAddress = 'changement adresse';
         console.log("on devrait changer d'adresse");
         // // Supports Metamask and Mist, and other wallets that provide 'web3'.
