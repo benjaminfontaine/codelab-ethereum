@@ -21,7 +21,8 @@ contract MonTierce is mortal{
     uint idCourse;
     uint montantTotalMises;
     bool terminee;
-    //les chevaux sont représentés par leur id
+    bool parisBloques;
+    //les chevaux sont représentés par leur ids
     uint32[] chevauxEnCourse;
     //on ne peut pas itérer sur le mapping paris sans ça
     address[] parisKeySet;
@@ -44,8 +45,7 @@ contract MonTierce is mortal{
     courses[courseIDGenerator].idCourse= courseIDGenerator;
     courses[courseIDGenerator].montantTotalMises=0;
     courses[courseIDGenerator].terminee=false;
-    //INFO : on doit copier les chevauxParticipants dans le storage du contrat
-    // => courses[courseIDGenerator].chevauxEnCourse
+    courses[courseIDGenerator].parisBloques=false;
     for(uint x= 0; x< chevauxParticipants.length; x++ ){
       courses[courseIDGenerator].chevauxEnCourse.push(chevauxParticipants[x]);
     }
@@ -57,9 +57,9 @@ contract MonTierce is mortal{
 
   event GetInfosCourse(uint idCourse);
   //cette méthode, en lecture seule, permets de récupérer les informations de la course
-  function getInfosCourse(uint idCourse) public returns(uint, uint, bool, uint32[]){
+  function getInfosCourse(uint idCourse) public returns(uint, uint, bool, uint32[], bool){
     GetInfosCourse(idCourse);
-    return (courses[idCourse].idCourse, courses[idCourse].montantTotalMises, courses[idCourse].terminee, courses[idCourse].chevauxEnCourse);
+    return (courses[idCourse].idCourse, courses[idCourse].montantTotalMises, courses[idCourse].terminee, courses[idCourse].chevauxEnCourse , courses[idCourse].parisBloques);
   }
 
     //fonction de fallback indispensable sinon la fonction parier revoit un throw à chaque appel
@@ -81,6 +81,11 @@ contract MonTierce is mortal{
         throw;
       }
 
+    //ou que les paris sont bloques
+    if(course.parisBloques){
+      throw;
+    }
+
       //on contrôle que le pari s'effectue sur des chevaux existants
       for(uint i = 0; i < 3; i++){
         bool chevalExiste = false;
@@ -98,6 +103,12 @@ contract MonTierce is mortal{
       course.montantTotalMises += msg.value;
     }
 
+  event InterdireParis(uint idCourse);
 
+  //bloquer les paris au début de la course
+  function interdireParis(uint idCourse) onlyowner{
+    courses[idCourse].parisBloques=true;
+    InterdireParis(idCourse);
+  }
 
 }
