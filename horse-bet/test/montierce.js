@@ -156,7 +156,8 @@ contract('MonTierce', function(accounts) {
             })
             .then(function (){
               console.log("interdire pari");
-              return contratTierce.interdireParis(courseId);
+              //INFO : on souhatte maintenant interdire les paris en appelant la fonction interdireParis du contrat
+              return FIX_ME;
             })
             .then(function (){
               console.log("pari 5");
@@ -183,7 +184,10 @@ contract('MonTierce', function(accounts) {
                 assert.equal(pari3EnErreur, true, "Le pari 3 ne devrait passé car les paris étaient bloqués");
                 assert.equal(pari5EnErreur, true, "Le pari 5 ne devrait pas être passé car il a misé sur le cheval 12 inexistant");
                 assert.equal(courseDatas[4], true, "Les paris doivent être interdits sur la course");
-                events.stopWatching();
+                //INFO : comment faire pour que mes tests me rendent la main après leur lancement
+                //INDICE : le framework web3 est encore en attente de lecture d'events
+                // https://github.com/ethereum/wiki/wiki/JavaScript-API#contract-allevents
+                FIX_ME
                 done();
             })
             .catch(function(err){
