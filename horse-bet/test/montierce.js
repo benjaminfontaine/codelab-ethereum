@@ -41,16 +41,18 @@ contract('MonTierce', function(accounts) {
         .then(function (idCourseCompteur){
           //idCourseCompteur est un BigInteger, on doit le convertir
           idCourseCree = Number(idCourseCompteur - 1);
-          //et on recherche ensuite des informations sur cette course
-          return contratTierce.getInfosCourse.call(idCourseCree);
+          //on recherche ensuite des informations sur cette course
+          //INFO : même syntaxe que pour l'id generator avec un paramètre en plus
+          return FIX_ME;
         })
         .then(function(courseDatas){
-          assert.equal(courseDatas[0], idCourseCree, "L'id de la course dans le storage doit être 0");
-          assert.equal(courseDatas[1], false, "La course ne doit pas être terminée");
+          //INFO : les données de la course sont retournées dans le tableau courseDatas
+          assert.equal(FIX_ME, idCourseCree, "L'id de la course dans le storage doit être 0");
+          assert.equal(FIX_ME, false, "La course ne doit pas être terminée");
           //web3 renvoie des BigInteger pour les uint, il faut donc les convertir en nombre standards
           var chevauxEnCourseRetournes = [];
-          for(var i = 0 ; i < courseDatas[2].length; i++){
-            chevauxEnCourseRetournes.push(Number(courseDatas[2][i]));
+          for(var i = 0 ; i < FIX_ME.length; i++){
+            chevauxEnCourseRetournes.push(Number(FIX_ME[i]));
           }
           assert.deepEqual(chevauxEnCourseRetournes, chevauxEnCourse, "Les chevaux en course dans le storage doivent être ceux passés à l'initialisation");
           //indispensable pour que le test unitaire se termine
