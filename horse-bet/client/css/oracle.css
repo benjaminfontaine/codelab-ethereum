@@ -1,0 +1,9 @@
+#zoneChevauxParticipants select{
+  position: relative;
+  top: 83px;
+  height: 100px;
+}
+
+#zoneChevauxParticipants label{
+  height: 100px;
+}

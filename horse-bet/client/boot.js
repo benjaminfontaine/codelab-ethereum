@@ -13,14 +13,13 @@ import { TranslateModule } from 'ng2-translate';
 
 import { routes } from './app/core/app.routes';
 import { CORE_DECLARATIONS, AppComponent } from './app/core';
-import { PARIS_DECLARATIONS } from './app/paris';
 
 if (ENVIRONMENT === 'production') {
   enableProdMode();
 }
 
 @NgModule({
-  declarations: [CORE_DECLARATIONS, PARIS_DECLARATIONS],
+  declarations: [CORE_DECLARATIONS],
   imports: [
     HttpModule, BrowserModule, FormsModule, ReactiveFormsModule,
     TranslateModule.forRoot(),

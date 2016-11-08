@@ -1,20 +1,19 @@
-<div style="text-align: center; color: white; font-weight: bold; background-color: red; padding: 3px 10px;">{{errorMessage}}</div>
-<br/>
+<h2>Espace Oracle (admin)</h2>
 <wallet></wallet>
 <br/>
 <div id="actionOwner">
-  <h2>Espace Oracle (admin)</h2>
-  <form id="formulaireAdmin">
+  <form id="oracleForm" [formGroup]="oracleForm">
     <h3>Créer une course :</h3>
     <br/>
-    <div>
+    <div id="zoneChevauxParticipants">
       <label for="chevauxParticipants">Chevaux participants : </label>
-      <select name="chevauxParticipants" id="chevauxParticipants">
-        <option *ngFor="let cheval of chevauxExistants" [value]="cheval">{{cheval}}</option>
+      <select formControlName="chevauxParticipants" id="chevauxParticipants" multiple>
+        <option *ngFor="let cheval of chevauxExistants" [value]="cheval.id">{{cheval.name}}</option>
       </select>
     </div>
     <br/>
-    <button type="button">Créer la course </button>
+    <button (click)="creerCourse(oracleForm.value)" type="button" type="submit" [disabled]="!oracleForm.valid" class="btn btn-primary">Créer la course </button>
+
     <br/><br/>
     <h3>Interdire les paris : </h3>
     <div>

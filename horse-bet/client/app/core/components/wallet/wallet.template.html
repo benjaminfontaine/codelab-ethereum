@@ -1,2 +1,7 @@
-<p id="activeAccount">Adresse actuelle du wallet (Metamask) : {{currentAddress}}</p>
-<p>Votre solde : {{currentBalance}} Ethers</p>
+<div [hidden]="!errorMessage" style="text-align: center; color: white; font-weight: bold; background-color: red; padding: 3px 10px;">{{errorMessage}}</div>
+
+<div id="wallet">
+  <h3> Wallet </h3>
+  <p id="activeAccount">Adresse actuelle du wallets : {{currentAddress}}</p>
+  <p>Votre solde : {{currentBalance}} Ethers</p>
+</div>

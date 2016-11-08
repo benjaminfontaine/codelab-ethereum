@@ -6,7 +6,8 @@ import MonTierce from "../../../../../contracts/MonTierce.sol";
 
 @Component({
   selector: 'wallet',
-  template: template
+  template: template,
+  styleUrls: ['css/wallet.css']
 })
 export class WalletComponent {
 
@@ -15,11 +16,11 @@ export class WalletComponent {
     this.currentBalanceEventEmitter = new EventEmitter();
     this.currentBalance = 0;
     this.currentAddress = "pas d'adresse trouvée";
-    setTimeout(()=>
-      this.zone.run(() => {
+    setTimeout(()=> {
+
         this.currentAddress = 'changement adresse';
         console.log("timeout expire");
-    }),500);
+    },500);
 
     if (typeof web3 !== 'undefined') {
       window.addEventListener('load', () => {

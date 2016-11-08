@@ -1,0 +1,23 @@
+#wallet{
+  border : 2px solid black;
+  border-radius: 5px;
+  position:relative;
+  margin-top: 40px;
+  padding-left: 30px;
+  height:85px;
+}
+
+#wallet p{
+  position:relative;
+  top:-35px;
+}
+
+#wallet h3{
+  position:relative;
+  top:-35px;
+  left:30px;
+  padding-left: 17px;
+  width: 100px;
+  z-index: 100;
+  background-color: white;
+}
