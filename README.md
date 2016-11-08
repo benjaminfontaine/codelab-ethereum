@@ -101,6 +101,7 @@ Pour Linux, MacOS et Windows
 
      cd horse-bet
      npm install
+     npm install -g gulp
 
 Cette commande va installer toutes les dépendances npm du projet (truffle, ethereumjs-testrpc, angular2, webpack, gulp ...)
 
@@ -136,7 +137,7 @@ Installez le navigateur Chrome et le plugin [Metamask](https://metamask.io/)
 
 ### Test de l'application
 
-Récupèrer la correction du TP1 :
+Récupèrer la version finale du projet :
 
      git checkout master
 
@@ -144,17 +145,20 @@ Lancer testrpc avec l'option -d (déterministe) qui va faire que les comptes gé
 
      testrpc -d
 
+
+#### Lancement des tests unitaires
 Puis lancer les tests truffle qui doivent passer :
 
     truffle test
 
-Pour lancer
+#### Lancement de l'IHM
 
     npm install (si pas déjà fait)
+    npm install -g gulp (si pas déjà fait)
     gulp serve
 
 Cela lance une url [localhost:9000](http://localhost:9000/) dans votre navigateur web favori.
-Mais ouvrez la plutôt avec Chrome.
+Mais *ouvrez la plutôt avec Chrome* car nous aurons besoin du plugin Metamask.
 
 Cliquer sur l'icone du plugin Metamask en haut à droite de votre fenêtre (un renard orangé).
 
@@ -162,7 +166,8 @@ Pour qu'une IHM de D-app fonctionne, elle doit être interfacée avec un portefe
 
 A l'heure actuelle, il y a deux solutions : *Metamask* qui permet d'ajouter un portefeuille ultra léger à Chrome (il ne télécharge pas de blockchain) et le navigateur dédie *Mist* qui se veut être l'appstore des D-apps.
 
-Le plugin Metamask va permettre à une application web qui utilise la librairie js web3, de communiquer avec n'importe quelle blockchain (rpc, privée, morden ou la principale).
+Le plugin Metamask va permettre à une application web qui utilise la librairie js web3, de se connecter à un compte d'un portefeuille de n'importe quelle blockchain (rpc, 
+privée, morden ou la principale).
 
 Pour pouvoir interfacer le plugin Metamask avec votre blockchain RPC, il faut le configurer.
 
@@ -183,20 +188,18 @@ Vous pouvez à tout moment changer d'utilisateur en faisant un switch account da
 
 
 
+#Démarrage du TP
 
-TODO : (voir comment gérer le rechargement automatique)
+##Etape 1-1 : Le contrat - Création d'une course
 
+Se mettre sur la branche Step 1-1.
 
-##Etape 1 : Le contrat - Création et consultation d'une course
+     git checkout step1-1
 
-Se mettre sur la branche Step 1.
-
-     git checkout step1
-
-Le projet ainsi récupéré est déjà initialisé (NE PAS LES RELANCER, c'est juste pour info [voir les étapes d'initialisation](#initialisation-projet))
+S'il y a des modifications qui vous empêche de faire le switch de branche, faites un git stash.
 
 
-Le contrat est déjà crée, ainsi que son test unitaire.
+Sur cette branche, le contrat est déjà crée, ainsi que son test unitaire.
 
 Seulement, j'ai sadiquement supprimé certaines lignes de code qui empèche les tests unitaires de fonctionner.
 
@@ -211,17 +214,20 @@ Vous pouvez tester la compilation du contrat en temps réel via :
 https://ethereum.github.io/browser-solidity/
 
 Les tests unitaires se lancent, à la racine du répertoire horse-bet par le biais de la commande :
+
      truffle test
 
 
-Pour le debug, c'est compliqué et rien n'est fourni de base.
+*Pour le debug*, c'est compliqué et rien n'est fourni de base.
+
 Vous pouvez cependant utiliser [les events et les logs js](#le-debuggage)
 
 Au terme de cette première partie de TP, les tests unitaires doivent être au vert.
 
+
 Pour voir la correction de ce TP :
 
-     git checkout step1-final
+     git checkout step1-1c
 
 
 <details>
@@ -236,41 +242,75 @@ Pour voir la correction de ce TP :
 
 </details>
 
-## Etape 2 : Mise en place de la fonctionnalité de pari
 
-Maintenant que nous pouvons créer et consulter les informations d'une course, nous pouvons passer à l'étape suivante : la fonctionnalité de parier.
+##Etape 1-2 : Le contrat - Consultation d'une course
 
-Tout d'abord charger la deuxième partie du TP :
+Se mettre sur la branche Step 1-2.
 
-     git checkout step2
+     git checkout step1-2
 
-Deux méthodes ont fait leur apparition dans le contrat `contacts/MonTierce.sol`
-- parier : méthode publique qui va permettre au parieur de miser un tierce une certaine somme d'argent. Stocke ce pari dans la course.
-- interdireParis : méthode du propriètaire qui va bloquer la fonctionnalité de pari une fois la course démarrée
+Dans cette partie, nous avons rajouté une méthode getInfosCourse dans le contrat `contacts/MonTierce.sol`. Cette méthode va permettre de consulter des données sur une course.
+Pas de FIX_ME dans le code de ce contrat.
+Par contre, le test unitaire `test/montierce.js`, en appliquant le même principe vicieux que précedemment, nécessite d'être complété pour fonctionner.
 
-
-De la même manière que l'exercice 1, traquez les FIX_ME dans ce contrat afin qu'il compile et que le nouveau test unitaire du fichier `test/montierce.js`, lui aussi un peu troué passe.
 
 
 Pour voir la correction de ce TP :
 
-     git checkout step2-final
+     git checkout step1-2c
 
 
 
-##Etape 3 : Implémentation de la méthode de fin de course.
+
+## Etape 2 : Le contrat - Mise en place de la fonctionnalité de pari
+
+Maintenant que nous pouvons créer et consulter les informations d'une course, nous pouvons passer à l'étape suivante : la fonctionnalité de parier.
+
+### Etape 2-1 - La fonction parier
+
+Tout d'abord charger la deuxième partie du TP :
+
+     git checkout step2-1
+
+Une nouvelle méthode a fait son apparition dans le contrat `contacts/MonTierce.sol`
+- parier : méthode publique qui va permettre au parieur de miser un tierce une certaine somme d'argent. Stocke ce pari dans la course.
+
+
+De la même manière que l'exercice 1, traquez les FIX_ME dans ce contrat afin qu'il compile et que le nouveau test unitaire du fichier `test/montierce.js` passe.
+
+
+Pour voir la correction de ce TP :
+
+     git checkout step2-1
+     
+     
+### Etape 2-2 - La fonction interdirePari
+
+     git checkout step2-2
+
+Une nouvelle méthode a fait son apparition dans le contrat `contacts/MonTierce.sol`
+- interdireParis : méthode du propriètaire qui va bloquer la fonctionnalité de pari une fois la course démarrée
+
+Cette fois-ci, c'est notre TU qu'il va falloir réparer, dans `test/montierce.js`.
+
+Pour voir la correction de ce TP :
+
+     git checkout step2-2c
+   
+   
+
+##Etape 3 : Le contrat - Implémentation de la méthode de fin de course.
 
 Cette méthode doit parcourir tous les paris de la course, déterminer ceux qui sont gagnants, et d'envoyer le gain à tous les vainqueurs.
 
 Vous devez commencer à avoir l'habitude, pour la troisième partie du TP, on lance :
 
-     git checkout step3
-
-
+     git checkout step3-1
 
 
 Deux méthodes ont fait leur apparition dans le contrat `contacts/MonTierce.sol`
 - terminerCourse : méthode du propriètaire qui va effectuer toutes les opérations de fin de course.
+- annulerParis : méthode qui va rendre leur argent aux parieurs si personne n'a gagné ou s'il y a un soucis sur la course
 
 Concernant l'algorithme de distribution des gains.
 C'est un algorithme maison dont je n'ai pas encore complétement testé la fiabilité.
@@ -282,12 +322,13 @@ La formule de calcul est la suivante :
 où facteurGain est un nombre entre 0 et 100 qui varie en fonction du fait qu'il y ait ou pas des gagnants de chaque type.
 
 
-De la même manière que les exercices 1 et 2, traquez les FIX_ME dans ce contrat afin qu'il compile et que le nouveau test unitaire du fichier `test/montierce.js`, lui aussi un peu troué passe.
+De la même manière que les exercices 1 et 2, traquez les FIX_ME dans ce contrat afin qu'il compile et que le nouveau test unitaire du fichier `test/montierce.js` passe.
 
 
 Pour voir la correction de ce TP :
 
-     git checkout step3-final
+     git checkout step3-1c
+
 
 ## Etape 4 : L'IHM
 Nous voila de retour dans un domaine un peu plus connu, l'IHM de la D-app.
@@ -300,20 +341,31 @@ J'ai utilisé la base du projet https://github.com/blacksonic/angular2-babel-esn
 
 Cela fournit une IHM Angular de base en ES6, servie par un serveur koa, avec liveReload et contruite avec gulp et webpack.
 
+Pour la lancer : 
+
+    npm install (si pas déjà fait)
+    npm install -g gulp (si pas déjà fait)
+    gulp serve
+
+### Etape 4-1 : Intégration des smart-contrats à l'application
+
+
+
 
 
 ##Etape 5 : Déploiement du contrat sur une blockchain privée (Optionnelle)
 Utilisation du client geth pour monter une blockchain privée et configuration de Truffle pour l'utiliser.
-Voir comment on autorise les transactions pour les paris
 
 Création d'une blockchain de test privée :
 
     geth --dev
 
+Brancher le plugin Metamask sur cette nouvelle blockchain.
+
 #Etape 6 : Sécurisation du smart contract
 Application du pattern withdrawal.
 
-
+//TODO
 
 
 
@@ -344,6 +396,7 @@ function parier(uint idCourse, uint32[3] chevauxTierce) public returns(bool pari
  ...
 }
 ```
+
 ##Initialisation projet
 Initialiser le projet :
 
