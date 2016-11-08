@@ -23,8 +23,11 @@ contract MonTierce is mortal{
     bool terminee;
     //les chevaux sont représentés par leur id
     uint32[] chevauxEnCourse;
-    //on ne peut pas itérer sur le mapping paris sans ça
-    address[] parisKeySet;
+
+    //INFO quand on a besoin de parcourir un mapping avec solidity
+    //on a besoin de recourir à des astuces
+    //INDICE : on va s'appuyer sur une structure de donnée à part pour itérer sur la map
+    FIX_ME parisKeySet;
     mapping (address => Pari) paris;
   }
 
@@ -67,7 +70,10 @@ contract MonTierce is mortal{
 
     event Parier(uint idCourse, uint32[3] chevauxTierce, address messageSender, uint mise, uint senderBalance);
 
-    function parier(uint idCourse, uint32[3] chevauxTierce) payable  {
+  //INFO : sans le mot clé dans la déclaration indiquant que cette fonction recevra des ethers
+  // la fonction renverra un throw systématiquement à chaque appel...sans autre indications sig...
+  // https://github.com/ethereum/solidity/releases/tag/v0.4.0
+    function parier(uint idCourse, uint32[3] chevauxTierce) FIX_ME  {
       Parier(idCourse, chevauxTierce, msg.sender, msg.value, msg.sender.balance);
 
       Course course = courses[idCourse];
@@ -94,7 +100,14 @@ contract MonTierce is mortal{
         }
       }
       course.parisKeySet.push(msg.sender);
-      course.paris[msg.sender] = Pari(msg.sender, msg.value, chevauxTierce, EtatPari.NonDetermine);
+
+    //INFO : on veut créer une struct Pari avec :
+    //   adresseParieur = msg.sender => adresse de l'auteur du pari
+    //   mise = msg.value => valeur en wei du pari
+    //   chevauxTierce = chevauxTierce
+    //   etat = EtatPari.NonDetermine
+    // INDICE : http://ethereum.stackexchange.com/questions/1511/how-to-initialize-a-struct
+      course.paris[msg.sender] = FIX_ME;
       course.montantTotalMises += msg.value;
     }
 
