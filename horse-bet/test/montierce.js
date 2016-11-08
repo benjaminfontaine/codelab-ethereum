@@ -56,7 +56,7 @@ contract('MonTierce', function(accounts) {
                     chevauxEnCourseRetournes.push(Number(courseDatas[3][i]));
                 }
                 assert.deepEqual(chevauxEnCourseRetournes, chevauxEnCourse, "Les chevaux en course dans le storage doivent être ceux passés à l'initialisation");
-      assert.equal(courseDatas[4], false, "Les paris doivent être autorisés sur la course");
+                assert.equal(courseDatas[4], false, "Les paris doivent être autorisés sur la course");
                 //indispensable pour que le test unitaire se termine
                 events.stopWatching();
                 done();
@@ -69,11 +69,6 @@ contract('MonTierce', function(accounts) {
             });
         
         //tente de faire une transaction de création de course sur un account autre que le owner
-        // INFO : il faut appeler la fonction d'initialisation de la course
-        // en lui passant les chevaux participants et en utilisant account_two
-        // Syntaxe de l'appel d'une fonction sur un contrat : http://truffle.readthedocs.io/en/latest/getting_started/contracts/#making-a-transaction
-        // cette appel déclenche une action d'écriture, on utilisera donc la syntaxe :
-        // interfaceContrat.nomMethode(parametres1,[ parametres2 ...],[ {options} ])
         contratTierce.initialiserCourse(chevauxEnCourse,{from: account_two}).catch(function(error){
             //cette création doit échouer
             initOwnerOnly = true;
@@ -97,6 +92,7 @@ contract('MonTierce', function(accounts) {
         var courseId = -1;
         var pari3EnErreur = false;
         var pari5EnErreur = false;
+        var pari6EnErreur = false;
         
         contratTierce.initialiserCourse(chevauxEnCourse)
             .then(function(transactionId) {
@@ -155,23 +151,23 @@ contract('MonTierce', function(accounts) {
                 return contratTierce.parier(courseId, [6,10,4], {value: 2000, gas: 2000000, from: account_four});
             })
             .then(function (){
-              console.log("interdire pari");
-              return contratTierce.interdireParis(courseId);
+                console.log("interdire pari");
+                return contratTierce.interdireParis(courseId);
             })
             .then(function (){
-              console.log("pari 5");
-              return contratTierce.parier(courseId, [9,7,4], {value: 3000, gas: 2000000, from: account_five});
+                console.log("pari 5");
+                return contratTierce.parier(courseId, [9,7,4], {value: 3000, gas: 2000000, from: account_five});
             })
             .catch(function (err){
-              console.log("catch 2");
-              console.log(err.message);
-              //l'erreur renvoyée quand on lance un throw depuis le contrat
-              if(err.message.indexOf(throwMessage) !== -1){
-                pari5EnErreur =true;
-              }else {
-                console.log(err);
-                assert.fail("Une erreur inattendue s'est produite "+ err.message);
-              }
+                console.log("catch 2");
+                console.log(err.message);
+                //l'erreur renvoyée quand on lance un throw depuis le contrat
+                if(err.message.indexOf(throwMessage) !== -1){
+                    pari5EnErreur =true;
+                }else {
+                    console.log(err);
+                    assert.fail("Une erreur inattendue s'est produite "+ err.message);
+                }
             })
             .then(function(){
                 console.log("get info 3");
@@ -183,6 +179,29 @@ contract('MonTierce', function(accounts) {
                 assert.equal(pari3EnErreur, true, "Le pari 3 ne devrait passé car les paris étaient bloqués");
                 assert.equal(pari5EnErreur, true, "Le pari 5 ne devrait pas être passé car il a misé sur le cheval 12 inexistant");
                 assert.equal(courseDatas[4], true, "Les paris doivent être interdits sur la course");
+                console.log("terminer course");
+                return contratTierce.terminerCourse(courseId,[6,10,8]);
+            })
+            .then(function(){
+                console.log("get info 4");
+                return contratTierce.getInfosCourse.call(courseId);
+            })
+            .then(function(courseDatas){
+                console.log("analyse info 4");
+                assert.equal(courseDatas[2], true, "La course davrait être terminée");
+                console.log("pari 6");
+                return contratTierce.parier(courseId, [9,7,4], {value: 3000, gas: 2000000, from: account_one});
+            })
+            .catch(function(err){
+                if(err.message.indexOf(throwMessage) !== -1){
+                    pari6EnErreur =true;
+                }else {
+                    console.log(err);
+                    assert.fail("Une erreur inattendue s'est produite "+ err.message);
+                }
+            })
+            .then(function(courseDatas){
+                assert.equal(pari6EnErreur, true, "Le dernier pari devrait avoir été refusé car la course est terminée");
                 events.stopWatching();
                 done();
             })
@@ -193,4 +212,73 @@ contract('MonTierce', function(accounts) {
                 done();
             });
     });
+    
+    it("possède une fonction terminerCourse qui va calculer les gains et payer tous les parieurs", function(done) {
+        var balanceAccount2, balanceAccount3, balanceAccount4, balanceAccount5, balanceAccount6;
+        
+        var contratTierce = MonTierce.deployed();
+        var events = contratTierce.allEvents({});
+        var courseId;
+        events.watch(function(error, result) {
+            console.log(result.event);
+            console.log(result.args);
+        });
+        contratTierce.initialiserCourse(chevauxEnCourse).catch(function(error){
+            console.log(console.error());
+        })
+            .then(function(transactionId) {
+                return contratTierce.courseIDGenerator.call();
+            })
+            .then(function(lastCourseId){
+                courseId = Number(lastCourseId-1);
+                console.log("courseId" + courseId);
+                return contratTierce.parier(courseId, [9,7,4], {value: 3000, gas: 2000000, from: account_six});
+            })
+            .then(function(){
+                return contratTierce.parier(courseId, [10,5,6], {value: 4000, gas: 2000000, from: account_two});
+            })
+            .then(function(){
+                return contratTierce.parier(courseId, [1,2,3], {value: 1000, gas: 2000000, from: account_three});
+            })
+            .then(function(){
+                return contratTierce.parier(courseId, [1,2,5], {value: 2000, gas: 2000000, from: account_four});
+            })
+            .then(function(){
+                return contratTierce.parier(courseId, [1,8,9], {value: 10000, gas: 2000000, from: account_five});
+            })
+            .then(function (){
+                return contratTierce.interdireParis(courseId);
+            })
+            .then(function(){
+                balanceAccount2=web3.eth.getBalance(account_two);
+                balanceAccount3=web3.eth.getBalance(account_three);
+                balanceAccount4=web3.eth.getBalance(account_four);
+                balanceAccount5=web3.eth.getBalance(account_five);
+                balanceAccount6=web3.eth.getBalance(account_six);
+                
+                return contratTierce.terminerCourse(courseId,[1,2,3]);
+            })
+            .then(function(){
+                console.log("asserts");
+                var balanceAccount2Apres=web3.eth.getBalance(account_two);
+                var balanceAccount3Apres=web3.eth.getBalance(account_three);
+                var balanceAccount4Apres=web3.eth.getBalance(account_four);
+                var balanceAccount5Apres=web3.eth.getBalance(account_five);
+                var balanceAccount6Apres=web3.eth.getBalance(account_six);
+                
+                assert.equal(balanceAccount2Apres.minus(balanceAccount2).toString(10), "0", "Le compte 2 devrait avoir gagné weis");
+                assert.equal(balanceAccount3Apres.minus(balanceAccount3).toString(10), "2909", "Le compte 3 devrait avoir gagné 1909 weis");
+                assert.equal(balanceAccount4Apres.minus(balanceAccount4).toString(10), "3909", "Le compte 4 devrait avoir gagné 1909 weis");
+                assert.equal(balanceAccount5Apres.minus(balanceAccount5).toString(10), "13181", "Le compte 5 devrait avoir gagné 3181 weis");
+                assert.equal(balanceAccount6Apres.minus(balanceAccount6).toString(10),  "0", "Le compte 6 devrait avoir gagné weis");
+                events.stopWatching();
+                done();
+            })
+            .catch(function(err){
+                console.log(err);
+                events.stopWatching();
+                done();
+            })
+    });
+    
 });
