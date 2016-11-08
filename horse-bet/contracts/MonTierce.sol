@@ -36,7 +36,7 @@ contract MonTierce is mortal{
     //INFO : on doit copier les chevauxParticipants dans le storage du contrat
     // => courses[courseIDGenerator].chevauxEnCourse
     // INDICE : on ne peut pas copier le tableau chevauxParticipants
-    //directement de la callstack dans l'espace storage, le code est en spoiler dans le TP
+    //directement de la callstack dans l'espace storage, le code est en spoiler dans le  README.md
     FIX_ME
     InitialisationCourse(chevauxParticipants, courses[courseIDGenerator].idCourse, owner);
 

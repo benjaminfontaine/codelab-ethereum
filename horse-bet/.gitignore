@@ -1,0 +1,4 @@
+.truffle-solidity-loader/
+node_modules
+**/.DS_Store
+dist

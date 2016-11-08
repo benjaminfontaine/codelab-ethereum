@@ -1,0 +1,56 @@
+<div style="text-align: center; color: white; font-weight: bold; background-color: red; padding: 3px 10px;">{{errorMessage}}</div>
+<br/>
+
+<wallet></wallet>
+<br/>
+<br/>
+<div id="actionPublic">
+  <h2>Espace parieurs</h2>
+  <div>
+    <form id="formulaireParieur" [formGroup]="pariForm">
+      <h3>Parier</h3>
+      <div>
+        <label for="idCourse">L'identifiant de la course : </label>
+        <input name="idCourse" id="idCourse" type="text"/>
+      </div>
+
+      <div>
+        <label id="premierCourse" for="premierCourse">Le cheval gagnant de la course : </label>
+        <select formControlName="premierCourse">
+          <option *ngFor="let cheval of chevauxEnCourse" [value]="cheval">{{cheval}}</option>
+        </select>
+      </div>
+      <div>
+        <label for="secondCourse">Le second cheval de la course : </label>
+        <select name="secondCourse" id="secondCourse">
+          <option *ngFor="let cheval of chevauxEnCourse" [value]="cheval">{{cheval}}</option>
+        </select>
+      </div>
+      <div>
+        <label for="troisiemeCourse">Le troisième cheval de la course : </label>
+        <select name="troisiemeCourse" id="troisiemeCourse">
+          <option *ngFor="let cheval of chevauxEnCourse" [value]="cheval">{{cheval}}</option>
+        </select>
+      </div>
+      <div>
+        <label for="misePari">Votre mise :</label>
+        <input name="misePari" id="misePari" type="text"/>
+      </div>
+      <br/>
+      <button type="button">Parier</button>
+      <br/><br/>
+
+      <h3>Récupérer mes gains</h3>
+      <br/>
+      <div>
+        <label for="idCourseGain">L'identifiant de la course : </label>
+        <input name="idCourseGain" id="idCourseGain" type="text"/>
+      </div>
+      <br/>
+
+      <button type="button">Donne moi mes gains ! </button>
+    </form>
+  </div>
+</div>
+
+<br/><br/>
