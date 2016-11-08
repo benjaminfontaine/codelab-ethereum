@@ -5,7 +5,6 @@ import "mortal.sol";
 
 contract MonTierce is mortal{
 
-  //INFO : il manque le mot clé pour définir une structure de donnée
   struct Course {
     uint idCourse;
     bool terminee;
@@ -14,9 +13,8 @@ contract MonTierce is mortal{
   }
 
   uint public courseIDGenerator = 0;
-  //INFO définir une structure de données type Map qui va associer un id à une course.
+  //une structure de données type Map qui va associer un id à une course.
   // http://solidity.readthedocs.io/en/develop/types.html
-  // INDICE : MAP...G
   mapping (uint => Course) courses;
 
   //event qui va permettre de debugger le contrat au cours de test et au cours de la vie du contrat.
@@ -35,8 +33,6 @@ contract MonTierce is mortal{
 
     //INFO : on doit copier les chevauxParticipants dans le storage du contrat
     // => courses[courseIDGenerator].chevauxEnCourse
-    // INDICE : on ne peut pas copier le tableau chevauxParticipants
-    //directement de la callstack dans l'espace storage, le code est en spoiler dans le README.md
     for(uint x= 0; x< chevauxParticipants.length; x++ ){
       courses[courseIDGenerator].chevauxEnCourse.push(chevauxParticipants[x]);
     }
@@ -44,5 +40,12 @@ contract MonTierce is mortal{
 
     courseIDGenerator++ ;
     return courses[courseIDGenerator].idCourse;
+  }
+
+  event GetInfosCourse(uint idCourse);
+  //cette méthode, en lecture seule, permets de récupérer les informations de la course
+  function getInfosCourse(uint idCourse) public returns(uint, bool, uint32[]){
+    GetInfosCourse(idCourse);
+    return (courses[idCourse].idCourse, courses[idCourse].terminee, courses[idCourse].chevauxEnCourse);
   }
 }
