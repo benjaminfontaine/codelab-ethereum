@@ -1,7 +1,15 @@
 <div [hidden]="!errorMessage" style="text-align: center; color: white; font-weight: bold; background-color: red; padding: 3px 10px;">{{errorMessage}}</div>
 
-<div id="wallet">
-  <h3> Wallet </h3>
-  <p id="activeAccount">Adresse actuelle du wallets : {{currentAddress}}</p>
-  <p>Votre solde : {{currentBalance}} Ethers</p>
+<div id="panneauControle">
+  <div id="wallet">
+    <h3> Wallet </h3>
+    <p id="activeAccount"><span>Votre adresse actuelle :</span> {{currentAddress}}</p>
+    <p><span>Votre solde :</span> {{currentBalance}} Weis (10^-15 Ethers)</p>
+  </div>
+
+  <div id="contrat">
+    <h3> Contrat </h3>
+    <p><span>Adresse du contrat :</span> {{contractAddress}}</p>
+    <p><span>Solde du contrat :</span> {{contractBalance}}  Weis</p>
+  </div>
 </div>

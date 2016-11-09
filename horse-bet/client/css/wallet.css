@@ -1,23 +1,14 @@
-#wallet{
-  border : 2px solid black;
-  border-radius: 5px;
-  position:relative;
-  margin-top: 40px;
-  padding-left: 30px;
-  height:85px;
+#panneauControle{
+  background-color: grey;
+  color:white;
+  border-radius: 10px;
+  padding: 10px 20px;
 }
 
-#wallet p{
-  position:relative;
-  top:-35px;
+#wallet p, #contrat p{
+  margin-left:20px;
 }
 
-#wallet h3{
-  position:relative;
-  top:-35px;
-  left:30px;
-  padding-left: 17px;
-  width: 100px;
-  z-index: 100;
-  background-color: white;
+#wallet p span, #contrat p span{
+  font-weight: bold;
 }

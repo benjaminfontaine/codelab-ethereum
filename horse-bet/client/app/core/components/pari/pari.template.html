@@ -1,54 +1,49 @@
+<div id="message" [class.erreur]="estEnErreur"  [class.ok]="!estEnErreur">
+  {{message}}
+</div>
 <h2>Espace parieurs</h2>
 <wallet></wallet>
 <br/>
 <div id="actionPublic">
   <div>
     <form id="pariForm" [formGroup]="pariForm">
-      <h3>Parier</h3>
-      <div>
-        <label for="idCourse">L'identifiant de la course : </label>
-        <select formControlName="idCourse" id="idCourse">
-          <option *ngFor="let course of courses" [value]="course.id">{{course.name}}</option>
-        </select>
+      <div class="zoneFonctionnalite">
+        <h3>Parier</h3>
+        <div class="contenuFonctionnalite">
+          <div>
+            <label for="idCourse">L'identifiant de la course : </label>
+            <select formControlName="idCourse" id="idCourse">
+              <option *ngFor="let course of courses" [value]="course.id">{{course.name}}</option>
+            </select>
+          </div>
+
+          <div>
+            <label id="premierCourse" for="premierCourse">Le cheval gagnant de la course : </label>
+            <select formControlName="premierCourse">
+              <option *ngFor="let cheval of chevauxEnCourse" [value]="cheval.id">{{cheval.name}}</option>
+            </select>
+          </div>
+          <div>
+            <label for="secondCourse">Le second cheval de la course : </label>
+            <select formControlName="secondCourse">
+              <option *ngFor="let cheval of chevauxEnCourse" [value]="cheval.id">{{cheval.name}}</option>
+            </select>
+          </div>
+          <div>
+            <label for="troisiemeCourse">Le troisième cheval de la course : </label>
+            <select formControlName="troisiemeCourse">
+              <option *ngFor="let cheval of chevauxEnCourse" [value]="cheval.id">{{cheval.name}}</option>
+            </select>
+          </div>
+          <div>
+            <label for="misePari">Votre mise :</label>
+            <input formControlName="misePari" id="misePari" type="text"/>
+          </div>
+          <br/>
+          <button (click)="parier(pariForm.value)" type="button" type="submit" [disabled]="!pariForm.valid" class="btn btn-primary">Parier</button>
+        </div>
       </div>
 
-      <div>
-        <label id="premierCourse" for="premierCourse">Le cheval gagnant de la course : </label>
-        <select formControlName="premierCourse">
-          <option *ngFor="let cheval of chevauxEnCourse" [value]="cheval.id">{{cheval.name}}</option>
-        </select>
-      </div>
-      <div>
-        <label for="secondCourse">Le second cheval de la course : </label>
-        <select formControlName="secondCourse">
-          <option *ngFor="let cheval of chevauxEnCourse" [value]="cheval.id">{{cheval.name}}</option>
-        </select>
-      </div>
-      <div>
-        <label for="troisiemeCourse">Le troisième cheval de la course : </label>
-        <select formControlName="troisiemeCourse">
-          <option *ngFor="let cheval of chevauxEnCourse" [value]="cheval.id">{{cheval.name}}</option>
-        </select>
-      </div>
-      <div>
-        <label for="misePari">Votre mise :</label>
-        <input formControlName="misePari" id="misePari" type="text"/>
-      </div>
-      <br/>
-      <button (click)="parier(pariForm.value)" type="button" type="submit" [disabled]="!pariForm.valid" class="btn btn-primary">Parier</button>
-      <br/><br/>
-
-      <!-- <h3>Récupérer mes gains</h3>
-      <br/>
-      <div>
-        <label for="idCourseGain">L'identifiant de la course : </label>
-        <input name="idCourseGain" id="idCourseGain" type="text"/>
-      </div>
-      <br/>
-
-      <button type="button">Donne moi mes gains ! </button> -->
     </form>
   </div>
 </div>
-
-<br/><br/>

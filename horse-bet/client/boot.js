@@ -13,6 +13,7 @@ import { TranslateModule } from 'ng2-translate';
 
 import { routes } from './app/core/app.routes';
 import { CORE_DECLARATIONS, AppComponent } from './app/core';
+import { MonTierceService } from './app/core/services/montierce/monTierce.service';
 
 if (ENVIRONMENT === 'production') {
   enableProdMode();
@@ -28,7 +29,8 @@ if (ENVIRONMENT === 'production') {
     })
   ],
   providers: [
-    { provide: 'ENVIRONMENT', useValue: ENVIRONMENT }
+    { provide: 'ENVIRONMENT', useValue: ENVIRONMENT },
+    MonTierceService
   ],
   bootstrap: [AppComponent]
 })

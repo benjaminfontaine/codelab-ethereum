@@ -1,36 +1,53 @@
+<div id="message" [class.erreur]="estEnErreur"  [class.ok]="!estEnErreur">
+  {{message}}
+</div>
 <h2>Espace Oracle (admin)</h2>
 <wallet></wallet>
 <br/>
 <div id="actionOwner">
   <form id="oracleForm" [formGroup]="oracleForm">
-    <h3>Créer une course :</h3>
-    <br/>
-    <div id="zoneChevauxParticipants">
-      <label for="chevauxParticipants">Chevaux participants : </label>
-      <select formControlName="chevauxParticipants" id="chevauxParticipants" multiple>
-        <option *ngFor="let cheval of chevauxExistants" [value]="cheval.id">{{cheval.name}}</option>
-      </select>
+    <div id="zoneChevauxParticipants" class="zoneFonctionnalite">
+      <h3>Créer une course :</h3>
+      <div class="contenuFonctionnalite">
+        <label for="chevauxParticipants">Chevaux participants : </label>
+        <select formControlName="chevauxParticipants" id="chevauxParticipants" multiple>
+          <option *ngFor="let cheval of chevauxExistants" [value]="cheval.id">{{cheval.name}}</option>
+        </select>
+        <br/>
+        <button (click)="creerCourse(oracleForm.value)" type="button" type="submit" [disabled]="!oracleForm.valid" class="btn btn-primary">Créer la course </button>
+      </div>
     </div>
-    <br/>
-    <button (click)="creerCourse(oracleForm.value)" type="button" type="submit" [disabled]="!oracleForm.valid" class="btn btn-primary">Créer la course </button>
 
-    <br/><br/>
-    <h3>Interdire les paris : </h3>
-    <div>
-      <label for="idCourse">Identifiant de la course : </label>
-      <input name="idCourse" id="idCourse" type="text"/>
+    <div class="zoneFonctionnalite">
+      <h3>Interdire les paris : </h3>
+      <div class="contenuFonctionnalite">
+        <label for="idCoursePari">Identifiant de la course : </label>
+        <select formControlName="idCourseBlocagePari" id="idCoursePari">
+          <option *ngFor="let course of courses" [value]="course.id">{{course.name}}</option>
+        </select>
+        <br/>
+        <button (click)="bloquerLesParis(oracleForm.value)" type="button" type="submit" [disabled]="!oracleForm.valid" class="btn btn-primary">Bloquer les paris </button>
+      </div>
     </div>
-    <br/>
-    <button type="button">Bloquer les paris </button>
 
-    <h3>Terminer la course :</h3>
-    <br/>
-    <div>
-      <label for="idFinCourse">Identifiant de la course : </label>
-      <input name="idFinCourse" id="idFinCourse" type="text"/>
+    <div class="zoneFonctionnalite">
+      <h3>Terminer la course :</h3>
+      <div class="contenuFonctionnalite">
+        <div>
+          <label for="idFinCourse">Identifiant de la course : </label>
+          <select formControlName="idFinCourse" id="idFinCourse">
+            <option *ngFor="let course of courses" [value]="course.id">{{course.name}}</option>
+          </select>
+        </div>
+        <div>
+          <label for="tierceGagnant">Tierce gagnant : </label>
+          <select formControlName="tierceGagnant" id="tierceGagnant" multiple>
+            <option *ngFor="let cheval of chevauxExistants" [value]="cheval.id">{{cheval.name}}</option>
+          </select>
+        </div>
+        <br/>
+        <button (click)="terminerLaCourse(oracleForm.value)" type="button" type="submit" [disabled]="!oracleForm.valid" class="btn btn-primary">Fin de la course </button>
+      </div>
     </div>
-    <br/><br/>
-    <button type="button">Fin de la course </button>
-    <br/>
   </form>
 </div>
