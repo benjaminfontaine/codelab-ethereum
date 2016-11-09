@@ -66,7 +66,37 @@ L'arborescence de notre projet est constituée de :
 - truffle.js : le fichier de configuration de truffle
 
 
-## Installation de l'environnement de développement :
+###Installation de l'environnement de développement light via docker
+
+Pour les premières étapes du tp vous avez juste de besoin de truffle et testrpc.
+Nous avons fait une image Docker qui intégre ces deux outils.
+
+Par contre, cette installation est insuffisante pour faire tourner l'ihm et vous devrez installer l'env de développement full pour la tester.
+
+Pré-requis : la docker toolbox.
+
+#### Lancement de testrpc :
+
+      docker run -d -p 8545:8545 zenika/truffle-with-testrpc testrpc -d &
+
+
+Changer dans truffle.js :
+```
+rpc: {
+   host: "192.168.99.100",//mon host docker :)
+   port: 8545
+ }
+```
+#### Lancement de truffle :
+
+//imaginons être dans “horse-bet”
+
+      docker run -it -v $(pwd):/app -w /app zenika/truffle-with-testrpc truffle test
+
+
+
+
+## Installation de l'environnement de développement full :
 Pré-requis :
 - sur tous les environnements : nodejs 5+
 
@@ -106,28 +136,6 @@ Pour Linux, MacOS et Windows
 Cette commande va installer toutes les dépendances npm du projet (truffle, ethereumjs-testrpc, angular2, webpack, gulp ...)
 
 
-### Installation de Geth
-
-#### Mac
-Lien d'installation :
-https://github.com/ethereum/go-ethereum/wiki/Installation-Instructions-for-Mac
-
-Image docker : TODO
-
-#### Ubuntu
-Lien d'installation :
-https://github.com/ethereum/go-ethereum/wiki/Installation-Instructions-for-Ubuntu
-
-Image docker : TODO
-
-
-#### Windows
-Lien d'installation : https://github.com/ethereum/go-ethereum/wiki/Installation-instructions-for-Windows
-
-Image docker :
-TODO
-
-(TODO : tester l'install Windows)
 
 ### Installation de Chrome et du plugin Metamask
 
@@ -150,42 +158,6 @@ Lancer testrpc avec l'option -d (déterministe) qui va faire que les comptes gé
 Puis lancer les tests truffle qui doivent passer :
 
     truffle test
-
-#### Lancement de l'IHM
-
-    npm install (si pas déjà fait)
-    npm install -g gulp (si pas déjà fait)
-    gulp serve
-
-Cela lance une url [localhost:9000](http://localhost:9000/) dans votre navigateur web favori.
-Mais *ouvrez la plutôt avec Chrome* car nous aurons besoin du plugin Metamask.
-
-Cliquer sur l'icone du plugin Metamask en haut à droite de votre fenêtre (un renard orangé).
-
-Pour qu'une IHM de D-app fonctionne, elle doit être interfacée avec un portefeuille contenant les comptes et les clés privée des utilisateurs. Sans cet interfaçage avec le portefeuille, l'utilisateur ne peut pas signer ses transactions et donc, par extension, pas interagir avec une blockchain.
-
-A l'heure actuelle, il y a deux solutions : *Metamask* qui permet d'ajouter un portefeuille ultra léger à Chrome (il ne télécharge pas de blockchain) et le navigateur dédie *Mist* qui se veut être l'appstore des D-apps.
-
-Le plugin Metamask va permettre à une application web qui utilise la librairie js web3, de se connecter à un compte d'un portefeuille de n'importe quelle blockchain (rpc, 
-privée, morden ou la principale).
-
-Pour pouvoir interfacer le plugin Metamask avec votre blockchain RPC, il faut le configurer.
-
-Sur l'écran de connexion (écran disponible de base ou accessible via Menu Lock puis Back), choisir l'option 'Restore existing Vault'.
-Il vous sera demandé douze mots clés permettant de récupérer votre portefeuille ainsi qu'un nouveau mot de passe.
-
-Pour se connecter au testrpc local, rentrer les deux mots clés fournis au lancement de testrpc dans la partie Mnemonic :
-
-     HD Wallet
-     ==================
-     Mnemonic:      myth like bonus scare over problem client lizard pioneer submit female collect
-
-Une fois cette configuration effectuée, vous serez connecté sur la blockchain avec le compte par défaut (qui sera l'owner du contrat).
-
-Vous aurez donc accès à l'interface spécifique du owner (création de course, blocage des paris, déclenchement de la fin de course).
-
-Vous pouvez à tout moment changer d'utilisateur en faisant un switch account dans Metamask afin d'accèder, par la même url, à l'interface de pari et de récupération des gains.
-
 
 
 #Démarrage du TP
@@ -282,8 +254,8 @@ De la même manière que l'exercice 1, traquez les FIX_ME dans ce contrat afin q
 Pour voir la correction de ce TP :
 
      git checkout step2-1
-     
-     
+
+
 ### Etape 2-2 - La fonction interdirePari
 
      git checkout step2-2
@@ -296,8 +268,8 @@ Cette fois-ci, c'est notre TU qu'il va falloir réparer, dans `test/montierce.js
 Pour voir la correction de ce TP :
 
      git checkout step2-2c
-   
-   
+
+
 
 ##Etape 3 : Le contrat - Implémentation de la méthode de fin de course.
 
@@ -331,6 +303,7 @@ Pour voir la correction de ce TP :
 
 
 ## Etape 4 : L'IHM
+
 Nous voila de retour dans un domaine un peu plus connu, l'IHM de la D-app.
 L'avantage de truffle c'est qu'il va utiliser le framework Javascript WEB3, avec la surcouche Ether Pudding pour appeler le contrat, depuis nos fichier js ou ts.
 La bonne nouvelle, c'est que c'est exactement les mêmes surcouches qui sont utilisée dans les tests que nous avons fait jusqu'à présent.
@@ -341,11 +314,43 @@ J'ai utilisé la base du projet https://github.com/blacksonic/angular2-babel-esn
 
 Cela fournit une IHM Angular de base en ES6, servie par un serveur koa, avec liveReload et contruite avec gulp et webpack.
 
-Pour la lancer : 
 
-    npm install (si pas déjà fait)
-    npm install -g gulp (si pas déjà fait)
-    gulp serve
+#### Lancement de l'IHM
+
+        npm install (si pas déjà fait)
+        npm install -g gulp (si pas déjà fait)
+        gulp serve
+
+Cela lance une url [localhost:9000](http://localhost:9000/) dans votre navigateur web favori.
+Mais *ouvrez la plutôt avec Chrome* car nous aurons besoin du plugin Metamask.
+
+Cliquer sur l'icone du plugin Metamask en haut à droite de votre fenêtre (un renard orangé).
+
+Pour qu'une IHM de D-app fonctionne, elle doit être interfacée avec un portefeuille contenant les comptes et les clés privée des utilisateurs. Sans cet interfaçage avec le portefeuille, l'utilisateur ne peut pas signer ses transactions et donc, par extension, pas interagir avec une blockchain.
+
+A l'heure actuelle, il y a deux solutions : *Metamask* qui permet d'ajouter un portefeuille ultra léger à Chrome (il ne télécharge pas de blockchain) et le navigateur dédie *Mist* qui se veut être l'appstore des D-apps.
+
+Le plugin Metamask va permettre à une application web qui utilise la librairie js web3, de se connecter à un compte d'un portefeuille de n'importe quelle blockchain (rpc,
+privée, morden ou la principale).
+
+Pour pouvoir interfacer le plugin Metamask avec votre blockchain RPC, il faut le configurer.
+
+Sur l'écran de connexion (écran disponible de base ou accessible via Menu Lock puis Back), choisir l'option 'Restore existing Vault'.
+Il vous sera demandé douze mots clés permettant de récupérer votre portefeuille ainsi qu'un nouveau mot de passe.
+
+Pour se connecter au testrpc local, rentrer les deux mots clés fournis au lancement de testrpc dans la partie Mnemonic :
+
+     HD Wallet
+     ==================
+     Mnemonic:      myth like bonus scare over problem client lizard pioneer submit female collect
+
+Une fois cette configuration effectuée, vous serez connecté sur la blockchain avec le compte par défaut (qui sera l'owner du contrat).
+
+Vous aurez donc accès à l'interface spécifique du owner (création de course, blocage des paris, déclenchement de la fin de course).
+
+Vous pouvez à tout moment changer d'utilisateur en faisant un switch account dans Metamask afin d'accèder, par la même url, à l'interface de pari et de récupération des gains.
+
+
 
 ### Etape 4-1 : Intégration des smart-contrats à l'application
 
@@ -353,19 +358,7 @@ Pour la lancer :
 
 
 
-##Etape 5 : Déploiement du contrat sur une blockchain privée (Optionnelle)
-Utilisation du client geth pour monter une blockchain privée et configuration de Truffle pour l'utiliser.
 
-Création d'une blockchain de test privée :
-
-    geth --dev
-
-Brancher le plugin Metamask sur cette nouvelle blockchain.
-
-#Etape 6 : Sécurisation du smart contract
-Application du pattern withdrawal.
-
-//TODO
 
 
 
