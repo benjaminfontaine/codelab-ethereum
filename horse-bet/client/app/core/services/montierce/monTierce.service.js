@@ -72,15 +72,12 @@ export class MonTierceService {
     return new Observable(obs => {
       this._ngZone.run(() => {
         this._contratTierce.initialiserCourse(chevauxEnCourse,  {from: window.web3.eth.defaultAccount}).then((err, data)=>{
-          console.log("good");
           return this._contratTierce.courseIDGenerator.call();
         })
         .then(function(lastCourseId){
-          console.log("still good");
           let courseId = Number(lastCourseId-1);
           obs.next(courseId);
         }).catch((err)=>{
-          console.log(err);
           obs.next("error");
         });
       });

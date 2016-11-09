@@ -72,6 +72,7 @@ export class OracleComponent {
     console.log("Terminer la course");
     this._serviceTierce.terminerLaCourse(formulaire.idFinCourse, formulaire.tierceGagnant)
     .then((error, idTransaction) => {
+      this.estEnErreur = false;
       this.message = "La course est terminée.";
       this._changeDetect.detectChanges();
     }).catch((error) => {
