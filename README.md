@@ -367,13 +367,63 @@ Vous pouvez à tout moment changer d'utilisateur en faisant un switch account da
 
 ### Etape 4-1 : Intégration des smart-contrats à l'application
 
+Placez vous sur la branche de cette nouvelle partie du TP :
 
+     git checkout step4-1
 
+Les endroits à modifier sont là encore marqués par des FIX_ME.
 
+Cette branche est une version de l'application sans lien avec Ethereum.
+C'est comme si on démarrait du project starter Angular2 (https://github.com/blacksonic/angular2-babel-esnext-starter), avec les quelques ajouts suivants :
+- j'ai ajouté les répertoires *contracts* (nos fichiers .sol) et *migrations* (les scripts de déploiement Truffle) à la racine du projet.
+- ainsi que les deux fichiers truffle.js et truffle-config.js pour que la configuration truffle soit prise en compte.
 
+A partir de là, pour pouvoir utiliser nos smarts contracts dans l'application, la configuration est assez simple.
 
+Tout d'abord, ajouter un loader webpack spécifique à Truffle *truffle-solidity-loader*.
+Ce loader va automatiquement rendre disponible vos ABI Javascript (fichier .sol.js) dans le fichier vendor.js aggrégant toutes les sources Js de l'appli.
 
+Pour cela, ajouter la ligne suivante dans les dépendances de votre package.json :
 
+      ...
+      "truffle-solidity-loader": "0.0.8",
+      ...
+
+Et faire un npm install
+
+Puis modifier le fichier `tasks/config/webpack.js` en y référençant notre nouveau loader qui prendra en charge les fichiers .sol :
+```
+module: {
+  loaders: [
+    {
+      ... ,
+
+    {
+      test: /\.json$/,
+      loader: 'json'
+    },
+    {
+      test: /\.sol/,
+      loader: 'truffle-solidity'
+    },
+  ],
+```
+
+Vous pouvez maintenant utiliser faire appel à vos contrats dans les fichiers js.
+
+Ouvrer le fichier `client/app/core/services/montierce/monTierce.service.js` qui centralise les appels au contrat dans l'application.
+
+Importer le contrat en .sol (le truffle-solidity-loader se chargera pour vous de le rendre disponible en Js) :
+
+     import MonTierce from "../../../../../contracts/MonTierce.sol";
+
+Puis utiliser le contrat dans la méthode parier afin d'implémenter l'appel du pari.
+
+C'est exactement la même syntaxe que le TU, sauf qu'il faut utiliser l'adresse window.web3.eth.defaultAccount dans le champs from.
+
+Et voila, vous êtes maintenant un débutant aguerri dans le développement d'une application Ethereum.
+
+Attention : les contrats développés dans le cadre de ce TP ne prennent pas en compte les bonnes pratique de sécurisation des contrats (parce que ça les complexifie beaucoup). Je vous encourage donc vivement à connaître et respecter ces régles listées sur la page suivante : https://github.com/ethereum/wiki/wiki/Safety lorsque vous vous lancerez dans l'aventure.
 
 #Annexes
 ## Le debuggage :
