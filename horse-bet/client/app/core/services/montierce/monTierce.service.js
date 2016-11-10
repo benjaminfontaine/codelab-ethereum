@@ -1,6 +1,7 @@
 import { Injectable, NgZone, ChangeDetectorRef} from '@angular/core';
-import MonTierce from "../../../../../contracts/MonTierce.sol";
 import {Observable} from 'rxjs/Observable';
+//FIX_ME : import du fichier .sol
+
 
 @Injectable()
 export class MonTierceService {
@@ -65,7 +66,7 @@ export class MonTierceService {
 
   parier(idCourse, tierce, mise){
     console.log(mise);
-    return this._contratTierce.parier(idCourse, tierce, {value: mise, gas: 2000000, from: window.web3.eth.defaultAccount});
+    return FIX_ME;
   }
 
   initialiserCourse(chevauxEnCourse){

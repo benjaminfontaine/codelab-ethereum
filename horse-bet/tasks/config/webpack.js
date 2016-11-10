@@ -40,10 +40,7 @@ module.exports = {
         test: /\.json$/,
         loader: 'json'
       },
-      {
-        test: /\.sol/,
-        loader: 'truffle-solidity'
-      },
+      //FIX_ME insérer ici le loader
     ],
     noParse: [ /.+zone\.js\/dist\/.+/, /.+angular2\/bundles\/.+/ ]
   },
