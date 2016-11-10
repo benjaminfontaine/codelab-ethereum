@@ -40,6 +40,7 @@ A cloner depuis le repo de ce codelab : [https://github.com/benjaminfontaine/cod
      git clone https://github.com/benjaminfontaine/codelab-ethereum.git
 
 Ensuite aller dans le répertoire horse-bet pour découvrir le code final de notre application :
+
      cd horse-bet
 
 
@@ -79,8 +80,20 @@ Pré-requis : la docker toolbox.
 
       docker run -d -p 8545:8545 zenika/truffle-with-testrpc testrpc -d &
 
+Récupérer l'ip  du host docker machine que vous utilisez
+      $ docker-machine ls
 
-Changer dans truffle.js :
+      NAME      ACTIVE   DRIVER       STATE     URL                         SWARM
+      default   *        virtualbox   Running   tcp://192.168.99.100:2376
+      Then select one of the machines (the default one is called default) and:
+
+
+      $ docker-machine ip default
+
+      192.168.99.100
+
+
+Et modifier la conf dans truffle.js :
 ```
 rpc: {
    host: "192.168.99.100",//mon host docker :)
