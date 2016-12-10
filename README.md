@@ -117,8 +117,11 @@ Pré-requis :
 ### Pré-requis Windows : installer les outils pour rebuilder une obscure librairie npm
 
 *Option 1: Installer tous les outils requis via npm (run as Administrator) :*
-
+```
     npm install --global --production
+    npm install -g truffle
+    npm install -g ethereumjs-testrpc
+```
 
 Option 2 manuelle : (si la 1 ne fonctionne pas)
 
