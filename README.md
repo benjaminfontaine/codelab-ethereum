@@ -208,7 +208,7 @@ Les tests unitaires se lancent, à la racine du répertoire horse-bet par le bia
 
 *Pour le debug*, c'est compliqué et rien n'est fourni de base.
 
-Vous pouvez cependant utiliser [les events et les logs js](#le-debuggage)
+Vous pouvez cependant utiliser [les events et les logs js](#le-debuggage-)
 
 Au terme de cette première partie de TP, les tests unitaires doivent être au vert.
 
