@@ -23,7 +23,7 @@ Pour ce TP, vous aurez besoin :
     * truffle
     * dapple
 
-    Pour ce TP, nous utiliserons Truffle parce qu'i était conseillé pour les débutants.
+    Pour ce TP, nous utiliserons Truffle parce qu'il était conseillé pour les débutants.
 
     Truffle va simplifier plusieurs étapes de réalistion de D-app :
    - compilation intégrée de smart contract, linkink, déploiement et gestion des livrables,
