@@ -208,7 +208,7 @@ S'il y a des modifications qui vous empêche de faire le switch de branche, fait
 
 Sur cette branche, le contrat est déjà crée, ainsi que son test unitaire.
 
-Seulement, j'ai sadiquement supprimé certaines lignes de code qui empèche les tests unitaires de fonctionner.
+Seulement, j'ai sadiquement supprimé certaines lignes de code, ce qui empèche les tests unitaires de fonctionner.
 
 Les deux fichiers impactés sont :
 - `contacts/MonTierce.sol` : le contract, qui va être le code déploié sur la blockchain et qui contiendra toutes les méthodes permettant de gérer des paris sur les courses. Ce contrat est écrit en SOLIDITY.
