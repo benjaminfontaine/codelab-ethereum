@@ -25,7 +25,7 @@ Pour ce TP, vous aurez besoin :
 
     Pour ce TP, nous utiliserons Truffle parce qu'il était conseillé pour les débutants.
 
-    Truffle va simplifier plusieurs étapes de réalistion de D-app :
+    Truffle va simplifier plusieurs étapes de réalistion de D-app (Decentralised application) :
    - compilation intégrée de smart contract, linkink, déploiement et gestion des livrables,
    - test automatisé des contracts avec Mocha (framework de test JS) et Chai (framework BDD),
    - pipeline de build configurable et personnalisable,
