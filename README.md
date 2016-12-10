@@ -117,7 +117,11 @@ Pré-requis :
 
 *Option 1: Installer tous les outils requis via npm (run as Administrator) :*
 
+```
     npm install --global --production windows-build-tools
+    npm install -g truffle
+    npm install -g ethereumjs-testrpc
+```
 (cf. https://github.com/nodejs/node-gyp)
 
 Option 2 manuelle : (si la 1 ne fonctionne pas)
