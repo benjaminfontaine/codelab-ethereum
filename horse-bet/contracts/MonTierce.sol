@@ -159,14 +159,14 @@ contract MonTierce is mortal{
             // INFO : calcul du gain du pari
             //facteurGainX = renvoyé par la méthode coefficient prime
             //gain pariX = (miseX * facteurGainX * misesDesPerdants) / somme pour tous les paris de (misePari * facteurGainPari)
-            uint gainPari = FIX_ME;
+            uint gainPari = (course.paris[addresseParieur].mise * course.coefficientsPrime[uint8(course.paris[addresseParieur].etat)] * course.misesDesPerdants) / course.sommeCoefficientsParMises;
             TerminerCourseEnvoiDesGains(addresseParieur, gainPari);
             //TODO mettre en place withdrawal pattern pour éviter des tas de failles de sécurité
 
             //INFO : envoi des gains au parieurs
             // gain = gainPari + miseInitiale
             //syntaxe adresseParieur.send(somme)
-            bool envoiOK = FIX_ME;
+            bool envoiOK = course.paris[addresseParieur].adresseParieur.send(gainPari + course.paris[addresseParieur].mise);
             if(!envoiOK){
               //TODO regarder comment traiter ce retour sans que toutes la transaction soit annulée
               throw;
@@ -263,7 +263,7 @@ contract MonTierce is mortal{
             for(uint p = 0 ; p < course.parisKeySet.length ; p++){
               Pari pari = course.paris[course.parisKeySet[p]];
               //INFO envoi de la mise à un parieur
-              if (FIX_ME) {
+              if (!pari.adresseParieur.send(pari.mise)) {
                 // si un envoi est impossible, on rend leur argent à tous les parieurs
                 // mais tel que c'est fait là, si un des envois échoue,
                 // alors tout la méthode terminerCourse est rollbackée et personne ne reçoit rien
