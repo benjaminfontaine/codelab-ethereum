@@ -157,7 +157,7 @@ contract('MonTierce', function(accounts) {
             .then(function (){
               console.log("interdire pari");
               //INFO : on souhatte maintenant interdire les paris en appelant la fonction interdireParis du contrat
-              return FIX_ME;
+              return contratTierce.interdireParis(courseId);
             })
             .then(function (){
               console.log("pari 5");
@@ -187,7 +187,7 @@ contract('MonTierce', function(accounts) {
                 //INFO : comment faire pour que mes tests me rendent la main après leur lancement
                 //INDICE : le framework web3 est encore en attente de lecture d'events
                 // https://github.com/ethereum/wiki/wiki/JavaScript-API#contract-allevents
-                FIX_ME
+                events.stopWatching();
                 done();
             })
             .catch(function(err){
