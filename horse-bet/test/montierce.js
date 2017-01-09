@@ -15,19 +15,20 @@ contract('MonTierce', function(accounts) {
   var throwMessage = "VM Exception while processing transaction: invalid JUMP";
 
   it("contient une méthode initialiserCourse qui doit garder une struct Course dans le storage lorsque l'on l'appelle", function(done) {
-    // récupère l'interface MonTierce.sol.js
+    
+    // INFO : récupère l'interface MonTierce.sol.js
+    // http://truffle.readthedocs.io/en/latest/getting_started/contracts/#making-a-transaction
+    // vous pouvez faire un console.log dessus pour observer l'objet renvoyé
     var contratTierce = MonTierce.deployed();
     var initOwnerOnly = false;
     var idCourseCree = -1;
 
-    //tente de faire une transaction de création de course sur un account autre que le owner
-    contratTierce.initialiserCourse(chevauxEnCourse, {from : account_two}).catch(function(error){
-      //cette création doit échouer
-      initOwnerOnly = true;
-    }).then(function(){
-      assert.equal(initOwnerOnly, true, "La création de course doit être réservé au propriètaire du contrat.")
+    // va nous permettre d'observer tous les événements renvoyés par la blockchain
+    var events = contratTierce.allEvents({});
+    events.watch(function(error, event){
+      console.log(event.args);
     });
-
+    
     //création du compte avec le bon compte (account_one est le compte par défaut)
     contratTierce.initialiserCourse(chevauxEnCourse)
     .then(function(transactionId) {
@@ -56,6 +57,7 @@ contract('MonTierce', function(accounts) {
       assert.deepEqual(chevauxEnCourseRetournes, chevauxEnCourse, "Les chevaux en course dans le storage doivent être ceux passés à l'initialisation");
       assert.equal(courseDatas[4], false, "Les paris doivent être autorisés sur la course");
       //indispensable pour que le test unitaire se termine
+      events.stopWatching();
       done();
     })
     //on catche les erreurs pour effectuer le done() dans tous les cas
@@ -64,23 +66,31 @@ contract('MonTierce', function(accounts) {
       assert.fail("Une erreur inattendue s'est produite" + err.message);
       done();
     });
+    
+    //tente de faire une transaction de création de course sur un account autre que le owner
+    contratTierce.initialiserCourse(chevauxEnCourse, {from : account_two}).catch(function(error){
+      //cette création doit échouer
+      initOwnerOnly = true;
+    }).then(function(){
+      assert.equal(initOwnerOnly, true, "La création de course doit être réservé au propriètaire du contrat.")
+    });
   });
-  
+
   it("possède une fonction parier qui va permettre de miser si les paris ne sont bloqués, la course encore en cours,  les chevaux du pari existent et le parieur n'a pas déjà parié", function(done) {
     var contratTierce = MonTierce.deployed();
-    
+
     //permet de logguer tous les events lancés par le contrat
     var events = contratTierce.allEvents({});
     events.watch(function(error, result) {
       console.log(result.event);
       console.log(result.args);
     });
-    
+
     var courseId = -1;
     var pari3EnErreur = false;
     var pari5EnErreur = false;
     var pari6EnErreur = false;
-    
+
     contratTierce.initialiserCourse(chevauxEnCourse)
         .then(function(transactionId) {
           return contratTierce.courseIDGenerator.call();
@@ -95,13 +105,13 @@ contract('MonTierce', function(accounts) {
           console.log("get info 1");
           return contratTierce.getInfosCourse.call(courseId);
         })
-        
+
         .then(function(courseDatas){
           console.log("analyse info 1");
           assert.equal(courseDatas[0], courseId, "L'id de la course dans le storage doit être 1");
           assert.equal(courseDatas[1].valueOf(), 300, "Le montant total des paris de la course dans le storage doit être 300");
           assert.equal(courseDatas[2], false, "La course ne doit pas être terminée");
-          
+
           //web3 renvoie des BigInteger pour les uint, il faut donc les convertir en nombre standards
           var chevauxEnCourseRetournes = [];
           for(var i = 0 ; i < courseDatas[3].length; i++){
@@ -118,14 +128,14 @@ contract('MonTierce', function(accounts) {
         })
         .then(function(courseDatas){
           console.log("analyse info 2");
-          assert.equal(courseDatas[1].valueOf(), 500, "Le montant total des paris de la course dans le storage doit être 300");
+          assert.equal(courseDatas[1].valueOf(), 500, "Le montant total des paris de la course dans le storage doit être 500");
           console.log("pari 3");
           //on essaye de parier sur des chevaux qui ne sont pas en course
           return contratTierce.parier(courseId, [12,3,2], {value: 1000, gas: 2000000, from: account_three});
         })
         .catch(function (err){
           console.log("catch 1");
-          
+
           //l'erreur renvoyée lorsque l'on lance un throw depuis le contrat
           if(err.message.indexOf(throwMessage) !== -1){
             pari3EnErreur =true;
@@ -166,7 +176,7 @@ contract('MonTierce', function(accounts) {
           assert.equal(pari3EnErreur, true, "Le pari 3 ne devrait passé car les paris étaient bloqués");
           assert.equal(pari5EnErreur, true, "Le pari 5 ne devrait pas être passé car il a misé sur le cheval 12 inexistant");
           assert.equal(courseDatas[4], true, "Les paris doivent être interdits sur la course");
-        // eventPari.stopWatching();
+        
         console.log("terminer course");
         return contratTierce.terminerCourse(courseId,[6,10,8]);
       })
@@ -193,9 +203,12 @@ contract('MonTierce', function(accounts) {
           events.stopWatching();
           done();
         })
-        .catch(
-            done
-        );
+        .catch(function(err){
+          console.log(err);
+          assert.fail("Une erreur inattendue s'est produite" + err.message);
+          events.stopWatching();
+          done();
+        });
   });
 
   it("possède une fonction terminerCourse qui va calculer les gains et payer tous les parieurs", function(done) {

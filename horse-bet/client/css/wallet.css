@@ -1,0 +1,14 @@
+#panneauControle{
+  background-color: grey;
+  color:white;
+  border-radius: 10px;
+  padding: 10px 20px;
+}
+
+#wallet p, #contrat p{
+  margin-left:20px;
+}
+
+#wallet p span, #contrat p span{
+  font-weight: bold;
+}

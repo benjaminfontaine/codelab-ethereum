@@ -22,7 +22,7 @@ contract MonTierce is mortal{
     uint montantTotalMises;
     bool terminee;
     bool parisBloques;
-    //les chevaux sont représentés par un hash de leur id et nom
+    //les chevaux sont représentés par leur ids
     uint32[] chevauxEnCourse;
     //on ne peut pas itérer sur le mapping paris sans ça
     address[] parisKeySet;
@@ -63,7 +63,7 @@ contract MonTierce is mortal{
   }
 
   event GetInfosCourse(uint idCourse);
-
+  //cette méthode, en lecture seule, permets de récupérer les informations de la course
   function getInfosCourse(uint idCourse) public returns(uint, uint, bool, uint32[], bool){
     GetInfosCourse(idCourse);
     return (courses[idCourse].idCourse, courses[idCourse].montantTotalMises, courses[idCourse].terminee, courses[idCourse].chevauxEnCourse , courses[idCourse].parisBloques);
@@ -110,6 +110,13 @@ contract MonTierce is mortal{
     course.montantTotalMises += msg.value;
   }
 
+  event InterdireParis(uint idCourse);
+
+  //bloquer les paris au début de la course
+  function interdireParis(uint idCourse) onlyowner{
+    courses[idCourse].parisBloques=true;
+    InterdireParis(idCourse);
+  }
   //event de debug de la fonctionnalité terminerCourse
   event TerminerCourseParams(uint idCourse, uint32[3] chevauxTierceGagnant);
   event TerminerCourseCalculGagnants(uint idCourse, uint32[3] chevauxTierceGagnant, bool existeGagnantTierce, bool existeGagnantDuo, bool existeGagnantUno, uint misesDesPerdants);
@@ -260,11 +267,5 @@ contract MonTierce is mortal{
             }
           }
 
-  event InterdireParis(uint idCourse);
 
-  //bloquer les paris au début de la course
-  function interdireParis(uint idCourse) onlyowner{
-    courses[idCourse].parisBloques=true;
-    InterdireParis(idCourse);
-  }
 }
