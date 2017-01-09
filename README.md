@@ -135,6 +135,22 @@ Option 2 manuelle : (si la 1 ne fonctionne pas)
 
 -L'erreur OpenSSL n'empeche pas l'installation mais vous pouvez l'installer quand même au [lien suivant](https://wiki.openssl.org/index.php/Binaries)
 
+-Pour résoudre les erreurs du type : 
+```gyp ERR! stack Error: self signed certificate in certificate chain
+gyp ERR! stack     at Error (native)
+gyp ERR! stack     at TLSSocket.<anonymous> (_tls_wrap.js:1000:38)
+gyp ERR! stack     at emitNone (events.js:67:13)
+gyp ERR! stack     at TLSSocket.emit (events.js:166:7)
+gyp ERR! stack     at TLSSocket._finishInit (_tls_wrap.js:567:8)
+gyp ERR! System Windows_NT 6.1.7601
+```
+
+Définir une variable d'environnement (en mode quick & dirty) : 
+```
+set NODE_TLS_REJECT_UNAUTHORIZED="0"
+export NODE_TLS_REJECT_UNAUTHORIZED=0
+```
+
 
 Lancer truffle dans un autre typ de terminal que celui par défaut car il peut y avoir des conflits Power shell, git bash ou babun
 
@@ -332,7 +348,8 @@ Cela fournit une IHM Angular de base en ES6, servie par un serveur koa, avec liv
 #### Lancement de l'IHM
 
         npm install (si pas déjà fait)
-        npm install -g gulp (si pas déjà fait)
+        npm install gulp-cli -g
+        npm install gulp -D (si pas déjà fait)
         gulp serve
 
 Cela lance une url [localhost:9000](http://localhost:9000/) dans votre navigateur web favori.
