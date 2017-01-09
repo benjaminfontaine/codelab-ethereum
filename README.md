@@ -62,8 +62,6 @@ L'arborescence de notre projet est constituée de :
 
 - tasks : tasks gulp servant à automatiser le déploiement de notre application
 
-- test : test unitaire sur nos smart-contract
-
 - truffle.js : le fichier de configuration de truffle
 
 
@@ -116,6 +114,7 @@ Pré-requis :
 
 ### Pré-requis Windows : installer les outils pour rebuilder une obscure librairie npm
 
+
 *Option 1: Installer tous les outils requis via npm (run as Administrator) :*
 
     npm install --global --production windows-build-tools
@@ -131,7 +130,9 @@ Option 2 manuelle : (si la 1 ne fonctionne pas)
      run npm config set python python2.7
 - Configurer la version du framework .NET à utiliser
 
+
      npm config set msvs_version 2015
+
 
 -L'erreur OpenSSL n'empeche pas l'installation mais vous pouvez l'installer quand même au [lien suivant](https://wiki.openssl.org/index.php/Binaries)
 
@@ -215,10 +216,13 @@ Au dessus de ces FIX_ME, des TAGs INFO vous donneront les indications pour compl
 Vous pouvez tester la compilation du contrat en temps réel via :
 https://ethereum.github.io/browser-solidity/
 
+
 Les tests unitaires se lancent, à la racine du répertoire horse-bet par le biais de la commande :
 
      truffle test
 
+
+Depuis le répertoire `horse-bet`, lancer les tests en faisant : `docker run -it --rm -v $(pwd):/app -w /app zenika/truffle-with-testrpc truffle test`
 
 *Pour le debug*, c'est compliqué et rien n'est fourni de base.
 
