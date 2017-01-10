@@ -141,7 +141,8 @@ Option 2 manuelle : (si la 1 ne fonctionne pas)
 -L'erreur OpenSSL n'empeche pas l'installation mais vous pouvez l'installer quand même au [lien suivant](https://wiki.openssl.org/index.php/Binaries)
 
 -Pour résoudre les erreurs du type : 
-```gyp ERR! stack Error: self signed certificate in certificate chain
+```
+gyp ERR! stack Error: self signed certificate in certificate chain
 gyp ERR! stack     at Error (native)
 gyp ERR! stack     at TLSSocket.<anonymous> (_tls_wrap.js:1000:38)
 gyp ERR! stack     at emitNone (events.js:67:13)
