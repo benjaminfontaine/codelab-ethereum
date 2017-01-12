@@ -1,0 +1,31 @@
+testrpc:
+    image: "codelab-ethereum"
+    ports:
+        - 8545:8545
+    expose:
+        - "8545"
+    command: "testrpc -d"
+truffle:
+    image: "codelab-ethereum"
+    command: "truffle test"
+    volumes:
+        - ./:/app
+    working_dir: /app
+    links:
+        - "testrpc"
+web:
+    image: "codelab-ethereum"
+    ports:
+        - 9000:9000
+        - 35729:35729
+    volumes:
+        - ./client:/usr/src/app/client
+        - ./contracts:/usr/src/app/contracts
+        - ./migrations:/usr/src/app/migrations
+        - ./server:/usr/src/app/server
+        - ./tasks:/usr/src/app/tasks
+        - ./gulpfile.js:/usr/src/app/gulpfile.js
+        - ./Procfile:/usr/src/app/Procfile
+    command: "gulp serve"
+    links:
+        - "testrpc"

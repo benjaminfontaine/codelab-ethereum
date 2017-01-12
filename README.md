@@ -23,9 +23,9 @@ Pour ce TP, vous aurez besoin :
     * truffle
     * dapple
 
-    Pour ce TP, nous utiliserons Truffle parce qu'i était conseillé pour les débutants.
+    Pour ce TP, nous utiliserons Truffle parce qu'il était conseillé pour les débutants.
 
-    Truffle va simplifier plusieurs étapes de réalistion de D-app :
+    Truffle va simplifier plusieurs étapes de réalistion de D-app (Decentralised application) :
    - compilation intégrée de smart contract, linkink, déploiement et gestion des livrables,
    - test automatisé des contracts avec Mocha (framework de test JS) et Chai (framework BDD),
    - pipeline de build configurable et personnalisable,
@@ -117,7 +117,11 @@ Pré-requis :
 
 *Option 1: Installer tous les outils requis via npm (run as Administrator) :*
 
+```
     npm install --global --production windows-build-tools
+    npm install -g truffle
+    npm install -g ethereumjs-testrpc
+```
 (cf. https://github.com/nodejs/node-gyp)
 
 Option 2 manuelle : (si la 1 ne fonctionne pas)
@@ -137,7 +141,8 @@ Option 2 manuelle : (si la 1 ne fonctionne pas)
 -L'erreur OpenSSL n'empeche pas l'installation mais vous pouvez l'installer quand même au [lien suivant](https://wiki.openssl.org/index.php/Binaries)
 
 -Pour résoudre les erreurs du type : 
-```gyp ERR! stack Error: self signed certificate in certificate chain
+```
+gyp ERR! stack Error: self signed certificate in certificate chain
 gyp ERR! stack     at Error (native)
 gyp ERR! stack     at TLSSocket.<anonymous> (_tls_wrap.js:1000:38)
 gyp ERR! stack     at emitNone (events.js:67:13)
@@ -204,7 +209,7 @@ S'il y a des modifications qui vous empêche de faire le switch de branche, fait
 
 Sur cette branche, le contrat est déjà crée, ainsi que son test unitaire.
 
-Seulement, j'ai sadiquement supprimé certaines lignes de code qui empèche les tests unitaires de fonctionner.
+Seulement, j'ai sadiquement supprimé certaines lignes de code, ce qui empèche les tests unitaires de fonctionner.
 
 Les deux fichiers impactés sont :
 - `contacts/MonTierce.sol` : le contract, qui va être le code déploié sur la blockchain et qui contiendra toutes les méthodes permettant de gérer des paris sur les courses. Ce contrat est écrit en SOLIDITY.
@@ -226,7 +231,7 @@ Depuis le répertoire `horse-bet`, lancer les tests en faisant : `docker run -it
 
 *Pour le debug*, c'est compliqué et rien n'est fourni de base.
 
-Vous pouvez cependant utiliser [les events et les logs js](#le-debuggage)
+Vous pouvez cependant utiliser [les events et les logs js](#le-debuggage-)
 
 Au terme de cette première partie de TP, les tests unitaires doivent être au vert.
 
