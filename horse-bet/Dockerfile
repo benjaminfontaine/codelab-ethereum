@@ -1,12 +1,12 @@
 FROM zenika/alpine-node
-COPY ./package.json .
 RUN npm i -g truffle \
 	&& npm i -g ethereumjs-testrpc \
 	&& npm i -g gulp-cli \
-	&& npm i -g gulp \
-	&& npm i -D -g 
-RUN npm install
-EXPOSE 8545
-EXPOSE 9000
-EXPOSE 35729
-CMD truffle version ; ls -al
+	&& npm i -g gulp 
+RUN apk update \
+	&& apk add socat
+COPY ./package.json /usr/src
+RUN cd /usr/src \
+	&& npm i -D \
+	&& npm cache clean
+CMD truffle version
