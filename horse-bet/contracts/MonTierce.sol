@@ -24,7 +24,7 @@ contract MonTierce is mortal{
 
   //INFO : on souhaite restreindre l'accès à cette fonction au propriètaire du contrat
   // on peut le faire via le modifier défini dans le fichier owned.sol
-  // https://github.com/ethereum/wiki/wiki/Solidity-Features#user-content-function-modifiers
+  // http://solidity.readthedocs.io/en/develop/types.html#mappings
   function initialiserCourse(uint32[] chevauxParticipants) FIX_ME returns(uint) {
 
     //les struct Course du mapping courses sont déjà initialisés, il suffit juste de leur positionner des attributs
@@ -36,7 +36,7 @@ contract MonTierce is mortal{
     //INFO : on doit copier les chevauxParticipants dans le storage du contrat
     // => courses[courseIDGenerator].chevauxEnCourse
     // INDICE : on ne peut pas copier le tableau chevauxParticipants
-    //directement de la callstack dans l'espace storage, le code est en spoiler dans le  README.md
+    //directement de la callstack dans l'espace storage, le code est en spoiler dans le  README.md (branch step1-1)
     FIX_ME
     InitialisationCourse(chevauxParticipants, courses[courseIDGenerator].idCourse, owner);
 
