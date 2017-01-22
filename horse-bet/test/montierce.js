@@ -84,7 +84,7 @@ contract('MonTierce', function(accounts) {
     
     
     
-    it("possède une fonction parier qui va permettre de miser si les paris ne sont bloqués, la course encore en cours,  les chevaux du pari existent et le parieur n'a pas déjà parié", function(done) {
+    it("possède une fonction parier qui va permettre de miser si les paris ne sont pas bloqués, la course encore en cours,  les chevaux du pari existent et le parieur n'a pas déjà parié", function(done) {
         var contratTierce = MonTierce.deployed();
         
         //permet de logguer tous les events lancés par le contrat
