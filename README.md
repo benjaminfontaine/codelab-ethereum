@@ -1,202 +1,60 @@
-# Codelab-ethereum DevFest 2O16
+# Codelab ethereum
 
-## Présentation  de l'environnement de travail
-Nous allons développer notre premier smart contract au sein d'un environnement de développement propre à Ethereum.
-Pour ce TP, vous aurez besoin :
+## Pré-requis
+Pour ce TP vous aurez besoin :
 
-1. De votre IDE préféré qui gère le javascript, de préférence.
+1. D'un éditeur de texte ou un IDE. S'il prend en charge le javascript c'est mieux.
 
-2. D'un client/node blockchain
+2. D'une version récente de docker
 
-    Plusieurs clients, à choisir selon vos goûts, car ils ont tous les mêmes fonctionnalités. Les principaux :
+3. Google chrome et [l'extension metamask](https://metamask.io/) (il n'est malheureusement pas encore disponible pour Firefox)
 
-    * Geth : client en GO (utilisé pour ce tp),
-    * Eth : en C++,
-    * Pyethapp : en python
-
-
-3. D'un framework de développement
-
-   Trois principaux :
-
-    * embarkJS
-    * truffle
-    * dapple
-
-    Pour ce TP, nous utiliserons Truffle parce qu'il était conseillé pour les débutants.
-
-    Truffle va simplifier plusieurs étapes de réalistion de D-app (Decentralised application) :
-   - compilation intégrée de smart contract, linkink, déploiement et gestion des livrables,
-   - test automatisé des contracts avec Mocha (framework de test JS) et Chai (framework BDD),
-   - pipeline de build configurable et personnalisable,
-   - déploiements scriptables et framework de gestion de migration,
-   - gestion des blockchains de déploiement (public et privée),
-   - console interactive de communication avec les contrats ...
-
-## Arborescence du projet
-
-A cloner depuis le repo de ce codelab : [https://github.com/benjaminfontaine/codelab-ethereum]
-
-     git clone https://github.com/benjaminfontaine/codelab-ethereum.git
-
-Ensuite aller dans le répertoire horse-bet pour découvrir le code final de notre application :
-
-     cd horse-bet
-
-
-L'arborescence de notre projet est constituée de :
-
-- .truffle-solidity-loader : fichier .sol.js qui sont des artifacts crées par un framework appelé Ether Pudding. Ces fichiers sont crées à partir d'une ABI, d'un binaire ou d'une adresse de contrat et vont permettre de s'interfacer facilement avec le contrat en Javascript,
-
-- build => répertoire de travail de truffle
-
-- client => le répertoire contenant la partie WEB de notre D-app, qui contient donc le site en Angular 2
-
-- contracts => dossier où sont stockés les smart-contracts de notre D-app en Solidity (.sol)
-
-- migrations => les scripts de déploiement des smart-contract sur la blockchain
-
-- test => le fichier contenant les sources js de test Mocha et Chai de nos smart-contract
-
-- server : sources et configuration du serveur koa qui sert l'ihm
-
-- tasks : tasks gulp servant à automatiser le déploiement de notre application
-
-- truffle.js : le fichier de configuration de truffle
-
-
-###Installation de l'environnement de développement light via docker
-
-Pour les premières étapes du tp vous avez juste de besoin de truffle et testrpc.
-Nous avons fait une image Docker qui intégre ces deux outils.
-
-Par contre, cette installation est insuffisante pour faire tourner l'ihm et vous devrez installer l'env de développement full pour la tester.
-
-Pré-requis : la docker toolbox.
-
-#### Lancement de testrpc :
-
-      docker run -d -p 8545:8545 zenika/truffle-with-testrpc testrpc -d &
-
-Récupérer l'ip  du host docker machine que vous utilisez
-      $ docker-machine ls
-
-      NAME      ACTIVE   DRIVER       STATE     URL                         SWARM
-      default   *        virtualbox   Running   tcp://192.168.99.100:2376
-      Then select one of the machines (the default one is called default) and:
-
-
-      $ docker-machine ip default
-
-      192.168.99.100
-
-
-Et modifier la conf dans truffle.js :
+## Installation
+```sh
+git clone https://github.com/benjaminfontaine/codelab-ethereum.git
+cd codelab-ethereum/horse-bet
 ```
-rpc: {
-   host: "192.168.99.100",//mon host docker :)
-   port: 8545
- }
-```
-#### Lancement de truffle :
-
-//imaginons être dans “horse-bet”
-
-      docker run -it -v $(pwd):/app -w /app zenika/truffle-with-testrpc truffle test
-
-
-
-
-## Installation de l'environnement de développement full :
-Pré-requis :
-- sur tous les environnements : nodejs 5+
-
-
-### Pré-requis Windows : installer les outils pour rebuilder une obscure librairie npm
-
-
-*Option 1: Installer tous les outils requis via npm (run as Administrator) :*
+Récupérez l'image docker via clef USB fournie en séance ou bien via :
+```sh
+docker pull francoiskha/codelab-ethereum
 
 ```
-    npm install --global --production windows-build-tools
-    npm install -g truffle
-    npm install -g ethereumjs-testrpc
+Installez [l'extension chrome metamask](https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn)
+
+Vérifiez que tout fonctionne via en lançant depuis la racine du projet :
+```sh
+docker-compose up -d
+docker-compose logs -f unit
 ```
-(cf. https://github.com/nodejs/node-gyp)
-
-Option 2 manuelle : (si la 1 ne fonctionne pas)
-
-- Installer package [Framework DotNet 4.6.1]
-
-- Installer [Visual C++ Build Tools] (http://landinghub.visualstudio.com/visual-cpp-build-tools) - install par défaut.
-- Installer Python 2.7
-- Configurer Python
-     run npm config set python python2.7
-- Configurer la version du framework .NET à utiliser
-
-
-     npm config set msvs_version 2015
-
-
--L'erreur OpenSSL n'empeche pas l'installation mais vous pouvez l'installer quand même au [lien suivant](https://wiki.openssl.org/index.php/Binaries)
-
--Pour résoudre les erreurs du type : 
+Vous devez obtenir à la fin du log la mention `3 passing`
+Lancez ensuite 
 ```
-gyp ERR! stack Error: self signed certificate in certificate chain
-gyp ERR! stack     at Error (native)
-gyp ERR! stack     at TLSSocket.<anonymous> (_tls_wrap.js:1000:38)
-gyp ERR! stack     at emitNone (events.js:67:13)
-gyp ERR! stack     at TLSSocket.emit (events.js:166:7)
-gyp ERR! stack     at TLSSocket._finishInit (_tls_wrap.js:567:8)
-gyp ERR! System Windows_NT 6.1.7601
+docker-compose logs -f web
 ```
+Vous devez obtenir un log sans erreur avec, à la fin, la mention `Listening on port 9000`. Si besoin, [une capture complète du lancement du projet est disponible ici](horse-bet/BUILD.md)
 
-Définir une variable d'environnement (en mode quick & dirty) : 
+## Plus de détails 
+Pour construire l'image docker de zéro reportez vous [à la page dédiée](horse-bet/BUILD.md) (ne le faites pas en séance !).
+
+Pour plus de détails sur l'architecture du projet, [consultez la page dédiée](horse-bet/OVERVIEW.md)
+
+## Les commandes importantes :
+Lancer tous les conteneurs (à faire au début)
+```sh
+docker-compose up
 ```
-set NODE_TLS_REJECT_UNAUTHORIZED="0"
-export NODE_TLS_REJECT_UNAUTHORIZED=0
+Lancer les tests unitaires
+```sh
+docker-compose run unit
 ```
-
-
-Lancer truffle dans un autre typ de terminal que celui par défaut car il peut y avoir des conflits Power shell, git bash ou babun
-
-
-#### Installation des dépendances npm
-Pour Linux, MacOS et Windows
-(sous Windows, il est conseillé d'utiliser PowerShell ou git bash sont peine de conflit)
-
-     cd horse-bet
-     npm install
-     npm install -g gulp
-
-Cette commande va installer toutes les dépendances npm du projet (truffle, ethereumjs-testrpc, angular2, webpack, gulp ...)
-
-
-
-### Installation de Chrome et du plugin Metamask
-
-Installez le navigateur Chrome et le plugin [Metamask](https://metamask.io/)
-
-
-
-### Test de l'application
-
-Récupèrer la version finale du projet :
-
-     git checkout master
-
-Lancer testrpc avec l'option -d (déterministe) qui va faire que les comptes générés par testrpc auront toujours les mêmes clés (indispensable) pour le fonctionnement du test unitaire :
-
-     testrpc -d
-
-
-#### Lancement des tests unitaires
-Puis lancer les tests truffle qui doivent passer :
-
-    truffle test
-
-
-#Démarrage du TP
+Consulter les logs de l'application web (option `-f` pour `tail`)
+```sh
+docker-compose logs web 
+```
+Redémarrer l'application web
+```sh
+docker-compose restart web 
+```
 
 ##Etape 1-1 : Le contrat - Création d'une course
 
@@ -205,7 +63,6 @@ Se mettre sur la branche Step 1-1.
      git checkout step1-1
 
 S'il y a des modifications qui vous empêche de faire le switch de branche, faites un git stash.
-
 
 Sur cette branche, le contrat est déjà crée, ainsi que son test unitaire.
 
@@ -224,10 +81,10 @@ https://ethereum.github.io/browser-solidity/
 
 Les tests unitaires se lancent, à la racine du répertoire horse-bet par le biais de la commande :
 
-     truffle test
-
-
-Depuis le répertoire `horse-bet`, lancer les tests en faisant : `docker run -it --rm -v $(pwd):/app -w /app zenika/truffle-with-testrpc truffle test`
+```sh
+docker-compose run unit
+```
+Depuis le répertoire `horse-bet`.
 
 *Pour le debug*, c'est compliqué et rien n'est fourni de base.
 
@@ -356,29 +213,20 @@ Cela fournit une IHM Angular de base en ES6, servie par un serveur koa, avec liv
 
 #### Lancement de l'IHM
 
-        npm install (si pas déjà fait)
-        npm install gulp-cli -g
-        npm install gulp -D (si pas déjà fait)
-        gulp serve
+```sh
+docker-compose start web
+```
 
-Cela lance une url [localhost:9000](http://localhost:9000/) dans votre navigateur web favori.
-Mais *ouvrez la plutôt avec Chrome* car nous aurons besoin du plugin Metamask.
+Consultez [http://localhost:9000](http://localhost:9000/) dans votre google chrome.
 
-Cliquer sur l'icone du plugin Metamask en haut à droite de votre fenêtre (un renard orangé).
+Cliquer sur l'icone de l'extension chrome Metamask en haut à droite de votre fenêtre (un renard orangé). 
 
-Pour qu'une IHM de D-app fonctionne, elle doit être interfacée avec un portefeuille contenant les comptes et les clés privée des utilisateurs. Sans cet interfaçage avec le portefeuille, l'utilisateur ne peut pas signer ses transactions et donc, par extension, pas interagir avec une blockchain.
+Pour pouvoir interfacer l'extension chrome Metamask avec votre blockchain RPC, il faut le configurer.
 
-A l'heure actuelle, il y a deux solutions : *Metamask* qui permet d'ajouter un portefeuille ultra léger à Chrome (il ne télécharge pas de blockchain) et le navigateur dédie *Mist* qui se veut être l'appstore des D-apps.
-
-Le plugin Metamask va permettre à une application web qui utilise la librairie js web3, de se connecter à un compte d'un portefeuille de n'importe quelle blockchain (rpc,
-privée, morden ou la principale).
-
-Pour pouvoir interfacer le plugin Metamask avec votre blockchain RPC, il faut le configurer.
-
-Sur l'écran de connexion (écran disponible de base ou accessible via Menu Lock puis Back), choisir l'option 'Restore existing Vault'.
+Sur l'écran de connexion (écran disponible de base ou accessible via Menu Lock puis Back), choisir l'option *Restore existing Vault*.
 Il vous sera demandé douze mots clés permettant de récupérer votre portefeuille ainsi qu'un nouveau mot de passe.
 
-Pour se connecter au testrpc local, rentrer les deux mots clés fournis au lancement de testrpc dans la partie Mnemonic :
+Pour se connecter au démon simulant une blockchain (testrpc), il rentrer les deux mots clés fournis au lancement de testrpc dans la partie Mnemonic (comme c'est un outil de test, ce sont toujours les mêmes) :
 
      HD Wallet
      ==================
@@ -390,7 +238,7 @@ Vous aurez donc accès à l'interface spécifique du owner (création de course,
 
 Vous pouvez à tout moment changer d'utilisateur en faisant un switch account dans Metamask afin d'accèder, par la même url, à l'interface de pari et de récupération des gains.
 
-
+Pour changer de compte, affichez la fenêtre de metamask, cliquez sur *Switch Accounts* en haut à droite, cliquez sur l'icône *+* pour faire apparaître les comptes préconfigurés par le daemon testrpc.
 
 ### Etape 4-1 : Intégration des smart-contrats à l'application
 
@@ -403,20 +251,12 @@ Les endroits à modifier sont là encore marqués par des FIX_ME.
 Cette branche est une version de l'application sans lien avec Ethereum.
 C'est comme si on démarrait du project starter Angular2 (https://github.com/blacksonic/angular2-babel-esnext-starter), avec les quelques ajouts suivants :
 - j'ai ajouté les répertoires *contracts* (nos fichiers .sol) et *migrations* (les scripts de déploiement Truffle) à la racine du projet.
-- ainsi que les deux fichiers truffle.js et truffle-config.js pour que la configuration truffle soit prise en compte.
+- ainsi que les le fichier truffle.js pour que la configuration truffle soit prise en compte.
 
 A partir de là, pour pouvoir utiliser nos smarts contracts dans l'application, la configuration est assez simple.
 
 Tout d'abord, ajouter un loader webpack spécifique à Truffle *truffle-solidity-loader*.
 Ce loader va automatiquement rendre disponible vos ABI Javascript (fichier .sol.js) dans le fichier vendor.js aggrégant toutes les sources Js de l'appli.
-
-Pour cela, ajouter la ligne suivante dans les dépendances de votre package.json :
-
-      ...
-      "truffle-solidity-loader": "0.0.8",
-      ...
-
-Et faire un npm install
 
 Puis modifier le fichier `tasks/config/webpack.js` en y référençant notre nouveau loader qui prendra en charge les fichiers .sol :
 ```
@@ -479,16 +319,6 @@ function parier(uint idCourse, uint32[3] chevauxTierce) public returns(bool pari
  ...
 }
 ```
-
-##Initialisation projet
-Initialiser le projet :
-
-      truffle init
-
-Créer un contrat :
-
-      truffle create:contract MonTierce
-
 
 
 https://live.ether.camp/
