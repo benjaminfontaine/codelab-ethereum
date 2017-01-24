@@ -5,7 +5,7 @@ Pour ce TP vous aurez besoin :
 
 1. D'un éditeur de texte ou un IDE. S'il prend en charge le javascript c'est mieux.
 
-2. D'une version récente de docker
+2. D'une version récente de docker (DockerToolBox pour windows et Docker native pour Mac et Linux)
 
 3. Google chrome et [l'extension metamask](https://metamask.io/) (il n'est malheureusement pas encore disponible pour Firefox)
 
@@ -14,11 +14,16 @@ Pour ce TP vous aurez besoin :
 git clone https://github.com/benjaminfontaine/codelab-ethereum.git
 cd codelab-ethereum/horse-bet
 ```
-Récupérez l'image docker via clef USB fournie en séance ou bien via :
+Récupérez l'image docker sur dockerhub via la ligne de commande suivante :
 ```sh
 docker pull francoiskha/codelab-ethereum
-
 ```
+
+Ou bien via la clef USB fournie en séance (mode hors connexion) :
+```sh
+docker load -i <USB-DRIVE>/install-codelab-ethereum/image-codelab-ethereum.tar.gz
+```
+
 Installez [l'extension chrome metamask](https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn)
 
 Vérifiez que tout fonctionne via en lançant depuis la racine du projet :
@@ -218,6 +223,16 @@ docker-compose start web
 ```
 
 Consultez [http://localhost:9000](http://localhost:9000/) dans votre google chrome.
+
+<aside class="notice">
+Si vous utilisez la docker toolbox sur votre machine (Windows ou Mac), l'url suivante ne fonctionnera pas.
+Cela est dû au fait que Docker tourne sur une vm Linux créée sur virtual box.
+L'ip à utiliser est donc l'ip de cette vm, vous pouvez la récuperer avec la ligne de commande suivante :
+```sh
+docker-machine ip default
+```
+L'url sera alors la suivante : http://<ip-vm>:9000
+</aside>
 
 Cliquer sur l'icone de l'extension chrome Metamask en haut à droite de votre fenêtre (un renard orangé). 
 
