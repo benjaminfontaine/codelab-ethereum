@@ -231,7 +231,7 @@ L'ip à utiliser est donc l'ip de cette vm, vous pouvez la récuperer avec la li
 ```sh
 docker-machine ip default
 ```
-L'url sera alors la suivante : http://<ip-vm>:9000
+L'url sera alors la suivante : http://ip-vm:9000
 </aside>
 
 Cliquer sur l'icone de l'extension chrome Metamask en haut à droite de votre fenêtre (un renard orangé). 
