@@ -1,0 +1,35 @@
+testrpc:
+    image: "francoiskha/codelab-ethereum"
+    expose:
+        - "8545"
+    ports:
+        - "8545:8545"
+    command: "testrpc -d"
+unit:
+    image: "francoiskha/codelab-ethereum"
+    command: "truffle test"
+    volumes:
+        - "./:/usr/src/app"
+    links:
+        - "testrpc"
+web:
+    image: "francoiskha/codelab-ethereum"
+    ports:
+        - "9000:9000"
+        - "35729:35729"
+    volumes:
+        - "./:/usr/src/app"
+    command: ["sh", "-c", "source ./serve.sh"]
+    links:
+        - "testrpc"
+
+# conteneur pour debug
+
+# command:
+#     image: "francoiskha/codelab-ethereum"
+#     volumes:
+#         - ./:/usr/src/app
+#     tty: true
+#     links:
+#         - "testrpc"
+#     entrypoint: /bin/sh
