@@ -6,3 +6,5 @@ horse-bet/app/node_modules
 tooling/tools
 tooling/*_tools
 tooling/*.gz
+tooling/*.log
+tooling/.vagrant
