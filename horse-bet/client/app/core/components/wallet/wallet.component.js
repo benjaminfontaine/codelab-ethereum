@@ -36,38 +36,35 @@ export class WalletComponent {
 
       var accountInterval = setInterval(() => {
         console.log("Rafraîchissement des soldes");
-        if (web3.eth.accounts[0] !== this.currentAddress) {
-          console.log("update address and balance");
-          this.currentAddress = web3.eth.accounts[0];
-          this._changeDetectorRef.detectChanges();
-          this._ngZone.run(() => {
-            this.refreshCurrentAccountBalance();
-          });
-        }
-        this.refreshContractBalance();
-      }, 1000);
+        this.currentAddress = web3.eth.accounts[0];
+        this._changeDetectorRef.detectChanges();
+        this._ngZone.run(() => {
+          this.refreshCurrentAccountBalance();
+          this.refreshContractBalance();
+        });
+      }, 500);
     } else {
       this.errorMessage = "Le plugin Metamask doit étre installé et configuré sur votre navigateur.";
     }
   }
 
-  refreshContractBalance(){
-     web3.eth.getBalance(this.contractAddress, (error, result) => {
-          if (!error) {
-            this.contractBalance = web3.fromWei(result.toNumber(), 'ether');;
-          } else {
-            this.errorMessage = error;
-          }
+  refreshContractBalance() {
+    web3.eth.getBalance(this.contractAddress, (error, result) => {
+      if (!error) {
+        this.contractBalance = web3.fromWei(result.toNumber(), 'ether');;
+      } else {
+        this.errorMessage = error;
+      }
     });
   }
 
-    refreshCurrentAccountBalance(){
-     web3.eth.getBalance(this.currentAddress, (error, result) => {
-          if (!error) {
-            this.currentBalance = web3.fromWei(result.toNumber(), 'ether');;
-          } else {
-            this.errorMessage = error;
-          }
+  refreshCurrentAccountBalance() {
+    web3.eth.getBalance(this.currentAddress, (error, result) => {
+      if (!error) {
+        this.currentBalance = web3.fromWei(result.toNumber(), 'ether');;
+      } else {
+        this.errorMessage = error;
+      }
     });
   }
 
