@@ -279,4 +279,71 @@ contract('MonTierce', function(accounts) {
     })
   });
 
+it("possède une fonction getCoursesEnCours qui va renvoyer les courses encore actives", function(done) {
+    var contratTierce = MonTierce.deployed();
+    var events = contratTierce.allEvents({});
+    var course1Id, course2Id, course3Id, course4Id;
+    events.watch(function(error, result) {
+      console.log(result.event);
+      console.log(result.args);
+    });
+    contratTierce.initialiserCourse(chevauxEnCourse).catch(function(error){
+      console.log(console.error());
+    })
+    .then(function(transactionId) {
+      return contratTierce.courseIDGenerator.call();
+    })
+    .then(function(lastCourseId){
+      course1Id = Number(lastCourseId-1);
+      console.log("course1Id" + course1Id);
+      return contratTierce.initialiserCourse(chevauxEnCourse);
+    })
+    .then(function(lastCourseId){
+       course2Id = course1Id +1;
+      console.log("course2Id" + course2Id);
+      return contratTierce.initialiserCourse(chevauxEnCourse);
+    })
+    .then(function(lastCourseId){
+       course3Id = course2Id+1;
+      console.log("course3Id" + course3Id);
+      return contratTierce.initialiserCourse(chevauxEnCourse);
+    })
+    .then(function(lastCourseId){
+       course4Id = course3Id +1;
+      console.log("course4Id" + course4Id);
+      return contratTierce.interdireParis(course1Id);
+    })
+    .then(function(){
+      return contratTierce.interdireParis(course3Id);
+    })
+    .then(function(){
+      return contratTierce.terminerCourse(course1Id,[1,2,3]);
+    })
+    .then(function(){
+      return contratTierce.getCoursesEnCours.call();
+    })
+     .then(function(courseDatas){
+      //web3 renvoie des BigInteger pour les uint, il faut donc les convertir en nombre standards
+      var idsCoursesRetournes = [];
+      for(var i = 0 ; i < courseDatas.length; i++){
+        if(Number(courseDatas[i])>0) {
+          console.log(Number(courseDatas[i]));
+          idsCoursesRetournes.push(Number(courseDatas[i]));
+        }
+      }
+      assert.isOk(idsCoursesRetournes.includes(course2Id), "La course 2 est encore en cours.");
+      assert.isOk(idsCoursesRetournes.includes(course4Id), "La course 4 est encore en cours.");
+      assert.isNotOk(idsCoursesRetournes.includes(course1Id), "La course 1 est terminée.");
+      assert.isNotOk(idsCoursesRetournes.includes(course3Id), "La course 3 est bloquées.");
+      events.stopWatching();
+      done();
+    })
+    .catch(function(err){
+      console.log(err);
+      assert.fail();
+      events.stopWatching();
+      done();
+    });
+  });
+
 });

@@ -11,7 +11,8 @@ import { MonTierceService } from '../../services/montierce/monTierce.service';
   styleUrls: ['css/wallet.css']
 })
 export class WalletComponent {
-
+  @Output() coursesAvecPariActif;
+  @Output() coursesATerminer;
   constructor(changeDetect: ChangeDetectorRef, ngZone: NgZone, ref: ApplicationRef, serviceTierce: MonTierceService) {
     this.currentBalance = 0;
     this.currentAddress = "pas d'adresse trouvée";
@@ -41,6 +42,7 @@ export class WalletComponent {
         this._ngZone.run(() => {
           this.refreshCurrentAccountBalance();
           this.refreshContractBalance();
+          this.refreshCoursesAvecPariActif()
         });
       }, 500);
     } else {
@@ -68,5 +70,10 @@ export class WalletComponent {
     });
   }
 
-
+  refreshCoursesAvecPariActif() {
+    this._service.recupererCoursesPourPari().subscribe(data => {
+      console.log("courses actives pour pari : " + data);
+      this.coursesAvecPariActif = data;
+    });
+  }
 }
