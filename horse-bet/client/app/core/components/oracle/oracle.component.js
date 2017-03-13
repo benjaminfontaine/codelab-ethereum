@@ -12,7 +12,6 @@ import { MonTierceService } from '../../services/montierce/monTierce.service';
 })
 export class OracleComponent {
 
-  @Input() currentBalance;
   constructor(formBuilder: FormBuilder, serviceTierce : MonTierceService, changeDetect : ChangeDetectorRef) {
     this._builder = formBuilder;
     this._serviceTierce = serviceTierce;

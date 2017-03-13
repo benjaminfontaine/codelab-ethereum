@@ -11,8 +11,6 @@ import { MonTierceService } from '../../services/montierce/monTierce.service';
   styleUrls: ['css/app.css'],
 })
 export class PariComponent {
-
-  @Input() currentBalance;
   constructor(formBuilder: FormBuilder, serviceTierce : MonTierceService, changeDetect : ChangeDetectorRef) {
     this._builder = formBuilder;
     this._serviceTierce = serviceTierce;
@@ -48,6 +46,9 @@ export class PariComponent {
          this.estEnErreur= true;
          this._changeDetect.detectChanges();
        });
+     }else{
+       this.message="Vous devez sélectionner trois chevaux différents";
+       this.estEnErreur= true;
      }
   }
 }

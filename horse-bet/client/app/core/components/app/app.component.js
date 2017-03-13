@@ -11,7 +11,6 @@ import template from './app.template.html';
 
 })
 export class AppComponent {
-
   constructor(@Inject('ENVIRONMENT') environment, translate: TranslateService) {
     this.environment = environment;
 
