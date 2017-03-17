@@ -6,14 +6,17 @@ $BASE_BOX = 'ubuntu/xenial64'
 Vagrant.configure(2) do |config|
 	config.vm.provider 'virtualbox' do |vb|
 		vb.gui = false
-		vb.customize ["modifyvm", :id, "--memory", "2048"]
+		vb.customize ["modifyvm", :id, "--memory", "4096"]
 		vb.customize ['modifyvm', :id, '--clipboard', 'bidirectional']
 	end
 	config.vm.box = $BASE_BOX
-	config.vm.hostname = 'codelab-ethereum'
+	config.vm.hostname = 'horse-bet'
 	config.vm.network 'private_network', type: 'dhcp'
-	config.vm.provision 'shell', path: 'provision.sh'
-	# Pour tester le setup dockerisé
-	# config.vm.provision 'shell', path: 'provision_docker.sh'
+	# Setup directement dans la vagrantbox
+	# Attention, la gestion de dépendances est un enfer
+	#config.vm.provision 'shell', path: 'provision.sh'
+	# setup avec docker
+	# config.vm.provision 'shell', path: 'provision_user.sh'
+	config.vm.provision 'shell', path: 'provision_docker.sh'
 	# config.vm.provision 'shell', path: 'provision_googlechrome.sh'
 end

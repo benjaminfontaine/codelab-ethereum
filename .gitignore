@@ -7,4 +7,5 @@ tooling/tools
 tooling/*_tools
 tooling/*.gz
 tooling/*.log
+tooling/*.box
 tooling/.vagrant
