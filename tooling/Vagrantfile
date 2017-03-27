@@ -14,9 +14,9 @@ Vagrant.configure(2) do |config|
 	config.vm.network 'private_network', type: 'dhcp'
 	# Setup directement dans la vagrantbox
 	# Attention, la gestion de dépendances est un enfer
-	#config.vm.provision 'shell', path: 'provision.sh'
+	# config.vm.provision 'shell', path: 'provision_horse-bet.sh'
 	# setup avec docker
-	# config.vm.provision 'shell', path: 'provision_user.sh'
 	config.vm.provision 'shell', path: 'provision_docker.sh'
-	# config.vm.provision 'shell', path: 'provision_googlechrome.sh'
+	#config.vm.provision 'shell', path: 'provision_googlechrome.sh'
+	#config.vm.provision 'shell', path: 'provision_clean_before_package.sh'
 end

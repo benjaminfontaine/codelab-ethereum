@@ -9,4 +9,6 @@ sudo add-apt-repository \
 sudo apt-get update
 # Docker install, pour test du setup
 sudo apt-get -y install docker-engine docker-compose
-sudo usermod -a -G docker ubuntu
+sudo usermod -a -G docker ubuntu || :
+sudo usermod -a -G docker vagrant || :
+docker pull francoiskha/codelab-ethereum
