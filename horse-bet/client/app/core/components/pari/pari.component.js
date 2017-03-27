@@ -18,9 +18,9 @@ export class PariComponent {
     this.pariForm = this._builder.group({
       _id: [''],
       idCourse:1,
-      premierCourse: [2, Validators.required],
-      secondCourse: [4, Validators.required],
-      troisiemeCourse: [8, Validators.required],
+      premierCourse: [1, Validators.required],
+      secondCourse: [2, Validators.required],
+      troisiemeCourse: [3, Validators.required],
       misePari:0
     });
     this.estEnErreur=false;

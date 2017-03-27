@@ -58,8 +58,8 @@ export class MonTierceService {
       { id: 7, name: "K2000" }, { id: 8, name: "mack" },
       { id: 9, name: "ben hur" }, { id: 10, name: "luke" },
       { id: 11, name: "dark vador" }, { id: 12, name: "j'ai plus d'idée" },
-      { id: 12, name: "un cheval" }, { id: 14, name: "un autre cheval" },
-      { id: 15, name: "et encore un" }, { id: 15, name: "allez le dernier" },
+      { id: 13, name: "un cheval" }, { id: 14, name: "un autre cheval" },
+      { id: 15, name: "et encore un" }, { id: 16, name: "allez le dernier" },
     ];
   }
 

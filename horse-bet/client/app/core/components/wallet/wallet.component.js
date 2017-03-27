@@ -36,7 +36,7 @@ export class WalletComponent {
       });
 
       var accountInterval = setInterval(() => {
-        console.log("Rafraîchissement des soldes");
+        /*console.log("Rafraîchissement des soldes");*/
         this.currentAddress = web3.eth.accounts[0];
         this._changeDetectorRef.detectChanges();
         this._ngZone.run(() => {
@@ -70,10 +70,4 @@ export class WalletComponent {
     });
   }
 
-  refreshCoursesAvecPariActif() {
-    this._service.recupererCoursesPourPari().subscribe(data => {
-      console.log("courses actives pour pari : " + data);
-      this.coursesAvecPariActif = data;
-    });
-  }
 }
