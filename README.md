@@ -228,15 +228,24 @@ Consultez [http://localhost:9000](http://localhost:9000/) dans votre google chro
 Si vous utilisez la docker toolbox sur votre machine (Windows ou Mac), l'url suivante ne fonctionnera pas.
 Cela est dû au fait que Docker tourne sur une vm Linux créée sur virtual box.
 L'ip à utiliser est donc l'ip de cette vm, vous pouvez la récuperer avec la ligne de commande suivante :
+
 ```sh
 docker-machine ip default
 ```
+
 L'url sera alors la suivante : http://ip-vm:9000
 </aside>
 
 Cliquer sur l'icone de l'extension chrome Metamask en haut à droite de votre fenêtre (un renard orangé). 
 
-Pour pouvoir interfacer l'extension chrome Metamask avec votre blockchain RPC, il faut le configurer.
+Pour pouvoir interfacer Metamask avec votre blockchain RPC, il faut le configurer.
+
+Attention, Metamask se connecte par défaut à une blockchain de test nommée Ropsten. Ce que nous souhaitons, nous, c'est nous connecter à testrpc. Dans la fenêtre de Metamask, cliquez en haut à gauche à côté de l'icône du renard pour faire apparaître le menu des blockchains où se connecter.
+
+![Metamask changement network](images/metamask_change_network.png)
+
+* Si vous utilisez docker natif il faut sélectionner `localhost:8545`
+* Si vous utilisez une VM (i.e. docker toolbox) il faut sélectionner `Custom RPC` puis entre l'ip de votre VM et le port 8545.
 
 Sur l'écran de connexion (écran disponible de base ou accessible via Menu Lock puis Back), choisir l'option *Restore existing Vault*.
 Il vous sera demandé douze mots clés permettant de récupérer votre portefeuille ainsi qu'un nouveau mot de passe.
@@ -246,6 +255,8 @@ Pour se connecter au démon simulant une blockchain (testrpc), il rentrer les de
      HD Wallet
      ==================
      Mnemonic:      myth like bonus scare over problem client lizard pioneer submit female collect
+
+Si vous êtes en panne d'inspiration pour le mot de passe saissez `ethereum`.
 
 Une fois cette configuration effectuée, vous serez connecté sur la blockchain avec le compte par défaut (qui sera l'owner du contrat).
 
