@@ -39,13 +39,10 @@ export class AppComponent {
   refreshIsOwner() {
     this.currentAddress = web3.eth.accounts[0];
     this.isOwner = this.currentAddress === this.ownerAccount;
-    console.log("Rafraichissement owner : res= "+ this.isOwner +" " + this.currentAddress + " " + this.currentAddress );
+    //console.log("Rafraichissement owner : res= "+ this.isOwner +" " + this.currentAddress + " " + this.currentAddress );
   }
 
   refreshCoursesAvecPariActif() {
-    this._service.recupererCoursesPourPari().subscribe(data => {
-      console.log("courses actives pour pari : " + data);
-      this.coursesAvecParisActif = data;
-    });
+    this._service.recupererCoursesPourPari();
   }
 }

@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, EventEmitter, Input, Output, ChangeDetectorRef} from '@angular/core';
+import { Component, ChangeDetectionStrategy, EventEmitter, Input, Output, ChangeDetectorRef, NgZone} from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 
 import template from './pari.template.html';
@@ -11,7 +11,7 @@ import { MonTierceService } from '../../services/montierce/monTierce.service';
   styleUrls: ['css/app.css'],
 })
 export class PariComponent {
-  constructor(formBuilder: FormBuilder, serviceTierce : MonTierceService, changeDetect : ChangeDetectorRef) {
+  constructor(formBuilder: FormBuilder, serviceTierce : MonTierceService, changeDetect : ChangeDetectorRef, ngZone : NgZone) {
     this._builder = formBuilder;
     this._serviceTierce = serviceTierce;
     this._changeDetect = changeDetect;
@@ -25,14 +25,30 @@ export class PariComponent {
     });
     this.estEnErreur=false;
     this.message='';
-    this.courses= serviceTierce.getCourses();
+    this.courses= [];
     this.chevauxEnCourse = serviceTierce.getChevauxExistants();
+    this._ngZone = ngZone;
+    this.coursesPourPariUnsuscribe = serviceTierce.coursesPourPari$.subscribe(
+      (coursesPourPari) => {
+        this._ngZone.run(() => {
+          console.log('Courses : ' + coursesPourPari);
+          this.courses=[{id:-1, name: "Sélectionner une course"}];
+          for (var i = 0; i < coursesPourPari.length; i++) {
+            this.courses.push({id:coursesPourPari[i], name:'Course '+ coursesPourPari[i]});  
+          };
+        });
+      }
+    )
   }
 
   ngOnInit() {
 
   }
 
+  ngOnDestroy(){
+     console.log("component destroyed");
+     this.coursesPourPariUnsuscribe.unsubscribe();
+  }
    parier(formulaire){
      console.log("Pari");
      console.log(formulaire);
@@ -50,5 +66,22 @@ export class PariComponent {
        this.message="Vous devez sélectionner trois chevaux différents";
        this.estEnErreur= true;
      }
+  }
+
+  rafraichirListeChevaux($event){
+    this.rafraichirListeChevauxParId($event.srcElement.selectedOptions[0].value);
+  }
+
+  rafraichirListeChevauxParId(id){
+    console.log(id);
+     this._ngZone.run(() => {
+      var chevauxEnCourseTemp = this._serviceTierce.getInfoCourses(id).chevauxEnCourse;
+      this.chevauxEnCourse = [];
+      for (var index = 0; index < chevauxEnCourseTemp.length; index++) {
+        var chevalId = chevauxEnCourseTemp[index];
+        this.chevauxEnCourse.push(this._serviceTierce.getChevauxExistants.filter((cheval)=> cheval.id === chevalId));
+      }
+      
+     });
   }
 }
