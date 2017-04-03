@@ -19,7 +19,7 @@ renvoit
 20170XXX_XXXXXX-ubuntu-xenial64-codelab-ethereum          (virtualbox, 0)
 ```
 
-Placez vous ensuite dans le répertoire `codelab-ethereum/horse-bet` du projet puis lancez la commande :
+Placez vous ensuite dans le répertoire `codelab-ethereum` du projet puis lancez la commande :
 ```bash
 vagrant up
 ```
@@ -28,5 +28,5 @@ Une fois la VM lancez, connectez vous via la commande :
 vagrant ssh
 ```
 Vous avez maintenant un shell ouvert sur la machine.
-Placez vous dans le répertoire `/vagrant` vous y trouverez le montage du répertoire du projet.
+Placez vous dans le répertoire `/vagrant/horse-bet` vous y trouverez le montage du répertoire du projet.
 Vous pouvez y lancer toutes les commandes `docker-compose` du projet, rejoignez le [README.md](../README.md) pour continuer le TP.
