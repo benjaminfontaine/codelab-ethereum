@@ -1,6 +1,7 @@
 import { Injectable, NgZone, ChangeDetectorRef } from '@angular/core';
 import MonTierce from "../../../../../contracts/MonTierce.sol";
 import { Observable } from 'rxjs/Observable';
+import {ReplaySubject} from 'rxjs/ReplaySubject';
 
 @Injectable()
 export class MonTierceService {
@@ -11,6 +12,8 @@ export class MonTierceService {
     var contratTierce = MonTierce.deployed();
     this._contratTierce = contratTierce;
     this._ngZone = ngZone;
+    this.coursesPourPari$ = new ReplaySubject();
+    this.dernieresCoursesPourPari = [];
   }
 
   getBalance(address) {
@@ -102,12 +105,11 @@ export class MonTierceService {
   terminerLaCourse(idCourse, tierceGagnant) {
     return this._ngZone.run(() => {
       return this._contratTierce.terminerCourse(idCourse, tierceGagnant, { from: window.web3.eth.defaultAccount });
-    });;
+    });
   }
 
   recupererCoursesPourPari() {
-    return new Observable(obs => {
-      this._ngZone.run(() => {
+    
         this._contratTierce.getCoursesEnCours.call()
           .then((courseDatas) => {
             var idsCoursesRetournes = [];
@@ -117,13 +119,28 @@ export class MonTierceService {
                 idsCoursesRetournes.push(Number(courseDatas[i]));
               }
             };
-            obs.next(idsCoursesRetournes);
+            if(!idsCoursesRetournes.equals(this.dernieresCoursesPourPari)){
+              console.log("Mise à jours id des courses ouvertes : "+ idsCoursesRetournes);
+              this.dernieresCoursesPourPari = idsCoursesRetournes;
+              this.coursesPourPari$.next(idsCoursesRetournes);
+            }
           })
           .catch((err) => {
             console.log(err);
-            obs.next(err);
+            this.coursesPourPari$.error(err);
           });
-      });;
-    });
-  }
+      
+    }
+
+    getInfosCourse(idCourse){
+      this._contratTierce.getInfosCourse.call(idCourse).then((courseDatas) => {
+        var chevauxEnCourseRetournes = [];
+        for(var i = 0 ; i < courseDatas[3].length; i++){
+          chevauxEnCourseRetournes.push(Number(courseDatas[3][i]));
+        }
+        return {id: courseDatas[0], montantParis : courseDatas[1].valueOf(), estTerminee : courseDatas[2], chevauxEnCourse : chevauxEnCourseRetournes, parisAutorises : courseDatas[4]};
+      });
+
+    }
+  
 }

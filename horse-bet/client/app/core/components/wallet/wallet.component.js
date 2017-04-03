@@ -38,11 +38,10 @@ export class WalletComponent {
       var accountInterval = setInterval(() => {
         /*console.log("Rafraîchissement des soldes");*/
         this.currentAddress = web3.eth.accounts[0];
-        this._changeDetectorRef.detectChanges();
+        //this._changeDetectorRef.detectChanges();
         this._ngZone.run(() => {
           this.refreshCurrentAccountBalance();
           this.refreshContractBalance();
-          this.refreshCoursesAvecPariActif()
         });
       }, 500);
     } else {
