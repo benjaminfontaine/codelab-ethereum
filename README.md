@@ -61,7 +61,7 @@ Redémarrer l'application web
 docker-compose restart web 
 ```
 
-##Etape 1-1 : Le contrat - Création d'une course
+## Etape 1-1 : Le contrat - Création d'une course
 
 Se mettre sur la branche Step 1-1.
 
@@ -116,7 +116,7 @@ Pour voir la correction de ce TP :
 </details>
 
 
-##Etape 1-2 : Le contrat - Consultation d'une course
+## Etape 1-2 : Le contrat - Consultation d'une course
 
 Se mettre sur la branche Step 1-2.
 
