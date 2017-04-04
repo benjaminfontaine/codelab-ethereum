@@ -7,7 +7,7 @@ testrpc:
     command: "testrpc -d"
 unit:
     image: "francoiskha/codelab-ethereum"
-    command: "truffle test"
+    command: ["sh", "-c", "source ./unit.sh"]
     volumes:
         - "./:/usr/src/app"
     links:

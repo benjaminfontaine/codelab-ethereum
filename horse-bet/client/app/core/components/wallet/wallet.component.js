@@ -9,9 +9,8 @@ import { MonTierceService } from '../../services/montierce/monTierce.service';
   selector: 'wallet',
   template: template,
   styleUrls: ['css/wallet.css']
-})
+           
 export class WalletComponent {
-
   constructor(changeDetect: ChangeDetectorRef, ngZone: NgZone, ref: ApplicationRef, serviceTierce: MonTierceService) {
     this.currentBalance = 0;
     this.currentAddress = "pas d'adresse trouvée";
@@ -35,9 +34,9 @@ export class WalletComponent {
       });
 
       var accountInterval = setInterval(() => {
-        console.log("Rafraîchissement des soldes");
+        /*console.log("Rafraîchissement des soldes");*/
         this.currentAddress = web3.eth.accounts[0];
-        this._changeDetectorRef.detectChanges();
+        //this._changeDetectorRef.detectChanges();
         this._ngZone.run(() => {
           this.refreshCurrentAccountBalance();
           this.refreshContractBalance();

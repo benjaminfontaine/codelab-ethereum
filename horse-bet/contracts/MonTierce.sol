@@ -1,5 +1,4 @@
 pragma solidity ^0.4.0;
-import "MonTierceLib.sol";
 import "mortal.sol";
 // Contrat de tierce en ligne
 
@@ -35,7 +34,7 @@ contract MonTierce is mortal{
     bool existeGagnantUno;
   }
 
-  uint public courseIDGenerator = 0;
+  uint public courseIDGenerator = 1;
   //structure de données qui référence les courses
   mapping (uint => Course) courses;
 
@@ -67,6 +66,33 @@ contract MonTierce is mortal{
   function getInfosCourse(uint idCourse) public returns(uint, uint, bool, uint32[], bool){
     GetInfosCourse(idCourse);
     return (courses[idCourse].idCourse, courses[idCourse].montantTotalMises, courses[idCourse].terminee, courses[idCourse].chevauxEnCourse , courses[idCourse].parisBloques);
+  }
+
+  event GetCoursesATerminer(uint[], uint);
+
+  //cette méthode, en lecture seule, renvoie les ids des courses actives
+  function getCoursesATerminer() public returns(uint[]){
+    uint[] memory idsCoursesATerminer =  new uint[](courseIDGenerator);
+    for(uint x= 0; x< courseIDGenerator; x++ ){
+      if(!courses[x].terminee &&  courses[x].parisBloques){
+          idsCoursesATerminer[x] = courses[x].idCourse;
+      }
+    }
+    GetCoursesATerminer(idsCoursesATerminer, idsCoursesATerminer.length);
+    return idsCoursesATerminer;
+  }
+
+  event GetCoursesEnCours(uint[], uint);
+  //cette méthode, en lecture seule, renvoie les ids des courses à terminer
+  function getCoursesEnCours() public returns(uint[]){
+    uint[] memory idsCoursesEnCours =  new uint[](courseIDGenerator);
+    for(uint x= 0; x< courseIDGenerator; x++ ){
+      if(!courses[x].terminee &&  !courses[x].parisBloques){
+          idsCoursesEnCours[x] = courses[x].idCourse;
+      }
+    }
+    GetCoursesEnCours(idsCoursesEnCours, idsCoursesEnCours.length);
+    return idsCoursesEnCours;
   }
 
   //fonction de fallback indispensable sinon la fonction parier revoit un throw à chaque appel

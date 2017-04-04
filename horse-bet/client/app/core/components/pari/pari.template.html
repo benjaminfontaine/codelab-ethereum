@@ -9,10 +9,10 @@
     <form id="pariForm" [formGroup]="pariForm">
       <div class="zoneFonctionnalite">
         <h3>Parier</h3>
-        <div class="contenuFonctionnalite">
+        <div class="contenuFonctionnalite" [hidden]="courses.length < 2">
           <div>
             <label for="idCourse">L'identifiant de la course : </label>
-            <select formControlName="idCourse" id="idCourse">
+            <select formControlName="idCourse" id="idCourse" (change)="rafraichirListeChevaux($event)">
               <option *ngFor="let course of courses" [value]="course.id">{{course.name}}</option>
             </select>
           </div>
@@ -42,6 +42,9 @@
           <br/>
           <button (click)="parier(pariForm.value)" type="button" type="submit" [disabled]="!pariForm.valid" class="btn btn-primary">Parier</button>
         </div>
+         <div class="contenuFonctionnalite" [hidden]="courses.length>1">
+           Aucune course n'est disponible pour le moment
+         </div>
       </div>
 
     </form>

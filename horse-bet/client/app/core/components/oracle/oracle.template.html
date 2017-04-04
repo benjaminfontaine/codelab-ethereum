@@ -20,34 +20,53 @@
 
     <div class="zoneFonctionnalite">
       <h3>Interdire les paris : </h3>
-      <div class="contenuFonctionnalite">
+      <div class="contenuFonctionnalite" [hidden]="coursesAInterdire.length < 2" >
         <label for="idCoursePari">Identifiant de la course : </label>
         <select formControlName="idCourseBlocagePari" id="idCoursePari">
-          <option *ngFor="let course of courses" [value]="course.id">{{course.name}}</option>
+          <option *ngFor="let course of coursesAInterdire" [value]="course.id">{{course.name}}</option>
         </select>
         <br/>
         <button (click)="bloquerLesParis(oracleForm.value)" type="button" type="submit" [disabled]="!oracleForm.valid" class="btn btn-primary">Bloquer les paris </button>
+      </div>
+      <div class="contenuFonctionnalite" [hidden]="coursesAInterdire.length > 1" >
+          Aucune course n'est en cours actuellement  
       </div>
     </div>
 
     <div class="zoneFonctionnalite">
       <h3>Terminer la course :</h3>
-      <div class="contenuFonctionnalite">
+      <div class="contenuFonctionnalite" [hidden]="coursesATerminer.length < 2">
         <div>
           <label for="idFinCourse">Identifiant de la course : </label>
-          <select formControlName="idFinCourse" id="idFinCourse">
-            <option *ngFor="let course of courses" [value]="course.id">{{course.name}}</option>
+          <select formControlName="idFinCourse" id="idFinCourse" (change)="rafraichirListeChevaux($event)">
+            <option *ngFor="let course of coursesATerminer" [value]="course.id">{{course.name}}</option>
           </select>
         </div>
-        <div>
-          <label for="tierceGagnant">Tierce gagnant : </label>
-          <select formControlName="tierceGagnant" id="tierceGagnant" multiple>
-            <option *ngFor="let cheval of chevauxExistants" [value]="cheval.id">{{cheval.name}}</option>
-          </select>
-        </div>
+         <div>
+            <label id="premierCourse" for="premierCourse">Le cheval gagnant de la course : </label>
+            <select formControlName="premierCourse">
+              <option *ngFor="let cheval of chevauxEnCourse" [value]="cheval.id">{{cheval.name}}</option>
+            </select>
+          </div>
+          <div>
+            <label for="secondCourse">Le second cheval de la course : </label>
+            <select formControlName="secondCourse">
+              <option *ngFor="let cheval of chevauxEnCourse" [value]="cheval.id">{{cheval.name}}</option>
+            </select>
+          </div>
+          <div>
+            <label for="troisiemeCourse">Le troisième cheval de la course : </label>
+            <select formControlName="troisiemeCourse">
+              <option *ngFor="let cheval of chevauxEnCourse" [value]="cheval.id">{{cheval.name}}</option>
+            </select>
+          </div>
         <br/>
         <button (click)="terminerLaCourse(oracleForm.value)" type="button" type="submit" [disabled]="!oracleForm.valid" class="btn btn-primary">Fin de la course </button>
       </div>
+
+       <div class="contenuFonctionnalite" [hidden]="coursesATerminer.length > 1">
+        Aucune course à terminer pour le moment.
+       </div>
     </div>
   </form>
 </div>
