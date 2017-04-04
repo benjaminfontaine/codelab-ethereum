@@ -29,6 +29,7 @@ export class AppComponent {
         this._ngZone.run(() => {
           this.refreshIsOwner();
           this.refreshCoursesAvecPariActif()
+          this.refreshCoursesATerminer();
         });
       }, 500);
     } else {
@@ -44,5 +45,8 @@ export class AppComponent {
 
   refreshCoursesAvecPariActif() {
     this._service.recupererCoursesPourPari();
+  }
+  refreshCoursesATerminer() {
+    this._service.recupererCoursesATerminer();
   }
 }

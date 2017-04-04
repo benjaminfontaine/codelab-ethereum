@@ -20,25 +20,35 @@ export class OracleComponent {
       _id: [''],
       chevauxParticipants: [[], Validators.required],
       idCourseBlocagePari: -1,
-      idFinCourse: 0,
-      premierCourse: [1, Validators.required],
-      secondCourse: [2, Validators.required],
-      troisiemeCourse: [3, Validators.required]
+      idFinCourse: -1,
+      premierCourse: [-1, Validators.required],
+      secondCourse: [-1, Validators.required],
+      troisiemeCourse: [-1, Validators.required]
     });
 
     this.estEnErreur = false;
     this.message = '';
     this.chevauxExistants = serviceTierce.getChevauxExistants();
     this.coursesAInterdire = [];
-    this.courses = serviceTierce.getCourses();
-    this.chevauxEnCourse = serviceTierce.getChevauxExistants();
+    this.coursesATerminer = [];
+    this.chevauxEnCourse = [];
     this._ngZone = ngZone;
-    this.coursesPourPariUnsuscribe = serviceTierce.coursesPourPari$.subscribe(
+    this.coursesPourPariUnsubscribe = serviceTierce.coursesPourPari$.subscribe(
       (coursesPourPari) => {
         this._ngZone.run(() => {
           this.coursesAInterdire=[{id:-1, name: "Sélectionner une course"}];
           for (var i = 0; i < coursesPourPari.length; i++) {
             this.coursesAInterdire.push({id:coursesPourPari[i], name:'Course '+ coursesPourPari[i]});  
+          };
+        });
+      }
+    )
+    this.coursesATerminerUnsubscribe = serviceTierce.coursesATerminer$.subscribe(
+      (coursesATerminer) => {
+        this._ngZone.run(() => {
+          this.coursesATerminer=[{id:-1, name: "Sélectionner une course"}];
+          for (var i = 0; i < coursesATerminer.length; i++) {
+            this.coursesATerminer.push({id:coursesATerminer[i], name:'Course '+ coursesATerminer[i]});  
           };
         });
       }
@@ -102,7 +112,28 @@ export class OracleComponent {
     }
   }
   
+  rafraichirListeChevaux($event){
+    this.rafraichirListeChevauxParId($event.srcElement.selectedOptions[0].value);
+  }
+
+  rafraichirListeChevauxParId(id){
+    console.log("Rafraîchissement des chevaux pour la course d'id " + id);
+    if(id != -1){
+     this._ngZone.run(() => {
+        this._serviceTierce.getInfosCourse(id).subscribe((infosCourse) => {
+          var chevauxEnCourseTemp = infosCourse.chevauxEnCourse;
+          this.chevauxEnCourse = [{ id: -1, name: "Sélectionner un cheval" }];
+          for (var index = 0; index < chevauxEnCourseTemp.length; index++) {
+            var chevalId = chevauxEnCourseTemp[index];
+            this.chevauxEnCourse.push(this._serviceTierce.getChevauxExistants().filter((cheval)=> cheval.id === chevalId)[0]);
+          }
+        });
+      });
+    }
+  }
+
   ngOnDestroy(){
-     this.coursesPourPariUnsuscribe.unsubscribe();
+     this.coursesPourPariUnsubscribe.unsubscribe();
+     this.coursesATerminerUnsubscribe.unsubscribe();
   }
 }

@@ -35,11 +35,11 @@
 
     <div class="zoneFonctionnalite">
       <h3>Terminer la course :</h3>
-      <div class="contenuFonctionnalite">
+      <div class="contenuFonctionnalite" [hidden]="coursesATerminer.length < 2">
         <div>
           <label for="idFinCourse">Identifiant de la course : </label>
-          <select formControlName="idFinCourse" id="idFinCourse">
-            <option *ngFor="let course of courses" [value]="course.id">{{course.name}}</option>
+          <select formControlName="idFinCourse" id="idFinCourse" (change)="rafraichirListeChevaux($event)">
+            <option *ngFor="let course of coursesATerminer" [value]="course.id">{{course.name}}</option>
           </select>
         </div>
          <div>
@@ -60,17 +60,13 @@
               <option *ngFor="let cheval of chevauxEnCourse" [value]="cheval.id">{{cheval.name}}</option>
             </select>
           </div>
-        
-        
-      <!--  <div>
-          <label for="tierceGagnant">Tierce gagnant : </label>
-          <select formControlName="tierceGagnant" id="tierceGagnant" multiple>
-            <option *ngFor="let cheval of chevauxExistants" [value]="cheval.id">{{cheval.name}}</option>
-          </select>
-        </div>-->
         <br/>
         <button (click)="terminerLaCourse(oracleForm.value)" type="button" type="submit" [disabled]="!oracleForm.valid" class="btn btn-primary">Fin de la course </button>
       </div>
+
+       <div class="contenuFonctionnalite" [hidden]="coursesATerminer.length > 1">
+        Aucune course à terminer pour le moment.
+       </div>
     </div>
   </form>
 </div>

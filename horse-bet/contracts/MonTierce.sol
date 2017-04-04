@@ -68,9 +68,22 @@ contract MonTierce is mortal{
     return (courses[idCourse].idCourse, courses[idCourse].montantTotalMises, courses[idCourse].terminee, courses[idCourse].chevauxEnCourse , courses[idCourse].parisBloques);
   }
 
-  event GetCoursesEnCours(uint[], uint);
+  event GetCoursesATerminer(uint[], uint);
 
   //cette méthode, en lecture seule, renvoie les ids des courses actives
+  function getCoursesATerminer() public returns(uint[]){
+    uint[] memory idsCoursesATerminer =  new uint[](courseIDGenerator);
+    for(uint x= 0; x< courseIDGenerator; x++ ){
+      if(!courses[x].terminee &&  courses[x].parisBloques){
+          idsCoursesATerminer[x] = courses[x].idCourse;
+      }
+    }
+    GetCoursesATerminer(idsCoursesATerminer, idsCoursesATerminer.length);
+    return idsCoursesATerminer;
+  }
+
+  event GetCoursesEnCours(uint[], uint);
+  //cette méthode, en lecture seule, renvoie les ids des courses à terminer
   function getCoursesEnCours() public returns(uint[]){
     uint[] memory idsCoursesEnCours =  new uint[](courseIDGenerator);
     for(uint x= 0; x< courseIDGenerator; x++ ){

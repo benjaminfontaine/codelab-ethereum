@@ -18,9 +18,9 @@ export class PariComponent {
     this.pariForm = this._builder.group({
       _id: [''],
       idCourse:-1,
-      premierCourse: [1, Validators.required],
-      secondCourse: [2, Validators.required],
-      troisiemeCourse: [3, Validators.required],
+      premierCourse: [-1, Validators.required],
+      secondCourse: [-1, Validators.required],
+      troisiemeCourse: [-1, Validators.required],
       misePari:0
     });
     this.estEnErreur=false;
@@ -31,7 +31,7 @@ export class PariComponent {
     this.coursesPourPariUnsuscribe = serviceTierce.coursesPourPari$.subscribe(
       (coursesPourPari) => {
         this._ngZone.run(() => {
-          console.log('Courses : ' + coursesPourPari);
+          console.log('Courses pour paris : ' + coursesPourPari);
           this.courses=[{id:-1, name: "Sélectionner une course"}];
           for (var i = 0; i < coursesPourPari.length; i++) {
             this.courses.push({id:coursesPourPari[i], name:'Course '+ coursesPourPari[i]});  
@@ -73,15 +73,14 @@ export class PariComponent {
   }
 
   rafraichirListeChevauxParId(id){
-    console.log(id);
+    console.log("Rafraîchissement des chevaux pour la course d'id " + id);
     if(id != -1){
      this._ngZone.run(() => {
         this._serviceTierce.getInfosCourse(id).subscribe((infosCourse) => {
           var chevauxEnCourseTemp = infosCourse.chevauxEnCourse;
-          this.chevauxEnCourse = [];
+          this.chevauxEnCourse = [{ id: -1, name: "Sélectionner un cheval" }];
           for (var index = 0; index < chevauxEnCourseTemp.length; index++) {
             var chevalId = chevauxEnCourseTemp[index];
-            console.log(this._serviceTierce.getInfosCourse(id));
             this.chevauxEnCourse.push(this._serviceTierce.getChevauxExistants().filter((cheval)=> cheval.id === chevalId)[0]);
           }
         });
