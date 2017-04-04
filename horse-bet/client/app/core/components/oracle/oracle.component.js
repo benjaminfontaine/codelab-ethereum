@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, EventEmitter, Input, Output, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy, EventEmitter, Input, Output, ChangeDetectorRef, NgZone } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 
 import template from './oracle.template.html';
@@ -12,14 +12,14 @@ import { MonTierceService } from '../../services/montierce/monTierce.service';
 })
 export class OracleComponent {
 
-  constructor(formBuilder: FormBuilder, serviceTierce: MonTierceService, changeDetect: ChangeDetectorRef) {
+  constructor(formBuilder: FormBuilder, serviceTierce: MonTierceService, changeDetect: ChangeDetectorRef, ngZone : NgZone) {
     this._builder = formBuilder;
     this._serviceTierce = serviceTierce;
     this._changeDetect = changeDetect;
     this.oracleForm = this._builder.group({
       _id: [''],
       chevauxParticipants: [[], Validators.required],
-      idCourseBlocagePari: 0,
+      idCourseBlocagePari: -1,
       idFinCourse: 0,
       premierCourse: [1, Validators.required],
       secondCourse: [2, Validators.required],
@@ -29,8 +29,20 @@ export class OracleComponent {
     this.estEnErreur = false;
     this.message = '';
     this.chevauxExistants = serviceTierce.getChevauxExistants();
+    this.coursesAInterdire = [];
     this.courses = serviceTierce.getCourses();
     this.chevauxEnCourse = serviceTierce.getChevauxExistants();
+    this._ngZone = ngZone;
+    this.coursesPourPariUnsuscribe = serviceTierce.coursesPourPari$.subscribe(
+      (coursesPourPari) => {
+        this._ngZone.run(() => {
+          this.coursesAInterdire=[{id:-1, name: "Sélectionner une course"}];
+          for (var i = 0; i < coursesPourPari.length; i++) {
+            this.coursesAInterdire.push({id:coursesPourPari[i], name:'Course '+ coursesPourPari[i]});  
+          };
+        });
+      }
+    )
   }
 
   ngOnInit() {
@@ -88,5 +100,9 @@ export class OracleComponent {
       this.message = "Vous devez sélectionner trois chevaux différents";
       this.estEnErreur = true;
     }
+  }
+  
+  ngOnDestroy(){
+     this.coursesPourPariUnsuscribe.unsubscribe();
   }
 }

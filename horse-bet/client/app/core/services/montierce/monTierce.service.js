@@ -133,14 +133,23 @@ export class MonTierceService {
     }
 
     getInfosCourse(idCourse){
-      this._contratTierce.getInfosCourse.call(idCourse).then((courseDatas) => {
-        var chevauxEnCourseRetournes = [];
-        for(var i = 0 ; i < courseDatas[3].length; i++){
-          chevauxEnCourseRetournes.push(Number(courseDatas[3][i]));
-        }
-        return {id: courseDatas[0], montantParis : courseDatas[1].valueOf(), estTerminee : courseDatas[2], chevauxEnCourse : chevauxEnCourseRetournes, parisAutorises : courseDatas[4]};
+      console.log("get infos courses : "+ idCourse);
+      return new Observable(obs => {
+      this._ngZone.run(() => {
+        this._contratTierce.getInfosCourse.call(idCourse)
+        .then((courseDatas) => {
+          var chevauxEnCourseRetournes = [];
+          for(var i = 0 ; i < courseDatas[3].length; i++){
+            chevauxEnCourseRetournes.push(Number(courseDatas[3][i]));
+          }
+          obs.next({id: courseDatas[0], montantParis : courseDatas[1].valueOf(), estTerminee : courseDatas[2], chevauxEnCourse : chevauxEnCourseRetournes, parisAutorises : courseDatas[4]});
+        })
+        .catch((err) => {
+          console.log(err);
+          obs.next(err);
+        });
       });
-
+    });
     }
   
 }

@@ -17,7 +17,7 @@ export class PariComponent {
     this._changeDetect = changeDetect;
     this.pariForm = this._builder.group({
       _id: [''],
-      idCourse:1,
+      idCourse:-1,
       premierCourse: [1, Validators.required],
       secondCourse: [2, Validators.required],
       troisiemeCourse: [3, Validators.required],
@@ -74,14 +74,18 @@ export class PariComponent {
 
   rafraichirListeChevauxParId(id){
     console.log(id);
+    if(id != -1){
      this._ngZone.run(() => {
-      var chevauxEnCourseTemp = this._serviceTierce.getInfoCourses(id).chevauxEnCourse;
-      this.chevauxEnCourse = [];
-      for (var index = 0; index < chevauxEnCourseTemp.length; index++) {
-        var chevalId = chevauxEnCourseTemp[index];
-        this.chevauxEnCourse.push(this._serviceTierce.getChevauxExistants.filter((cheval)=> cheval.id === chevalId));
-      }
-      
-     });
+        this._serviceTierce.getInfosCourse(id).subscribe((infosCourse) => {
+          var chevauxEnCourseTemp = infosCourse.chevauxEnCourse;
+          this.chevauxEnCourse = [];
+          for (var index = 0; index < chevauxEnCourseTemp.length; index++) {
+            var chevalId = chevauxEnCourseTemp[index];
+            console.log(this._serviceTierce.getInfosCourse(id));
+            this.chevauxEnCourse.push(this._serviceTierce.getChevauxExistants().filter((cheval)=> cheval.id === chevalId)[0]);
+          }
+        });
+      });
+    }
   }
 }

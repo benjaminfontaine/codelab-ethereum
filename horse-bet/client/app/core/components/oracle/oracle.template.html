@@ -20,13 +20,16 @@
 
     <div class="zoneFonctionnalite">
       <h3>Interdire les paris : </h3>
-      <div class="contenuFonctionnalite">
+      <div class="contenuFonctionnalite" [hidden]="coursesAInterdire.length < 2" >
         <label for="idCoursePari">Identifiant de la course : </label>
         <select formControlName="idCourseBlocagePari" id="idCoursePari">
-          <option *ngFor="let course of courses" [value]="course.id">{{course.name}}</option>
+          <option *ngFor="let course of coursesAInterdire" [value]="course.id">{{course.name}}</option>
         </select>
         <br/>
         <button (click)="bloquerLesParis(oracleForm.value)" type="button" type="submit" [disabled]="!oracleForm.valid" class="btn btn-primary">Bloquer les paris </button>
+      </div>
+      <div class="contenuFonctionnalite" [hidden]="coursesAInterdire.length > 1" >
+          Aucune course n'est en cours actuellement  
       </div>
     </div>
 
