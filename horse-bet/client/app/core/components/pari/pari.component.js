@@ -46,12 +46,10 @@ export class PariComponent {
   }
 
   ngOnDestroy(){
-     console.log("component destroyed");
      this.coursesPourPariUnsuscribe.unsubscribe();
   }
    parier(formulaire){
      console.log("Pari");
-     console.log(formulaire);
      if(formulaire.premierCourse != formulaire.secondCourse && formulaire.secondCourse != formulaire.troisiemeCourse && formulaire.troisiemeCourse != formulaire.premierCourse ){
        this._serviceTierce.parier(formulaire.idCourse, [formulaire.premierCourse, formulaire.secondCourse, formulaire.troisiemeCourse], formulaire.misePari).then((error, data) => {
          this.message="Le pari a bien été pris en compte.";

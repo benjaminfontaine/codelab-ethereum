@@ -69,7 +69,6 @@ export class MonTierceService {
   }
 
   parier(idCourse, tierce, mise) {
-    console.log(mise);
     return this._contratTierce.parier(idCourse, tierce, { value: window.web3.toWei(mise, 'ether'), gas: 2000000, from: window.web3.eth.defaultAccount });
   }
 
