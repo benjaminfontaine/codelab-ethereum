@@ -17,10 +17,10 @@ export class PariComponent {
     this._changeDetect = changeDetect;
     this.pariForm = this._builder.group({
       _id: [''],
-      idCourse:1,
-      premierCourse: [1, Validators.required],
-      secondCourse: [2, Validators.required],
-      troisiemeCourse: [3, Validators.required],
+      idCourse:-1,
+      premierCourse: [-1, Validators.required],
+      secondCourse: [-1, Validators.required],
+      troisiemeCourse: [-1, Validators.required],
       misePari:0
     });
     this.estEnErreur=false;
@@ -31,7 +31,7 @@ export class PariComponent {
     this.coursesPourPariUnsuscribe = serviceTierce.coursesPourPari$.subscribe(
       (coursesPourPari) => {
         this._ngZone.run(() => {
-          console.log('Courses : ' + coursesPourPari);
+          console.log('Courses pour paris : ' + coursesPourPari);
           this.courses=[{id:-1, name: "Sélectionner une course"}];
           for (var i = 0; i < coursesPourPari.length; i++) {
             this.courses.push({id:coursesPourPari[i], name:'Course '+ coursesPourPari[i]});  
@@ -46,12 +46,10 @@ export class PariComponent {
   }
 
   ngOnDestroy(){
-     console.log("component destroyed");
      this.coursesPourPariUnsuscribe.unsubscribe();
   }
    parier(formulaire){
      console.log("Pari");
-     console.log(formulaire);
      if(formulaire.premierCourse != formulaire.secondCourse && formulaire.secondCourse != formulaire.troisiemeCourse && formulaire.troisiemeCourse != formulaire.premierCourse ){
        this._serviceTierce.parier(formulaire.idCourse, [formulaire.premierCourse, formulaire.secondCourse, formulaire.troisiemeCourse], formulaire.misePari).then((error, data) => {
          this.message="Le pari a bien été pris en compte.";
@@ -73,15 +71,18 @@ export class PariComponent {
   }
 
   rafraichirListeChevauxParId(id){
-    console.log(id);
+    console.log("Rafraîchissement des chevaux pour la course d'id " + id);
+    if(id != -1){
      this._ngZone.run(() => {
-      var chevauxEnCourseTemp = this._serviceTierce.getInfoCourses(id).chevauxEnCourse;
-      this.chevauxEnCourse = [];
-      for (var index = 0; index < chevauxEnCourseTemp.length; index++) {
-        var chevalId = chevauxEnCourseTemp[index];
-        this.chevauxEnCourse.push(this._serviceTierce.getChevauxExistants.filter((cheval)=> cheval.id === chevalId));
-      }
-      
-     });
+        this._serviceTierce.getInfosCourse(id).subscribe((infosCourse) => {
+          var chevauxEnCourseTemp = infosCourse.chevauxEnCourse;
+          this.chevauxEnCourse = [{ id: -1, name: "Sélectionner un cheval" }];
+          for (var index = 0; index < chevauxEnCourseTemp.length; index++) {
+            var chevalId = chevauxEnCourseTemp[index];
+            this.chevauxEnCourse.push(this._serviceTierce.getChevauxExistants().filter((cheval)=> cheval.id === chevalId)[0]);
+          }
+        });
+      });
+    }
   }
 }

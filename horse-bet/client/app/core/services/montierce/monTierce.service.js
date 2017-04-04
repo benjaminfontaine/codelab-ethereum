@@ -13,7 +13,9 @@ export class MonTierceService {
     this._contratTierce = contratTierce;
     this._ngZone = ngZone;
     this.coursesPourPari$ = new ReplaySubject();
+    this.coursesATerminer$ = new ReplaySubject();
     this.dernieresCoursesPourPari = [];
+    this.dernieresCoursesATerminer = [];
   }
 
   getBalance(address) {
@@ -67,7 +69,6 @@ export class MonTierceService {
   }
 
   parier(idCourse, tierce, mise) {
-    console.log(mise);
     return this._contratTierce.parier(idCourse, tierce, { value: window.web3.toWei(mise, 'ether'), gas: 2000000, from: window.web3.eth.defaultAccount });
   }
 
@@ -109,38 +110,70 @@ export class MonTierceService {
   }
 
   recupererCoursesPourPari() {
-    
-        this._contratTierce.getCoursesEnCours.call()
-          .then((courseDatas) => {
-            var idsCoursesRetournes = [];
-            for (var i = 0; i < courseDatas.length; i++) {
-              //web3 renvoie des BigInteger pour les uint, il faut donc les convertir en nombre standards
-              if (Number(courseDatas[i]) > 0) {
-                idsCoursesRetournes.push(Number(courseDatas[i]));
-              }
-            };
-            if(!idsCoursesRetournes.equals(this.dernieresCoursesPourPari)){
-              console.log("Mise à jours id des courses ouvertes : "+ idsCoursesRetournes);
-              this.dernieresCoursesPourPari = idsCoursesRetournes;
-              this.coursesPourPari$.next(idsCoursesRetournes);
+      this._contratTierce.getCoursesEnCours.call()
+        .then((courseDatas) => {
+          var idsCoursesRetournes = [];
+          for (var i = 0; i < courseDatas.length; i++) {
+            //web3 renvoie des BigInteger pour les uint, il faut donc les convertir en nombre standards
+            if (Number(courseDatas[i]) > 0) {
+              idsCoursesRetournes.push(Number(courseDatas[i]));
             }
-          })
-          .catch((err) => {
-            console.log(err);
-            this.coursesPourPari$.error(err);
-          });
+          };
+          if(!idsCoursesRetournes.equals(this.dernieresCoursesPourPari)){
+            console.log("Mise à jours id des courses ouvertes : "+ idsCoursesRetournes);
+            this.dernieresCoursesPourPari = idsCoursesRetournes;
+            this.coursesPourPari$.next(idsCoursesRetournes);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          this.coursesPourPari$.error(err);
+        });
       
-    }
+  }
 
-    getInfosCourse(idCourse){
-      this._contratTierce.getInfosCourse.call(idCourse).then((courseDatas) => {
-        var chevauxEnCourseRetournes = [];
-        for(var i = 0 ; i < courseDatas[3].length; i++){
-          chevauxEnCourseRetournes.push(Number(courseDatas[3][i]));
-        }
-        return {id: courseDatas[0], montantParis : courseDatas[1].valueOf(), estTerminee : courseDatas[2], chevauxEnCourse : chevauxEnCourseRetournes, parisAutorises : courseDatas[4]};
+
+  recupererCoursesATerminer() {
+      this._contratTierce.getCoursesATerminer.call()
+        .then((courseDatas) => {
+          var idsCoursesRetournes = [];
+          for (var i = 0; i < courseDatas.length; i++) {
+            //web3 renvoie des BigInteger pour les uint, il faut donc les convertir en nombre standards
+            if (Number(courseDatas[i]) > 0) {
+              idsCoursesRetournes.push(Number(courseDatas[i]));
+            }
+          };
+          if(!idsCoursesRetournes.equals(this.dernieresCoursesATerminer)){
+            console.log("Mise à jours id des courses à terminer : "+ idsCoursesRetournes);
+            this.dernieresCoursesATerminer = idsCoursesRetournes;
+            this.coursesATerminer$.next(idsCoursesRetournes);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          this.coursesATerminer$.error(err);
+        });
+      
+  }
+
+  getInfosCourse(idCourse){
+    console.log("get infos courses : "+ idCourse);
+    return new Observable(obs => {
+      this._ngZone.run(() => {
+        this._contratTierce.getInfosCourse.call(idCourse)
+        .then((courseDatas) => {
+          var chevauxEnCourseRetournes = [];
+          for(var i = 0 ; i < courseDatas[3].length; i++){
+            chevauxEnCourseRetournes.push(Number(courseDatas[3][i]));
+          }
+          obs.next({id: courseDatas[0], montantParis : courseDatas[1].valueOf(), estTerminee : courseDatas[2], chevauxEnCourse : chevauxEnCourseRetournes, parisAutorises : courseDatas[4]});
+        })
+        .catch((err) => {
+          console.log(err);
+          obs.next(err);
+        });
       });
-
-    }
+    });
+  }
   
 }
