@@ -4,7 +4,8 @@ Si votre machine ne parviens pas à gérer docker (oui, ça arrive), on vous pro
 * Installez virtualbox
 * Installez vagrant
 * Récupérez le fichier de la box :
-** En séance sur clef USB
+	* En séance sur clef USB
+	* hors séance [sur ce lien](http://dl.free.fr/rm.pl?h=oCTCWWoPk&i=82372531&s=qYljWEsza5KUQk1eetSyKT97fDTbmSMe)
 
 Pour importer la box dans vagrant lancez la commande :
 ```bash
