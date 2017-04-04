@@ -2,7 +2,7 @@ import { Component, ChangeDetectionStrategy, EventEmitter, Input, Output, Change
 import { FormBuilder, Validators } from '@angular/forms';
 
 import template from './pari.template.html';
-import MonTierce from "../../../../../contracts/MonTierce.sol";
+
 import { MonTierceService } from '../../services/montierce/monTierce.service';
 
 @Component({
