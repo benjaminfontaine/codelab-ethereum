@@ -170,9 +170,7 @@ Pour voir la correction de ce TP :
 
      git checkout step2-2c
 
-
-
-##Etape 3 : Le contrat - Implémentation de la méthode de fin de course.
+## Etape 3 : Le contrat - Implémentation de la méthode de fin de course.
 
 Cette méthode doit parcourir tous les paris de la course, déterminer ceux qui sont gagnants, et d'envoyer le gain à tous les vainqueurs.
 
