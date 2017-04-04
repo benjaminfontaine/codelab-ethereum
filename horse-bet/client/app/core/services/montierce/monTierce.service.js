@@ -1,5 +1,5 @@
 import { Injectable, NgZone, ChangeDetectorRef } from '@angular/core';
-import MonTierce from "../../../../../contracts/MonTierce.sol";
+//FIX_ME : import du fichier .sol
 import { Observable } from 'rxjs/Observable';
 import {ReplaySubject} from 'rxjs/ReplaySubject';
 
