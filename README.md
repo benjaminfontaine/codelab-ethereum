@@ -316,7 +316,7 @@ Et voila, vous êtes maintenant un débutant aguerri dans le développement d'un
 
 Attention : les contrats développés dans le cadre de ce TP ne prennent pas en compte les bonnes pratique de sécurisation des contrats (parce que ça les complexifie beaucoup). Je vous encourage donc vivement à connaître et respecter ces régles listées sur la page suivante : https://github.com/ethereum/wiki/wiki/Safety lorsque vous vous lancerez dans l'aventure.
 
-#Annexes
+# Annexes
 ## Le debuggage :
 Créer un event pour pouvoir debugger votre contrat :
 Dans le test unitaire ou votre IHM :
