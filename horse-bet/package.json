@@ -84,7 +84,7 @@
     "zone.js": "0.6.26",
     "ethereumjs-testrpc": "3.0.0",
     "truffle": "2.1.0",
-    FIX_ME
+    "truffle-solidity-loader": "0.0.8",
     "gulp": "3.9.1"
   }
 }
