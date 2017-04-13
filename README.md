@@ -3,11 +3,13 @@
 ## Pré-requis
 Pour ce TP vous aurez besoin :
 
-1. D'un éditeur de texte ou un IDE. S'il prend en charge le javascript c'est mieux.
+1. D'un éditeur de texte ou un IDE. S'il prend en charge le javascript c'est mieux : [Visual Studio Code](https://code.visualstudio.com/), [Atom](https://atom.io/), [Notepad++](https://notepad-plus-plus.org/fr/), [Sublime Text](https://www.sublimetext.com/)...
 
-2. D'une version récente de docker (DockerToolBox pour windows et Docker native pour Mac et Linux)
+2. D'une version récente de docker : [Windows](https://docs.docker.com/docker-for-windows/install/), [Linux](https://docs.docker.com/engine/installation/linux/ubuntu/), [Mac](https://docs.docker.com/docker-for-mac/install/).
 
-3. Google chrome et [l'extension metamask](https://metamask.io/) (il n'est malheureusement pas encore disponible pour Firefox)
+3. De [Git](https://git-scm.com/downloads)
+
+4. De Google chrome/Chromium et de [l'extension metamask](https://metamask.io/) (il n'est malheureusement pas encore disponible pour Firefox)
 
 ## Installation
 ```sh
