@@ -9,7 +9,8 @@ Pour ce TP vous aurez besoin :
 
 3. De [Git](https://git-scm.com/downloads)
 
-4. De Google chrome/Chromium et de [l'extension metamask](https://metamask.io/) (il n'est malheureusement pas encore disponible pour Firefox)
+4. De Google chrome/Chromium et de [l'extension metamask](https://github.com/MetaMask/metamask-plugin/releases/tag/v3.5.2) (il ne faut pas prendre la dernière version qui est incompatible avec nos librairies actuelles).
+Pour installer l'extension, télécharger et dézipper le fichier. Puis glisser déposer le répertoire du plugin dans le corps de la page chrome://extensions/ dans le navigateur Chrome afin de l'installer.
 
 ## Installation
 ```sh
