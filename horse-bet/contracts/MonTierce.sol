@@ -65,6 +65,6 @@ contract MonTierce is mortal{
   
     //cette méthode, en lecture seule, permets de récupérer les informations de la course
     function getInfosCourse(uint idCourse) public returns(uint, uint, bool, uint32[], bool){
-      // FIX_ME
+      return (courses[idCourse].idCourse, courses[idCourse].montantTotalMises, courses[idCourse].terminee, courses[idCourse].chevauxEnCourse , courses[idCourse].parisBloques);
     }
 }
