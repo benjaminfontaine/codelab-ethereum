@@ -204,7 +204,7 @@ Pour voir la correction de ce TP :
      git checkout step3-1c
 
 
-## Etape 4 : L'IHM
+## Etape 4 : Envoyer des données depuis l'IHM vers le smart contract
 
 Nous voila de retour dans un domaine un peu plus connu, l'IHM de la D-app.
 L'avantage de truffle c'est qu'il va utiliser le framework Javascript WEB3, avec la surcouche Ether Pudding pour appeler le contrat, depuis nos fichier js ou ts.
@@ -267,25 +267,22 @@ Vous pouvez à tout moment changer d'utilisateur en faisant un switch account da
 
 Pour changer de compte, affichez la fenêtre de metamask, cliquez sur *Switch Accounts* en haut à droite, cliquez sur l'icône *+* pour faire apparaître les comptes préconfigurés par le daemon testrpc.
 
-### Etape 4-1 : Intégration des smart-contrats à l'application
+### Etape 4-préquel : Intégration des smart-contrats à l'application
 
-Placez vous sur la branche de cette nouvelle partie du TP :
+Il n'y a pas d'exercice à cette étape, c'est juste à titre explicatif.
 
-     git checkout step4-1
+Pour faire interagir notre application avec la blockchain Ethereum, il a quelques pré-requis.
 
-Les endroits à modifier sont là encore marqués par des FIX_ME.
-
-Cette branche est une version de l'application sans lien avec Ethereum.
-C'est comme si on démarrait du project starter Angular2 (https://github.com/blacksonic/angular2-babel-esnext-starter), avec les quelques ajouts suivants :
-- j'ai ajouté les répertoires *contracts* (nos fichiers .sol) et *migrations* (les scripts de déploiement Truffle) à la racine du projet.
-- ainsi que les le fichier truffle.js pour que la configuration truffle soit prise en compte.
+On démarre du project starter Angular2 (https://github.com/blacksonic/angular2-babel-esnext-starter), et on y fait les quelques ajouts suivants :
+- ajouter les répertoires *contracts* (nos fichiers .sol) et *migrations* (les scripts de déploiement Truffle) à la racine du projet.
+- ainsi que le fichier truffle.js pour que la configuration truffle soit prise en compte.
 
 A partir de là, pour pouvoir utiliser nos smarts contracts dans l'application, la configuration est assez simple.
 
-Tout d'abord, ajouter un loader webpack spécifique à Truffle *truffle-solidity-loader*.
+Tout d'abord, nous avons ajouté un loader webpack spécifique à Truffle *truffle-solidity-loader*.
 Ce loader va automatiquement rendre disponible vos ABI Javascript (fichier .sol.js) dans le fichier vendor.js aggrégant toutes les sources Js de l'appli.
 
-Puis modifier le fichier `tasks/config/webpack.js` en y référençant notre nouveau loader qui prendra en charge les fichiers .sol :
+Puis nous avons modifié le fichier `tasks/config/webpack.js` en y référençant notre nouveau loader qui prendra en charge les fichiers .sol :
 ```
 module: {
   loaders: [
@@ -303,21 +300,31 @@ module: {
   ],
 ```
 
-Vous pouvez maintenant utiliser faire appel à vos contrats dans les fichiers js.
+Nous pouvez maintenant utiliser faire appel à vos contrats dans les fichiers js.
+
+### Etape 4 : Envoyer des données à notre smart contract depuis l'IHM
+
 
 Ouvrer le fichier `client/app/core/services/montierce/monTierce.service.js` qui centralise les appels au contrat dans l'application.
 
-Importer le contrat en .sol (le truffle-solidity-loader se chargera pour vous de le rendre disponible en Js) :
+Le premier FIX_ME à corriger est l'import du contrat en .sol (le truffle-solidity-loader se chargera pour vous de le rendre disponible en Js) :
 
      import MonTierce from "../../../../../contracts/MonTierce.sol";
 
-Puis utiliser le contrat dans la méthode parier afin d'implémenter l'appel du pari.
+Nous allons ensuite devoir réparer l'appel à la création de course de notre smart contract.
 
 C'est exactement la même syntaxe que le TU, sauf qu'il faut utiliser l'adresse window.web3.eth.defaultAccount dans le champs from.
+
+### Etape 5 : Récupérer des données de notre smart contract pour les afficher dans l'IHM
+
+### Etape 6 : Les réglements des gains aux vainqueurs
 
 Et voila, vous êtes maintenant un débutant aguerri dans le développement d'une application Ethereum.
 
 Attention : les contrats développés dans le cadre de ce TP ne prennent pas en compte les bonnes pratique de sécurisation des contrats (parce que ça les complexifie beaucoup). Je vous encourage donc vivement à connaître et respecter ces régles listées sur la page suivante : https://github.com/ethereum/wiki/wiki/Safety lorsque vous vous lancerez dans l'aventure.
+
+
+
 
 # Annexes
 ## Le debuggage :
@@ -348,5 +355,4 @@ function parier(uint idCourse, uint32[3] chevauxTierce) public returns(bool pari
 ```
 
 
-https://live.ether.camp/
-https://benjifontaine.by.ether.camp/ide.html
+
