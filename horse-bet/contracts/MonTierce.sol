@@ -98,7 +98,12 @@ contract MonTierce is mortal{
   //fonction de fallback indispensable sinon la fonction parier revoit un throw à chaque appel
   function() payable { }
 
-  // FIX_ME : ajouter une function parier(uint idCourse, uint32[3] chevauxTierce) payable {}
+  function parier(uint idCourse, uint32[3] chevauxTierce) payable  {
+        Course course = courses[idCourse];
+        course.parisKeySet.push(msg.sender);
+        course.paris[msg.sender] = Pari(msg.sender, msg.value, chevauxTierce, EtatPari.NonDetermine);
+        course.montantTotalMises += msg.value;
+  }
                                   
   event InterdireParis(uint idCourse);
 
