@@ -64,145 +64,59 @@ Redémarrer l'application web
 docker-compose restart web 
 ```
 
-## Etape 1-1 : Le contrat - Création d'une course
+## Etape 1 : Lire des données dans la blockchain
 
-Se mettre sur la branche Step 1-1.
+Se mettre sur la branche :
 
-     git checkout step1-1
-
-S'il y a des modifications qui vous empêche de faire le switch de branche, faites un git stash.
-
-Sur cette branche, le contrat est déjà crée, ainsi que son test unitaire.
-
-Seulement, j'ai sadiquement supprimé certaines lignes de code, ce qui empèche les tests unitaires de fonctionner.
-
-Les deux fichiers impactés sont :
-- `contacts/MonTierce.sol` : le contract, qui va être le code déploié sur la blockchain et qui contiendra toutes les méthodes permettant de gérer des paris sur les courses. Ce contrat est écrit en SOLIDITY.
-- `test/montierce.js` : son test unitaire, qui va utilisé Mocha et Chai pour fournir des tests unitaires et d'intégration sur notre contrat
-
-Vous repérerez les zones corromptues par le pattern FIX_ME disséminé un peu partout dans le code.
-Au dessus de ces FIX_ME, des TAGs INFO vous donneront les indications pour compléter les trous.
-
-Vous pouvez tester la compilation du contrat en temps réel via :
-https://ethereum.github.io/browser-solidity/
-
-
-Les tests unitaires se lancent, à la racine du répertoire horse-bet par le biais de la commande :
-
-```sh
-docker-compose run unit
-```
-Depuis le répertoire `horse-bet`.
-
-*Pour le debug*, c'est compliqué et rien n'est fourni de base.
-
-Vous pouvez cependant utiliser [les events et les logs js](#le-debuggage-)
-
-Au terme de cette première partie de TP, les tests unitaires doivent être au vert.
-
-
-Pour voir la correction de ce TP :
-
-     git checkout step1-1c
-
-
-<details>
-  <summary>SPOILER ALERT: solution de la copie de tableau dans la méthode initialiserCourse </summary>
-
-
-```
-        for(uint x= 0; x< chevauxParticipants.length; x++ ){
-          courses[courseIDGenerator].chevauxEnCourse.push(chevauxParticipants[x]);
-        }
-```
-
-</details>
-
-
-## Etape 1-2 : Le contrat - Consultation d'une course
-
-Se mettre sur la branche Step 1-2.
-
-     git checkout step1-2
+     git checkout starter-1
 
 Dans cette partie, nous avons rajouté une méthode getInfosCourse dans le contrat `contacts/MonTierce.sol`. Cette méthode va permettre de consulter des données sur une course.
-Pas de FIX_ME dans le code de ce contrat.
-Par contre, le test unitaire `test/montierce.js`, en appliquant le même principe vicieux que précedemment, nécessite d'être complété pour fonctionner.
+Il y a un commentaire `FIX_ME` dans le corps de cette méthode, à vous de l'implémenter.
+Vous pouvez exécuter des tests via la commande 
 
-
+    docker-compose run unit
+    
+Ils vous aideront à déterminer si votre code fonctionne ou non comme attendu.
 
 Pour voir la correction de ce TP :
 
-     git checkout step1-2c
+     git checkout starter-1c
 
+## Etape 2 : stocker des données dans la blockchain
 
-
-
-## Etape 2 : Le contrat - Mise en place de la fonctionnalité de pari
-
-Maintenant que nous pouvons créer et consulter les informations d'une course, nous pouvons passer à l'étape suivante : la fonctionnalité de parier.
-
-### Etape 2-1 - La fonction parier
+Nous pouvons créer et consulter les informations d'une course, nous pouvons passer à l'étape suivante : la 
+fonctionnalité de parier.
 
 Tout d'abord charger la deuxième partie du TP :
 
-     git checkout step2-1
+     git checkout starter-2
 
-Une nouvelle méthode a fait son apparition dans le contrat `contacts/MonTierce.sol`
-- parier : méthode publique qui va permettre au parieur de miser un tierce une certaine somme d'argent. Stocke ce pari dans la course.
+Dans le contrat `contacts/MonTierce.sol`, il y a un nouveau commentaire `FIX_ME` qui vous indique la signature de la 
+fonction attendue.
+Il s'agit d'une méthode publique qui va permettre au parieur de miser un tierce une certaine somme d'argent. Stocke 
+ce pari dans la course.
 
-
-De la même manière que l'exercice 1, traquez les FIX_ME dans ce contrat afin qu'il compile et que le nouveau test unitaire du fichier `test/montierce.js` passe.
-
-
-Pour voir la correction de ce TP :
-
-     git checkout step2-1
-
-
-### Etape 2-2 - La fonction interdirePari
-
-     git checkout step2-2
-
-Une nouvelle méthode a fait son apparition dans le contrat `contacts/MonTierce.sol`
-- interdireParis : méthode du propriètaire qui va bloquer la fonctionnalité de pari une fois la course démarrée
-
-Cette fois-ci, c'est notre TU qu'il va falloir réparer, dans `test/montierce.js`.
+De la même manière que l'exercice 1, exécutez les tests unitaires pour vérifier que votre code fonctionne comme attendu.
 
 Pour voir la correction de ce TP :
 
-     git checkout step2-2c
-
-## Etape 3 : Le contrat - Implémentation de la méthode de fin de course.
-
-Cette méthode doit parcourir tous les paris de la course, déterminer ceux qui sont gagnants, et d'envoyer le gain à tous les vainqueurs.
-
-Vous devez commencer à avoir l'habitude, pour la troisième partie du TP, on lance :
-
-     git checkout step3-1
+     git checkout starter-2c
 
 
-Deux méthodes ont fait leur apparition dans le contrat `contacts/MonTierce.sol`
-- terminerCourse : méthode du propriètaire qui va effectuer toutes les opérations de fin de course.
-- annulerParis : méthode qui va rendre leur argent aux parieurs si personne n'a gagné ou s'il y a un soucis sur la course
+## Etape 3 - Une fonctione d'administration
 
-Concernant l'algorithme de distribution des gains.
-C'est un algorithme maison dont je n'ai pas encore complétement testé la fiabilité.
-Cependant, il permet de rétribuer chaque parieur en fonction de son type de gain (tierce, doublet ou unique) et du montant de sa mise.
+     git checkout starter-3
 
-La formule de calcul est la suivante :
+Dans le contrat `contacts/MonTierce.sol`, il vous faut maintenant implémenter une fonction permettant d'interdire 
+les paris.
+Le contenu de la fonction est simple, un attribut est prévu sur la course pour interdire un nouveau pari mais attention, 
+cette fonction ne doit pouvoir être utilisée que par l'administrateur, c'est à dire le compte n°1.
 
-     gain parieur = (mise * facteurGain * miseDesPerdants) / (somme pour tous les paris de (misePari * facteurGainPari))
-où facteurGain est un nombre entre 0 et 100 qui varie en fonction du fait qu'il y ait ou pas des gagnants de chaque type.
-
-
-De la même manière que les exercices 1 et 2, traquez les FIX_ME dans ce contrat afin qu'il compile et que le nouveau test unitaire du fichier `test/montierce.js` passe.
-
+De la même manière que l'exercice 1, exécutez les tests unitaires pour vérifier que votre code fonctionne comme attendu.
 
 Pour voir la correction de ce TP :
 
-     git checkout step3-1c
-
+     git checkout starter-3c
 
 ## Etape 4 : Envoyer des données depuis l'IHM vers le smart contract
 
