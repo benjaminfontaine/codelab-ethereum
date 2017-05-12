@@ -58,7 +58,10 @@ contract MonTierce is mortal{
     InitialisationCourse(chevauxParticipants, courses[courseIDGenerator].idCourse, owner);
 
     courseIDGenerator++ ;
-    return courses[courseIDGenerator].idCourse;
+    //ce return ne sert strictement à rien 
+    //car cette fonction renverra systématiquement le hash de la transaction 
+    //dans laquelle elle a été executée
+    return courseIDGenerator;
   }
 
   event GetInfosCourse(uint idCourse);

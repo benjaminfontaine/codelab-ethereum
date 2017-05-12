@@ -219,6 +219,10 @@ Cela fournit une IHM Angular de base en ES6, servie par un serveur koa, avec liv
 
 #### Lancement de l'IHM
 
+Rechargons maintenant la branche d'origine et jouons un peu avec l'ihm :
+
+     git checkout starter
+
 ```sh
 docker-compose start web
 ```
@@ -304,6 +308,9 @@ Nous pouvez maintenant utiliser faire appel à vos contrats dans les fichiers js
 
 ### Etape 4 : Envoyer des données à notre smart contract depuis l'IHM
 
+Chargeons la branche contenant le premier exercise sur l'ihm :
+
+     git checkout starter-4
 
 Ouvrer le fichier `client/app/core/services/montierce/monTierce.service.js` qui centralise les appels au contrat dans l'application.
 
@@ -313,7 +320,7 @@ Le premier FIX_ME à corriger est l'import du contrat en .sol (le truffle-solidi
 
 Nous allons ensuite devoir réparer l'appel à la création de course de notre smart contract.
 
-C'est exactement la même syntaxe que le TU, sauf qu'il faut utiliser l'adresse window.web3.eth.defaultAccount dans le champs from.
+C'est exactement la même syntaxe que le TU , sauf qu'il faut utiliser l'adresse 'window.web3.eth.defaultAccount' dans le champs from. Cette adresse est l'adresse de l'utilisateur qui est actuellement sélectionné dans Metamask.
 
 ### Etape 5 : Récupérer des données de notre smart contract pour les afficher dans l'IHM
 

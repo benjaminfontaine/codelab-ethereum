@@ -40,20 +40,6 @@ export class MonTierceService {
     return this._contratTierce.address;
   }
 
-  getCourses() {
-    return [
-      { id: 1, name: "course 1" },
-      { id: 2, name: "course 2" },
-      { id: 3, name: "course 3" },
-      { id: 4, name: "course 4" },
-      { id: 5, name: "course 5" },
-      { id: 6, name: "course 6" },
-      { id: 7, name: "course 7" },
-      { id: 8, name: "course 8" },
-      { id: 9, name: "course 9" }
-
-    ];
-  }
 
   getChevauxExistants() {
     return [
