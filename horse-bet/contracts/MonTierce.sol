@@ -98,44 +98,8 @@ contract MonTierce is mortal{
   //fonction de fallback indispensable sinon la fonction parier revoit un throw à chaque appel
   function() payable { }
 
-  event Parier(uint idCourse, uint32[3] chevauxTierce, address messageSender, uint mise, uint senderBalance);
-
-  function parier(uint idCourse, uint32[3] chevauxTierce) payable  {
-    Parier(idCourse, chevauxTierce, msg.sender, msg.value, msg.sender.balance);
-
-    Course course = courses[idCourse];
-    //si la course n'existe pas
-    if(course.chevauxEnCourse.length == 0){
-      throw;
-    }
-
-    //ou bien est terminée
-    if(course.terminee){
-      throw;
-    }
-
-    //ou que les paris sont bloques
-    if(course.parisBloques){
-      throw;
-    }
-
-    //on contrôle que le pari s'effectue sur des chevaux existants
-    for(uint i = 0; i < 3; i++){
-      bool chevalExiste = false;
-      for(uint j = 0; j < course.chevauxEnCourse.length; j++){
-        if(chevauxTierce[i] == course.chevauxEnCourse[j]){
-          chevalExiste = true;
-        }
-      }
-      if(!chevalExiste){
-        throw;
-      }
-    }
-    course.parisKeySet.push(msg.sender);
-    course.paris[msg.sender] = Pari(msg.sender, msg.value, chevauxTierce, EtatPari.NonDetermine);
-    course.montantTotalMises += msg.value;
-  }
-
+  // FIX_ME : ajouter une function parier(uint idCourse, uint32[3] chevauxTierce) payable {}
+                                  
   event InterdireParis(uint idCourse);
 
   //bloquer les paris au début de la course
