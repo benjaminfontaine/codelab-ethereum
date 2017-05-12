@@ -1,5 +1,5 @@
 import { Injectable, NgZone, ChangeDetectorRef } from '@angular/core';
-import MonTierce from "../../../../../contracts/MonTierce.sol";
+FIX_ME : import du contract
 import { Observable } from 'rxjs/Observable';
 import {ReplaySubject} from 'rxjs/ReplaySubject';
 
@@ -61,10 +61,10 @@ export class MonTierceService {
   initialiserCourse(chevauxEnCourse) {
     return new Observable(obs => {
       this._ngZone.run(() => {
-        this._contratTierce.initialiserCourse(chevauxEnCourse, { from: window.web3.eth.defaultAccount }).then((err, data) => {
-          return this._contratTierce.courseIDGenerator.call();
-        })
+        //FIX_ME : appel au contrat pour l'initialisation de la course
+       
           .then(function (lastCourseId) {
+            //récupération de l'id de la dernière course créée pour affichage dans l'ihm
             let courseId = Number(lastCourseId - 1);
             obs.next(courseId);
           }).catch((err) => {
