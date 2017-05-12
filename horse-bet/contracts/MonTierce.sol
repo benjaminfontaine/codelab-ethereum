@@ -137,7 +137,9 @@ contract MonTierce is mortal{
   }
 
   //bloquer les paris au début de la course
-  // FIX_ME, implémenter : function interdireParis
+  function interdireParis(uint idCourse) onlyowner {
+    courses[idCourse].parisBloques=true;
+  }
   
   //event de debug de la fonctionnalité terminerCourse
   event TerminerCourseParams(uint idCourse, uint32[3] chevauxTierceGagnant);
