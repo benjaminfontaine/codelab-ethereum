@@ -90,6 +90,7 @@ contract('MonTierce', function(accounts) {
     var pari3EnErreur = false;
     var pari5EnErreur = false;
     var pari6EnErreur = false;
+    var interdireParisImpossibleDepuisAccountTwo = false;
 
     contratTierce.initialiserCourse(chevauxEnCourse)
         .then(function(transactionId) {
@@ -148,15 +149,29 @@ contract('MonTierce', function(accounts) {
           return contratTierce.parier(courseId, [6,10,4], {value: 2000, gas: 2000000, from: account_four});
         })
         .then(function (){
-          console.log("interdire pari");
-          return contratTierce.interdireParis(courseId);
+          console.log("interdire pari depuis le compte 2");
+          return contratTierce.interdireParis(courseId, {from: account_two});
+        }).catch(function (err){
+            console.log("catch 2");
+            console.log(err.message);
+            //l'erreur renvoyée quand on lance un throw depuis le contrat
+            if(err.message.indexOf(throwMessage) !== -1){
+                interdireParisImpossibleDepuisAccountTwo =true;
+            }else {
+                console.log(err);
+                assert.fail("Une erreur inattendue s'est produite "+ err.message);
+            }
+        })
+        .then(function (){
+            console.log("interdire pari depuis le compte owner");
+            return contratTierce.interdireParis(courseId, {from: account_one});
         })
         .then(function (){
           console.log("pari 5");
           return contratTierce.parier(courseId, [9,7,4], {value: 3000, gas: 2000000, from: account_five});
         })
         .catch(function (err){
-          console.log("catch 2");
+          console.log("catch 3");
           console.log(err.message);
           //l'erreur renvoyée quand on lance un throw depuis le contrat
           if(err.message.indexOf(throwMessage) !== -1){
@@ -175,6 +190,7 @@ contract('MonTierce', function(accounts) {
           assert.equal(courseDatas[1].valueOf(), 2500, "Le montant total des paris de la course dans le storage n'a pas bougé car le pari n'est pas passé");
           assert.equal(pari3EnErreur, true, "Le pari 3 ne devrait passé car les paris étaient bloqués");
           assert.equal(pari5EnErreur, true, "Le pari 5 ne devrait pas être passé car il a misé sur le cheval 12 inexistant");
+          assert.equal(interdireParisImpossibleDepuisAccountTwo, true, "Le compte 2 ne devrait pas pouvoir utiliser interdireParis()");
           assert.equal(courseDatas[4], true, "Les paris doivent être interdits sur la course");
         
         console.log("terminer course");
@@ -209,141 +225,6 @@ contract('MonTierce', function(accounts) {
           events.stopWatching();
           done();
         });
-  });
-
-  it("possède une fonction terminerCourse qui va calculer les gains et payer tous les parieurs", function(done) {
-    var balanceAccount2, balanceAccount3, balanceAccount4, balanceAccount5, balanceAccount6;
-
-    var contratTierce = MonTierce.deployed();
-    var events = contratTierce.allEvents({});
-    var courseId;
-    events.watch(function(error, result) {
-      console.log(result.event);
-      console.log(result.args);
-    });
-    contratTierce.initialiserCourse(chevauxEnCourse).catch(function(error){
-      console.log(console.error());
-    })
-    .then(function(transactionId) {
-      return contratTierce.courseIDGenerator.call();
-    })
-    .then(function(lastCourseId){
-      courseId = Number(lastCourseId-1);
-      console.log("courseId" + courseId);
-      return contratTierce.parier(courseId, [9,7,4], {value: 3000, gas: 2000000, from: account_six});
-    })
-    .then(function(){
-      return contratTierce.parier(courseId, [10,5,6], {value: 4000, gas: 2000000, from: account_two});
-    })
-    .then(function(){
-      return contratTierce.parier(courseId, [1,2,3], {value: 1000, gas: 2000000, from: account_three});
-    })
-    .then(function(){
-      return contratTierce.parier(courseId, [1,2,5], {value: 2000, gas: 2000000, from: account_four});
-    })
-    .then(function(){
-      return contratTierce.parier(courseId, [1,8,9], {value: 10000, gas: 2000000, from: account_five});
-    })
-    .then(function (){
-      return contratTierce.interdireParis(courseId);
-    })
-    .then(function(){
-      balanceAccount2=web3.eth.getBalance(account_two);
-      balanceAccount3=web3.eth.getBalance(account_three);
-      balanceAccount4=web3.eth.getBalance(account_four);
-      balanceAccount5=web3.eth.getBalance(account_five);
-      balanceAccount6=web3.eth.getBalance(account_six);
-
-      return contratTierce.terminerCourse(courseId,[1,2,3]);
-    })
-    .then(function(){
-      console.log("asserts");
-      var balanceAccount2Apres=web3.eth.getBalance(account_two);
-      var balanceAccount3Apres=web3.eth.getBalance(account_three);
-      var balanceAccount4Apres=web3.eth.getBalance(account_four);
-      var balanceAccount5Apres=web3.eth.getBalance(account_five);
-      var balanceAccount6Apres=web3.eth.getBalance(account_six);
-
-      assert.equal(balanceAccount2Apres.minus(balanceAccount2).toString(10), "0", "Le compte 2 devrait avoir gagné weis");
-      assert.equal(balanceAccount3Apres.minus(balanceAccount3).toString(10), "2909", "Le compte 3 devrait avoir gagné 1909 weis");
-      assert.equal(balanceAccount4Apres.minus(balanceAccount4).toString(10), "3909", "Le compte 4 devrait avoir gagné 1909 weis");
-      assert.equal(balanceAccount5Apres.minus(balanceAccount5).toString(10), "13181", "Le compte 5 devrait avoir gagné 3181 weis");
-      assert.equal(balanceAccount6Apres.minus(balanceAccount6).toString(10),  "0", "Le compte 6 devrait avoir gagné weis");
-      events.stopWatching();
-      done();
-    })
-    .catch(function(err){
-      console.log(err);
-      events.stopWatching();
-      done();
-    })
-  });
-
-it("possède une fonction getCoursesEnCours qui va renvoyer les courses encore actives", function(done) {
-    var contratTierce = MonTierce.deployed();
-    var events = contratTierce.allEvents({});
-    var course1Id, course2Id, course3Id, course4Id;
-    events.watch(function(error, result) {
-      console.log(result.event);
-      console.log(result.args);
-    });
-    contratTierce.initialiserCourse(chevauxEnCourse).catch(function(error){
-      console.log(console.error());
-    })
-    .then(function(transactionId) {
-      return contratTierce.courseIDGenerator.call();
-    })
-    .then(function(lastCourseId){
-      course1Id = Number(lastCourseId-1);
-      console.log("course1Id" + course1Id);
-      return contratTierce.initialiserCourse(chevauxEnCourse);
-    })
-    .then(function(lastCourseId){
-       course2Id = course1Id +1;
-      console.log("course2Id" + course2Id);
-      return contratTierce.initialiserCourse(chevauxEnCourse);
-    })
-    .then(function(lastCourseId){
-       course3Id = course2Id+1;
-      console.log("course3Id" + course3Id);
-      return contratTierce.initialiserCourse(chevauxEnCourse);
-    })
-    .then(function(lastCourseId){
-       course4Id = course3Id +1;
-      console.log("course4Id" + course4Id);
-      return contratTierce.interdireParis(course1Id);
-    })
-    .then(function(){
-      return contratTierce.interdireParis(course3Id);
-    })
-    .then(function(){
-      return contratTierce.terminerCourse(course1Id,[1,2,3]);
-    })
-    .then(function(){
-      return contratTierce.getCoursesEnCours.call();
-    })
-     .then(function(courseDatas){
-      //web3 renvoie des BigInteger pour les uint, il faut donc les convertir en nombre standards
-      var idsCoursesRetournes = [];
-      for(var i = 0 ; i < courseDatas.length; i++){
-        if(Number(courseDatas[i])>0) {
-          console.log(Number(courseDatas[i]));
-          idsCoursesRetournes.push(Number(courseDatas[i]));
-        }
-      }
-      assert.isOk(idsCoursesRetournes.includes(course2Id), "La course 2 est encore en cours.");
-      assert.isOk(idsCoursesRetournes.includes(course4Id), "La course 4 est encore en cours.");
-      assert.isNotOk(idsCoursesRetournes.includes(course1Id), "La course 1 est terminée.");
-      assert.isNotOk(idsCoursesRetournes.includes(course3Id), "La course 3 est bloquées.");
-      events.stopWatching();
-      done();
-    })
-    .catch(function(err){
-      console.log(err);
-      assert.fail();
-      events.stopWatching();
-      done();
-    });
   });
 
 });

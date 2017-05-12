@@ -136,13 +136,9 @@ contract MonTierce is mortal{
     course.montantTotalMises += msg.value;
   }
 
-  event InterdireParis(uint idCourse);
-
   //bloquer les paris au début de la course
-  function interdireParis(uint idCourse) onlyowner{
-    courses[idCourse].parisBloques=true;
-    InterdireParis(idCourse);
-  }
+  // FIX_ME, implémenter : function interdireParis
+  
   //event de debug de la fonctionnalité terminerCourse
   event TerminerCourseParams(uint idCourse, uint32[3] chevauxTierceGagnant);
   event TerminerCourseCalculGagnants(uint idCourse, uint32[3] chevauxTierceGagnant, bool existeGagnantTierce, bool existeGagnantDuo, bool existeGagnantUno, uint misesDesPerdants);
