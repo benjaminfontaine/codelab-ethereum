@@ -9,3 +9,4 @@ tooling/*.gz
 tooling/*.log
 tooling/*.box
 tooling/.vagrant
+metamask/
