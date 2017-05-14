@@ -96,13 +96,13 @@ export class MonTierceService {
   }
 
   recupererCoursesPourPari() {
-    this._contratTierce.getCoursesEnCours.call()
+    //FIX_ME : appel de la méthode getCoursesEnCours sur le smart contract
       .then((courseDatas) => {
         var idsCoursesRetournes = this.filtrerEtConvertirIdCourses(courseDatas);
         if (!idsCoursesRetournes.equals(this.dernieresCoursesPourPari)) {
           console.log("Mise à jours id des courses ouvertes : " + idsCoursesRetournes);
           this.dernieresCoursesPourPari = idsCoursesRetournes;
-          this.coursesPourPari$.next(idsCoursesRetournes);
+          //FIX_ME : alimentation de l'Observable coursesPourPari$ avec les ids récupérés
         }
       })
       .catch((err) => {
