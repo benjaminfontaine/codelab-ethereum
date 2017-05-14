@@ -190,7 +190,7 @@ contract MonTierce is mortal{
             uint gainPari = (course.paris[addresseParieur].mise * course.coefficientsPrime[uint8(course.paris[addresseParieur].etat)] * course.misesDesPerdants) / course.sommeCoefficientsParMises;
             TerminerCourseEnvoiDesGains(addresseParieur, gainPari);
             //TODO mettre en place withdrawal pattern pour éviter des tas de failles de sécurité
-            bool envoiOK = course.paris[addresseParieur].adresseParieur.send(gainPari + course.paris[addresseParieur].mise);
+            bool envoiOK = adresseParieur.send(gainPari + course.paris[addresseParieur].mise);
             if(!envoiOK){
               //TODO regarder comment traiter ce retour sans que toutes la transaction soit annulée
               throw;

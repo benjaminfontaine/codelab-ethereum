@@ -238,7 +238,49 @@ C'est exactement la même syntaxe que le TU , sauf qu'il faut utiliser l'adresse
 
 ### Etape 5 : Récupérer des données de notre smart contract pour les afficher dans l'IHM
 
+Nous allons maintenant voir comment récupérer des données stockées dans le smart contract (en lecture seule).
+
+
+Chargeons la branche contenant le premier exercise sur l'ihm :
+
+     git checkout starter-5
+
+Deux FIX_ME ont été introduits dans le code de la classe `client/app/core/services/montierce/monTierce.service.js`
+
+Le premier FIX_ME consiste à appeler la méthode getCoursesEnCours sur le smart contract.
+Ethereum fait la distinction entre les transactions (des appels aux smart-contracts qui vont aller modifier l'état interne du smart contract et qui coûtent de l'ether) et les opérations de récupération de données, qui s'effectuent sur le noeud local, ne modifient pas le smart-contract et qui sont gratuites.
+
+Trois choix : 
+- call : lecture seule. syntaxe : contrat.nomMethodeSansParentheses.call(), renvoie des données
+- sendTransaction : envoie une transaction sur la blockchain, renvoie un hash de transaction.
+Syntaxe : contrat.nomMethodeSansParentheses.sendTransaction()
+- contrat.nomMethode([params...], [configuration]) : choisit l'un ou l'autre des modes en fonction de la nature de fonction.
+
+A vous de choisir la bonne méthode.
+
+Le second FIX_ME nécessite que vous alimentiez l'observable coursesPourPari$ avec les données récupérées.
+
+Cela va déclenchera un traitement chez tous les Souscripteurs de cet Observable.
+Les souscripteurs de cet Observable attendent un tableau d'id en entrée (voir pari.component.js L.73)
+La syntaxe est la suivante : observable.next(donnees)
+
+
+
+
 ### Etape 6 : Les réglements des gains aux vainqueurs
+
+Revenons maintenant brièvement dans le code de notre smart contract pour voir comment le smart contract règle les gains aux gagnants.
+
+     git checkout starter-6
+
+Le FIX_ME est dans le fichier `contacts/MonTierce.sol`.
+La syntaxe de l'envoi d'argent est la suivante <adresse-publique-parieur>.send(somme).
+
+Vous pouvez tester le bon fonctionnement de votre solution en lancant les tests unitaires.
+
+
+La méthode que nous utilisons là est la plus simple mais aussi la plus risquée car elle peut entraîner des vulnérabilités comme nous allons le voir en fin de TP.
+
 
 Et voila, vous êtes maintenant un débutant aguerri dans le développement d'une application Ethereum.
 
