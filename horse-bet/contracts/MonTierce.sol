@@ -190,9 +190,11 @@ contract MonTierce is mortal{
             uint gainPari = (course.paris[addresseParieur].mise * course.coefficientsPrime[uint8(course.paris[addresseParieur].etat)] * course.misesDesPerdants) / course.sommeCoefficientsParMises;
             TerminerCourseEnvoiDesGains(addresseParieur, gainPari);
             //TODO mettre en place withdrawal pattern pour éviter des tas de failles de sécurité
-            bool envoiOK = course.paris[addresseParieur].adresseParieur.send(gainPari + course.paris[addresseParieur].mise);
+            
+            //appeler la méthode send sur l'adresse du parieur en passant le gain en paramètre
+            //le gain est égal au gainPari + la mise de départ stockées dans course.paris[addresseParieur]
+            bool envoiOK = //FIX_ME envoi de ses gains à l'utilisateurs ;
             if(!envoiOK){
-              //TODO regarder comment traiter ce retour sans que toutes la transaction soit annulée
               throw;
             }
           }
